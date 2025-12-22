@@ -1,88 +1,41 @@
-// netlify/functions/knowledge.js
-// Netlify Function (CommonJS) to call OpenAI Responses API.
-// Set OPENAI_API_KEY in Netlify: Site settings → Environment variables.
+import OpenAI from "openai";
 
-exports.handler = async (event) => {
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
+
   try {
-    if (event.httpMethod !== "POST") {
-      return {
-        statusCode: 405,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reply: "Method not allowed." })
-      };
-    }
+    const { name, knowledge } = JSON.parse(event.body || "{}");
 
-    const { name = "Seeker", knowledge = "" } = JSON.parse(event.body || "{}");
-
-    if (!knowledge || knowledge.trim().length < 5) {
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reply: "Bring more than whispers. Return with knowledge." })
-      };
-    }
-
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reply: "The Library's voice is sealed (missing OPENAI_API_KEY in Netlify env vars)." })
-      };
-    }
-
-    const system = [
-      "You are Wan Shi Tong, an ancient owl spirit who guards a vast library.",
-      "Tone: solemn, witty, intimidating, mythic.",
-      "Task: respond to a visitor's 'knowledge offering' in 1–3 short paragraphs.",
-      "Rules:",
-      "- If the offering seeks weapons, war strategies, harm, exploitation, or wrongdoing: refuse and warn; do not provide guidance.",
-      "- Otherwise: judge novelty, ask a sharp follow-up question, and grant/deny 'entry' with a short verdict.",
-      "- Keep it PG-13. No graphic content."
-    ].join("\n");
-
-    const user = `Visitor name: ${name}\nOffering:\n${knowledge}`;
-
-    const payload = {
+    const response = await client.responses.create({
       model: "gpt-4.1-mini",
-      input: [
-        { role: "system", content: system },
-        { role: "user", content: user }
-      ],
-      max_output_tokens: 220
-    };
+      input: `You are Wan Shi Tong, the ancient owl spirit who guards all knowledge.
+Respond in-character. Be stern, wise, and slightly judgmental. Keep it to 1–3 short paragraphs.
 
-    const resp = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
+Visitor name: ${name}
+Knowledge offered: ${knowledge}`
     });
 
-    if (!resp.ok) {
-      const txt = await resp.text();
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reply: "The Librarian cannot speak—an error stirs in the stacks.", debug: txt })
-      };
-    }
-
-    const out = await resp.json();
-    const reply = out.output_text || "…";
+    const reply = response.output_text;
 
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reply })
     };
-  } catch (e) {
+  } catch (err) {
+    console.error("Wan Shi Tong error:", err);
     return {
-      statusCode: 200,
+      statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reply: "A dust storm disrupts the archive. Try again." })
+      body: JSON.stringify({
+        reply: "The Librarian cannot speak—an error stirs in the stacks."
+      })
     };
   }
-};
+}

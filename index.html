@@ -461,6 +461,22 @@
       .token-name { font-size: 2.1em; }
       .token-card { padding: 22px; }
     }
+  /* ===== Layout Cleanup (Cards) ===== */
+.knowledge-sections {
+  align-items: stretch;
+  justify-items: stretch;
+}
+.section {
+  min-height: 270px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section h2 { margin-bottom: 8px; }
+.section p { margin-top: 0; }
+@media (max-width: 980px) {
+  .section { min-height: auto; }
+}
   </style>
 </head>
 
@@ -567,9 +583,8 @@
         </div>
       </div>
 <div class="lore-text">
-      Knowledge compounds when returned to the library.
-      Activity sustains attention.
-      Those who understand compounding understand the Snowball.
+      "Knowledge is not a weapon. It is a trust."
+— Wan Shi Tong
     </div>
   </div>
 </div>
@@ -579,33 +594,8 @@
 
     <div class="knowledge-sections">
       <div class="section">
-        <h2><span class="section-icon">📚</span> Ancient Texts</h2>
-        <p>Vast collections of scrolls and manuscripts from across the world, containing the wisdom of ages past. From the Fire Nation's early chronicles to the Water Tribe's oral histories, preserved in written form.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">🌍</span> Geography & Maps</h2>
-        <p>Detailed cartography of all four nations, including hidden locations, spirit portals, and forgotten cities. Knowledge of the physical world in its entirety.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">⚗️</span> Natural Philosophy</h2>
-        <p>The sciences of the material world: alchemy, astronomy, biology, and the fundamental laws that govern nature itself.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">🎭</span> Arts & Culture</h2>
-        <p>The accumulated artistic achievements of humanity: poetry, music, theater, and the cultural traditions that define civilizations.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">⚔️</span> History & Warfare</h2>
-        <p>Complete records of conflicts, treaties, and the rise and fall of empires. Though I despise those who use knowledge for war.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">✨</span> Spirit World Lore</h2>
-        <p>Rare knowledge of the spirit realm, its inhabitants, and the delicate balance between the physical and spiritual planes.</p>
+        <h2><span class="section-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#daa520" stroke-width="2"><path d="M12 2c3 4 6 6 6 10a6 6 0 1 1-12 0c0-4 3-6 6-10z"/></svg></span> Spirit World Lore</h2>
+        <p>Archives of spirits, portals, and the delicate balance between realms. The library is a bridge between worlds—once buried in the desert, now beyond the physical, where only worthy offerings open doors.</p>
       </div>
     </div>
 

@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wan Shi Tong's Library — $WanShiTong</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: linear-gradient(135deg, #1a0a0a 0%, #3d2314 50%, #1a0a0a 100%);
+      color: #e8d5b7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.9; }
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px 34px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+      position: relative;
+      z-index: 1;
+    }
+
+    .owl-icon {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #daa520;
+      box-shadow: 0 0 30px rgba(218, 165, 32, 0.5);
+      animation: float 3s ease-in-out infinite;
+      position: relative;
+    }
+
+    .owl-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      font-style: italic;
+      font-size: 1.2em;
+      opacity: 0.9;
+      margin-bottom: 18px;
+    }
+
+    .warning {
+      background: rgba(139, 0, 0, 0.3);
+      border: 2px solid #8b0000;
+      padding: 15px;
+      max-width: 780px;
+      margin: 14px auto 0;
+      border-radius: 7px;
+      font-size: 0.95em;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 34px 20px 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== Hover Lore ===== */
+    .lore-trigger { position: relative; }
+    .lore-popover {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: calc(100% + 14px);
+      width: min(560px, calc(100vw - 40px));
+      background: rgba(0,0,0,0.78);
+      border: 2px solid #8b6914;
+      border-radius: 10px;
+      padding: 18px 18px 14px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 20;
+    }
+    .lore-title {
+      color: #daa520;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      font-size: 0.95em;
+    }
+    .lore-text {
+      line-height: 1.6;
+      font-size: 1.05em;
+      color: #e8d5b7;
+      min-height: 64px;
+      white-space: pre-wrap;
+    }
+    .lore-hint {
+      margin-top: 10px;
+      opacity: 0.82;
+      font-size: 0.9em;
+      color: #e8d5b7;
+      border-top: 1px solid rgba(218,165,32,0.25);
+      padding-top: 10px;
+    }
+    .lore-trigger:hover .lore-popover,
+    .lore-trigger:focus-within .lore-popover {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .lore-popover::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px;
+      height: 14px;
+      background: rgba(0,0,0,0.78);
+      border-left: 2px solid #8b6914;
+      border-top: 2px solid #8b6914;
+    }
+
+    /* ===== Token Landing ===== */
+    .token-hero { margin: 0 0 26px; }
+    .token-card {
+      background: rgba(61, 35, 20, 0.6);
+      border: 2px solid #8b6914;
+      border-radius: 12px;
+      padding: 28px;
+      backdrop-filter: blur(6px);
+    }
+    .token-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .token-kicker {
+      opacity: 0.85;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 0.9em;
+      margin-bottom: 6px;
+    }
+    .token-name {
+      font-size: 2.6em;
+      color: #daa520;
+      letter-spacing: 3px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+    .token-tagline { opacity: 0.95; margin-top: 6px; max-width: 70ch; }
+    .token-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 2px solid #8b6914;
+      background: rgba(0,0,0,0.35);
+      color: #e8d5b7;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      cursor: pointer;
+      font-family: 'Georgia', serif;
+    }
+    .btn:hover { transform: translateY(-2px); border-color: #daa520; background: rgba(0,0,0,0.5); }
+    .btn.primary { background: #8b6914; border-color: #8b6914; }
+    .btn.primary:hover { background: #daa520; border-color: #daa520; }
+    .btn.small { padding: 10px 14px; font-size: 0.95em; }
+
+    .ca-box {
+      margin-top: 18px;
+      background: rgba(0,0,0,0.35);
+      border: 2px solid rgba(218,165,32,0.35);
+      border-radius: 10px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px 12px;
+      align-items: center;
+    }
+    .ca-label { opacity: 0.9; color: #daa520; font-weight: bold; }
+    .ca-value {
+      grid-column: 1 / -1;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95em;
+      word-break: break-all;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(218,165,32,0.25);
+    }
+    .copy-status { opacity: 0.9; font-size: 0.9em; justify-self: end; }
+
+    .token-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .stat {
+      background: rgba(0,0,0,0.28);
+      border: 1px solid rgba(218,165,32,0.22);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .stat-label { opacity: 0.85; font-size: 0.95em; }
+    .stat-value { color: #daa520; font-weight: bold; margin-top: 6px; font-size: 1.05em; }
+
+    .links-row {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(218,165,32,0.25);
+      background: rgba(0,0,0,0.3);
+      color: #e8d5b7;
+      text-decoration: none;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .pill:hover { transform: translateY(-2px); border-color: #daa520; }
+
+    .disclaimer {
+      margin-top: 18px;
+      opacity: 0.85;
+      font-size: 0.95em;
+      border-top: 1px solid rgba(218,165,32,0.22);
+      padding-top: 14px;
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+      margin: 18px 0 40px;
+    }
+    .panel {
+      background: rgba(61, 35, 20, 0.55);
+      border: 2px solid #8b6914;
+      border-radius: 12px;
+      padding: 22px;
+      backdrop-filter: blur(5px);
+    }
+    .panel h3 { color: #daa520; margin-bottom: 12px; font-size: 1.5em; }
+    .clean-list { list-style: none; padding-left: 0; }
+    .clean-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(218,165,32,0.18);
+    }
+    .clean-list li:last-child { border-bottom: none; }
+    .steps { margin-left: 18px; }
+    .steps li { margin: 10px 0; line-height: 1.55; }
+    .roadmap { display: grid; gap: 12px; }
+    .milestone {
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid rgba(218,165,32,0.22);
+      line-height: 1.55;
+    }
+    .milestone span {
+      display: inline-block;
+      margin-right: 10px;
+      color: #daa520;
+      font-weight: bold;
+    }
+    .muted { opacity: 0.9; line-height: 1.6; }
+
+    /* Original content sections */
+    .knowledge-sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .section {
+      background: rgba(61, 35, 20, 0.6);
+      border: 2px solid #8b6914;
+      border-radius: 10px;
+      padding: 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(139, 105, 20, 0.4);
+      border-color: #daa520;
+    }
+
+    .section h2 {
+      color: #daa520;
+      margin-bottom: 15px;
+      font-size: 1.8em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon { font-size: 1.3em; }
+    .section p { line-height: 1.6; opacity: 0.9; }
+
+    .quote-section {
+      background: rgba(0, 0, 0, 0.5);
+      border-left: 4px solid #daa520;
+      padding: 30px;
+      margin: 50px 0;
+      border-radius: 5px;
+    }
+
+    .quote {
+      font-size: 1.3em;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .quote-author {
+      text-align: right;
+      color: #daa520;
+      font-weight: bold;
+    }
+
+    .knowledge-form {
+      background: rgba(61, 35, 20, 0.6);
+      border: 2px solid #8b6914;
+      border-radius: 10px;
+      padding: 40px;
+      max-width: 720px;
+      margin: 50px auto 30px;
+    }
+
+    .knowledge-form h3 {
+      color: #daa520;
+      margin-bottom: 14px;
+      font-size: 1.8em;
+      text-align: center;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #daa520;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid #8b6914;
+      border-radius: 5px;
+      color: #e8d5b7;
+      font-family: 'Georgia', serif;
+      font-size: 1em;
+    }
+
+    input:focus, textarea:focus { outline: none; border-color: #daa520; }
+    textarea { resize: vertical; min-height: 120px; }
+
+    button {
+      background: #8b6914;
+      color: #e8d5b7;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.1em;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Georgia', serif;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #daa520;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
+    }
+
+    .submission-message {
+      background: rgba(0, 0, 0, 0.55);
+      border: 2px solid rgba(218, 165, 32, 0.35);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 18px;
+      text-align: left;
+      display: none;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      opacity: 0.7;
+      font-size: 0.9em;
+      z-index: 1;
+      position: relative;
+    }
+
+    @media (max-width: 520px) {
+      h1 { font-size: 2.2em; }
+      .token-name { font-size: 2.1em; }
+      .token-card { padding: 22px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stars" id="stars"></div>
+
+  <header>
+    <div class="owl-icon lore-trigger" id="loreTrigger" tabindex="0">
+      <img src="wan-shi-tong.png" alt="Wan Shi Tong" />
+      <div class="lore-popover" id="lorePopover" aria-hidden="true">
+        <div class="lore-title">The Librarian’s Oath</div>
+        <div class="lore-text" id="loreText"></div>
+        <div class="lore-hint">Hover to listen. Click to seal your offering.</div>
+      </div>
+    </div>
+
+    <h1>WAN SHI TONG</h1>
+    <p class="subtitle">He Who Knows Ten Thousand Things</p>
+    <div class="warning">⚠️ Those who seek knowledge for destructive purposes will be cast out into the desert</div>
+  </header>
+
+  <div class="container">
+
+    <section class="token-hero">
+      <div class="token-card">
+        <div class="token-row">
+          <div>
+            <div class="token-kicker">The Library Opens</div>
+            <div class="token-name">$WanShiTong</div>
+            <div class="token-tagline">He Who Knows Ten Thousand Things — now guarding your bags as $WanShiTong.</div>
+          </div>
+
+          <div class="token-actions">
+            <a class="btn primary" href="#" id="buyBtn">Buy on DEX</a>
+            <a class="btn" href="#" id="chartBtn">View Chart</a>
+          </div>
+        </div>
+
+        <div class="ca-box">
+          <div class="ca-label">Contract Address</div>
+          <div class="ca-value" id="caValue">DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump</div>
+          <button class="btn small" type="button" id="copyCa">Copy</button>
+          <span class="copy-status" id="copyStatus" aria-live="polite"></span>
+        </div>
+
+        <div class="token-stats">
+          <div class="stat">
+            <div class="stat-label">Chain</div>
+            <div class="stat-value">Solana</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Supply</div>
+            <div class="stat-value">1,000,000,000</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Tax</div>
+            <div class="stat-value">0/0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">LP</div>
+            <div class="stat-value">Burned / Locked</div>
+          </div>
+        </div>
+
+        <div class="links-row">
+          <a class="pill" href="#" id="xLink">X / Community</a>
+          
+          <a class="pill" href="#" id="dexLink">Dexscreener</a>
+          
+        </div>
+
+        <div class="disclaimer">
+          <strong>Wan Shi Tong warns:</strong> Knowledge is given freely, but consequences are not. Enter this library of your own will, and bear the results of what you seek.
+        </div>
+      </div>
+    </section>
+
+    <section class="token-grid">
+      <div class="panel">
+        <h3>Tokenomics</h3>
+        <ul class="clean-list">
+          <li><span>Supply:</span> <strong>1B</strong></li>
+          <li><span>Liquidity:</span> <strong>Fair launch</strong></li>
+          <li><span>Taxes:</span> <strong>0%</strong></li>
+          <li><span>Allocation:</span> <strong>100% community</strong></li>
+        </ul>
+        <p class="muted">The only utility is knowledge, vibes, and the meme. The only rule: don’t bring war.</p>
+      </div>
+
+      <div class="panel">
+        <h3>How to Buy</h3>
+        <ol class="steps">
+          <li>Get SOL in your wallet (Phantom, Backpack).</li>
+          <li>Open the DEX and paste the Contract Address.</li>
+          <li>Swap SOL → <strong>$WanShiTong</strong>.</li>
+          <li>Offer knowledge. Share memes. Protect the library.</li>
+        </ol>
+      </div>
+
+      <div class="panel">
+        <h3>Roadmap</h3>
+        <div class="roadmap">
+          <div class="milestone"><span>Phase I</span> Summon the Scholars (launch, socials, memes)</div>
+          <div class="milestone"><span>Phase II</span> The Archive Expands (lore drops, raids, community quests)</div>
+          <div class="milestone"><span>Phase III</span> Ten Thousand Things (AI librarian, knowledge ledger, mini-quests)</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="knowledge-sections">
+      <div class="section">
+        <h2><span class="section-icon">📚</span> Ancient Texts</h2>
+        <p>Vast collections of scrolls and manuscripts from across the world, containing the wisdom of ages past. From the Fire Nation's early chronicles to the Water Tribe's oral histories, preserved in written form.</p>
+      </div>
+
+      <div class="section">
+        <h2><span class="section-icon">🌍</span> Geography & Maps</h2>
+        <p>Detailed cartography of all four nations, including hidden locations, spirit portals, and forgotten cities. Knowledge of the physical world in its entirety.</p>
+      </div>
+
+      <div class="section">
+        <h2><span class="section-icon">⚗️</span> Natural Philosophy</h2>
+        <p>The sciences of the material world: alchemy, astronomy, biology, and the fundamental laws that govern nature itself.</p>
+      </div>
+
+      <div class="section">
+        <h2><span class="section-icon">🎭</span> Arts & Culture</h2>
+        <p>The accumulated artistic achievements of humanity: poetry, music, theater, and the cultural traditions that define civilizations.</p>
+      </div>
+
+      <div class="section">
+        <h2><span class="section-icon">⚔️</span> History & Warfare</h2>
+        <p>Complete records of conflicts, treaties, and the rise and fall of empires. Though I despise those who use knowledge for war.</p>
+      </div>
+
+      <div class="section">
+        <h2><span class="section-icon">✨</span> Spirit World Lore</h2>
+        <p>Rare knowledge of the spirit realm, its inhabitants, and the delicate balance between the physical and spiritual planes.</p>
+      </div>
+    </div>
+
+    <div class="quote-section">
+      <p class="quote">"You think you are the first person to believe their war was justified? Countless others before you have come here seeking weapons, weaknesses, battle strategies."</p>
+      <p class="quote-author">— Wan Shi Tong</p>
+    </div>
+
+    <div class="knowledge-form">
+      <h3>Contribute Knowledge</h3>
+      <p style="text-align: center; margin-bottom: 22px; opacity: 0.9;">
+        Entry to my library requires payment in the form of knowledge I do not possess.
+      </p>
+
+      <form id="knowledgeForm">
+        <div class="form-group">
+          <label for="name">Your Name:</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="form-group">
+          <label for="knowledge">What Knowledge Do You Bring?</label>
+          <textarea id="knowledge" required placeholder="Share something unique, something I have not yet collected..."></textarea>
+        </div>
+        <button type="submit" id="offerBtn">Present Your Offering</button>
+
+        <div class="submission-message" id="aiReply"></div>
+      </form>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>The Library exists beyond the physical realm, in the Si Wong Desert</p>
+    <p>Guarded eternally by the Knowledge Seekers</p>
+  </footer>
+
+  <script>
+    // ===== Stars =====
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = (Math.random() * 3 + 1) + 'px';
+      star.style.height = star.style.width;
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // ===== Hover Lore Typewriter =====
+    const loreLines = [
+      "I am Wan Shi Tong. I collect knowledge.",
+      "Bring me something I do not know… and you may enter.",
+      "Seek weapons, and I will cast you into the desert.",
+      "Seek alpha, and I will test your intent.",
+      "In this library, the only currency is truth."
+    ];
+
+    const loreTextEl = document.getElementById('loreText');
+    const loreTrigger = document.getElementById('loreTrigger');
+
+    let loreIndex = 0;
+    let typing = false;
+    let typeTimer = null;
+
+    function typeLine(line) {
+      typing = true;
+      loreTextEl.textContent = "";
+      let i = 0;
+      clearInterval(typeTimer);
+      typeTimer = setInterval(() => {
+        loreTextEl.textContent += line.charAt(i);
+        i++;
+        if (i >= line.length) {
+          clearInterval(typeTimer);
+          typing = false;
+        }
+      }, 22);
+    }
+
+    function nextLore() {
+      if (typing) return;
+      typeLine(loreLines[loreIndex % loreLines.length]);
+      loreIndex++;
+    }
+
+    loreTrigger.addEventListener('mouseenter', nextLore);
+    loreTrigger.addEventListener('focusin', nextLore);
+    loreTrigger.addEventListener('click', () => {
+      if (typing) {
+        clearInterval(typeTimer);
+        typing = false;
+      } else {
+        nextLore();
+      }
+    });
+
+    // Initialize first line
+    typeLine(loreLines[0]);
+    loreIndex = 1;
+
+    // ===== Contract Address Copy =====
+    const copyBtn = document.getElementById('copyCa');
+    const caValue = document.getElementById('caValue');
+    const copyStatus = document.getElementById('copyStatus');
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(caValue.textContent.trim());
+        copyStatus.textContent = "Copied.";
+        setTimeout(() => (copyStatus.textContent = ""), 1500);
+      } catch (e) {
+        copyStatus.textContent = "Copy failed. Select and copy manually.";
+        setTimeout(() => (copyStatus.textContent = ""), 2500);
+      }
+    });
+
+    // ===== Link wiring =====
+    const LINKS = {
+      buy: "#",      // Add your Jupiter/Raydium swap URL here
+      chart: "https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn",    // Dexscreener chart
+      x: "https://x.com/i/communities/2002918673451831748",
+      tg: "#",       // Add your Telegram invite here
+      dex: "https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn",      // Dexscreener link
+      docs: "#"
+    };
+
+    document.getElementById('buyBtn').setAttribute('href', LINKS.buy);
+    document.getElementById('chartBtn').setAttribute('href', LINKS.chart);
+    document.getElementById('xLink').setAttribute('href', LINKS.x);
+        document.getElementById('dexLink').setAttribute('href', LINKS.dex);
+    
+    ['buyBtn','chartBtn','xLink','dexLink'].forEach(id => {
+      const el = document.getElementById(id);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
+    });
+
+    // ===== AI Offering (Netlify Function) =====
+    const form = document.getElementById('knowledgeForm');
+    const aiReply = document.getElementById('aiReply');
+    const offerBtn = document.getElementById('offerBtn');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const knowledge = document.getElementById('knowledge').value.trim();
+
+      aiReply.style.display = 'block';
+      aiReply.textContent = 'The Librarian considers your offering...';
+      offerBtn.disabled = true;
+      offerBtn.textContent = 'Judging...';
+
+      try {
+        const res = await fetch('/.netlify/functions/knowledge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, knowledge })
+        });
+
+        const data = await res.json();
+        aiReply.textContent = data.reply || 'The Library is silent.';
+      } catch (err) {
+        aiReply.textContent = 'The sands interfere… try again later.';
+      } finally {
+        offerBtn.disabled = false;
+        offerBtn.textContent = 'Present Your Offering';
+      }
+    });
+
+    // ===== Section click feedback =====
+    document.querySelectorAll('.section').forEach(section => {
+      section.addEventListener('click', function() {
+        this.style.background = 'rgba(61, 35, 20, 0.8)';
+        setTimeout(() => {
+          this.style.background = 'rgba(61, 35, 20, 0.6)';
+        }, 200);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -527,10 +527,8 @@
 
         <div class="links-row">
           <a class="pill" href="#" id="xLink">X / Community</a>
-          
-          <a class="pill" href="#" id="dexLink">Dexscreener</a>
-          
-        </div>
+<a class="pill" href="#" id="dexLink">Dexscreener</a>
+</div>
 
         <div class="disclaimer">
           <strong>Wan Shi Tong warns:</strong> Knowledge is given freely, but consequences are not. Enter this library of your own will, and bear the results of what you seek.
@@ -565,9 +563,18 @@
         <div class="roadmap">
           <div class="milestone"><span>Phase I</span> Summon the Scholars (launch, socials, memes)</div>
           <div class="milestone"><span>Phase II</span> The Archive Expands (lore drops, raids, community quests)</div>
-          <div class="milestone"><span>Phase III</span> Ten Thousand Things (AI librarian, knowledge ledger, mini-quests)</div>
+          <div class="milestone"><span>Phase III</span> Ten Thousand Things (oracle responses, lore drops, and community quests)</div>
         </div>
       </div>
+<div class="lore-text">
+      Knowledge compounds when returned to the library.
+      Activity sustains attention.
+      Those who understand compounding understand the Snowball.
+    </div>
+  </div>
+</div>
+
+
     </section>
 
     <div class="knowledge-sections">
@@ -629,6 +636,67 @@
     </div>
 
   </div>
+
+    <section class="token-grid" id="pfpGen">
+      <div class="panel" style="grid-column: 1 / -1;">
+        <h3>Create Your Library Sigil</h3>
+        <p class="muted" style="margin-bottom: 14px;">
+          Upload an image, add relics, stamp your mark, and export a PFP-ready meme. Runs locally in your browser.
+        </p>
+
+        <div style="display:grid; grid-template-columns: 1fr; gap: 14px;">
+          <div style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <input type="file" id="pfpUpload" accept="image/*" class="btn" style="padding:10px 12px;" />
+            <button type="button" class="btn" id="pfpReset">Reset</button>
+            <button type="button" class="btn primary" id="pfpDownload">Download PNG</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start;">
+            <div>
+              <canvas id="pfpCanvas" width="768" height="768"
+                style="width:100%; max-width: 640px; aspect-ratio: 1 / 1; display:block; border-radius: 14px; border: 2px solid #8b6914; background: rgba(0,0,0,0.25);"></canvas>
+              <div class="muted" style="margin-top:10px; font-size:0.95em;">
+                Tip: Drag stickers on the canvas. Use the wheel/trackpad to resize the selected sticker. Press Delete to remove.
+              </div>
+            </div>
+
+            <div class="panel" style="padding:16px; border-radius:12px;">
+              <h3 style="font-size:1.2em;">Controls</h3>
+
+              <label style="margin-top:12px;">Presets</label>
+              <div id="pfpPresets" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+
+              <label style="margin-top:12px;">Overlay Text</label>
+              <input id="pfpText" type="text" placeholder="$WanShiTong" value="$WanShiTong" />
+
+              <label style="margin-top:12px;">Text Style</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn small" data-textstyle="top">Top</button>
+                <button type="button" class="btn small" data-textstyle="bottom">Bottom</button>
+                <button type="button" class="btn small" data-textstyle="both">Both</button>
+                <button type="button" class="btn small" id="pfpClearText">Clear</button>
+              </div>
+
+              <label style="margin-top:12px;">Stickers</label>
+              <div id="pfpStickers" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+              <label style="margin-top:12px;">Frame</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn small" data-frame="none">None</button>
+                <button type="button" class="btn small" data-frame="gold">Gold Ring</button>
+                <button type="button" class="btn small" data-frame="seal">Library Seal</button>
+              </div>
+
+              <div class="disclaimer" style="margin-top:14px;">
+                <strong>Note:</strong> This generator runs locally in your browser. No image uploads are sent to a server.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
 
   <footer>
     <p>The Library exists beyond the physical realm, in the Si Wong Desert</p>
@@ -724,14 +792,13 @@
       x: "https://x.com/i/communities/2002918673451831748",
       tg: "#",       // Add your Telegram invite here
       dex: "https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn",      // Dexscreener link
-      docs: "#"
     };
 
     document.getElementById('buyBtn').setAttribute('href', LINKS.buy);
     document.getElementById('chartBtn').setAttribute('href', LINKS.chart);
     document.getElementById('xLink').setAttribute('href', LINKS.x);
-        document.getElementById('dexLink').setAttribute('href', LINKS.dex);
-    
+    document.getElementById('dexLink').setAttribute('href', LINKS.dex);
+
     ['buyBtn','chartBtn','xLink','dexLink'].forEach(id => {
       const el = document.getElementById(id);
       el.setAttribute('target', '_blank');
@@ -755,14 +822,28 @@
       offerBtn.textContent = 'Judging...';
 
       try {
-        const res = await fetch('/.netlify/functions/knowledge', {
+        const endpoint = '/.netlify/functions/knowledge';
+        // If you're previewing from a local file (file://), Netlify Functions won't exist.
+        if (location.protocol === 'file:') {
+          throw new Error('Local preview cannot call Netlify Functions. Deploy to Netlify to enable the Librarian.');
+        }
+
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, knowledge })
         });
 
-        const data = await res.json();
-        aiReply.textContent = data.reply || 'The Library is silent.';
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) {}
+
+        if (!res.ok) {
+          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Function error (${res.status}).`;
+          throw new Error(msg + (text ? `\n${text}` : ''));
+        }
+
+        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Library is silent.');
       } catch (err) {
         aiReply.textContent = 'The sands interfere… try again later.';
       } finally {
@@ -780,6 +861,477 @@
         }, 200);
       });
     });
-  </script>
+  
+    // ===== PFP / Meme Generator (Client-side Canvas) =====
+(function() {
+  const upload = document.getElementById('pfpUpload');
+  const canvas = document.getElementById('pfpCanvas');
+  const resetBtn = document.getElementById('pfpReset');
+  const dlBtn = document.getElementById('pfpDownload');
+  const textInput = document.getElementById('pfpText');
+  const clearTextBtn = document.getElementById('pfpClearText');
+  const stickerBar = document.getElementById('pfpStickers');
+  const presetsBar = document.getElementById('pfpPresets');
+
+  if (!upload || !canvas || !stickerBar) return;
+
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const state = {
+    baseImg: null,
+    baseCrop: { sx:0, sy:0, s:1 },
+    textMode: 'bottom', // top | bottom | both
+    frame: 'gold',      // none | gold | seal
+    stickers: [],       // {img, x,y, w,h, rot, id, key}
+    selectedId: null
+  };
+
+  const svgSticker = (svg) => 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+
+  // Lore sticker pack (all inline SVG; no external assets; runs 100% client-side)
+  const STICKERS = [
+    { key: 'owl_eyes', label: 'Owl Eyes', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+      <defs>
+        <radialGradient id="g" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#daa520" stop-opacity="0.95"/>
+          <stop offset="55%" stop-color="#daa520" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="110" cy="95" rx="88" ry="64" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="10"/>
+      <ellipse cx="250" cy="95" rx="88" ry="64" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="10"/>
+      <circle cx="110" cy="95" r="44" fill="url(#g)"/>
+      <circle cx="250" cy="95" r="44" fill="url(#g)"/>
+      <circle cx="110" cy="95" r="16" fill="rgba(0,0,0,0.7)"/>
+      <circle cx="250" cy="95" r="16" fill="rgba(0,0,0,0.7)"/>
+      <circle cx="102" cy="88" r="6" fill="rgba(255,255,255,0.5)"/>
+      <circle cx="242" cy="88" r="6" fill="rgba(255,255,255,0.5)"/>
+    </svg>`) },
+    { key: 'sigil', label: 'Sigil', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
+      <circle cx="110" cy="110" r="96" fill="rgba(0,0,0,0.45)" stroke="#daa520" stroke-width="10"/>
+      <path d="M110 35 L145 95 L110 185 L75 95 Z" fill="none" stroke="#daa520" stroke-width="10" stroke-linejoin="round"/>
+      <circle cx="110" cy="110" r="10" fill="#daa520"/>
+    </svg>`) },
+    { key: 'feather_crown', label: 'Feather Crown', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="210" viewBox="0 0 360 210">
+      <path d="M55 165 C95 80, 140 80, 180 165 C220 80, 265 80, 305 165" fill="none" stroke="#daa520" stroke-width="12" stroke-linecap="round"/>
+      <path d="M70 160 C90 120, 120 120, 140 160" fill="none" stroke="rgba(232,213,183,0.65)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M220 160 C240 120, 270 120, 290 160" fill="none" stroke="rgba(232,213,183,0.65)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="180" cy="165" r="22" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="10"/>
+    </svg>`) },
+    { key: 'scroll', label: 'Scroll', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="260" height="180" viewBox="0 0 260 180">
+      <rect x="40" y="35" width="180" height="110" rx="16" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="8"/>
+      <path d="M70 70 H190" stroke="#e8d5b7" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+      <path d="M70 95 H175" stroke="#e8d5b7" stroke-width="8" stroke-linecap="round" opacity="0.8"/>
+      <path d="M70 120 H160" stroke="#e8d5b7" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+      <circle cx="40" cy="90" r="22" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="8"/>
+      <circle cx="220" cy="90" r="22" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="8"/>
+    </svg>`) },
+    { key: 'tome', label: 'Tome', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="260" height="220" viewBox="0 0 260 220">
+      <rect x="55" y="35" width="150" height="160" rx="14" fill="rgba(0,0,0,0.45)" stroke="#daa520" stroke-width="10"/>
+      <rect x="75" y="55" width="110" height="120" rx="10" fill="rgba(0,0,0,0.22)" stroke="rgba(218,165,32,0.4)" stroke-width="6"/>
+      <path d="M130 72 V178" stroke="#daa520" stroke-width="8" opacity="0.9"/>
+      <circle cx="130" cy="120" r="10" fill="#daa520"/>
+    </svg>`) },
+    { key: 'wax_seal', label: 'Wax Seal', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260">
+      <circle cx="130" cy="130" r="110" fill="rgba(0,0,0,0.35)" stroke="#daa520" stroke-width="10"/>
+      <circle cx="130" cy="130" r="78" fill="rgba(0,0,0,0.22)" stroke="rgba(218,165,32,0.35)" stroke-width="6"/>
+      <text x="130" y="120" font-family="Georgia" font-size="22" text-anchor="middle" fill="#e8d5b7" opacity="0.9">THE LIBRARY</text>
+      <text x="130" y="156" font-family="Georgia" font-size="18" text-anchor="middle" fill="#e8d5b7" opacity="0.75">REMEMBERS</text>
+    </svg>`) },
+    { key: 'chains', label: 'Chains', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="340" height="220" viewBox="0 0 340 220">
+      <g fill="none" stroke="#daa520" stroke-width="10" opacity="0.9" stroke-linecap="round">
+        <path d="M60 60 C95 25, 145 25, 180 60 C215 95, 215 145, 180 180 C145 215, 95 215, 60 180 C25 145, 25 95, 60 60 Z"/>
+        <path d="M160 40 C195 5, 245 5, 280 40 C315 75, 315 125, 280 160 C245 195, 195 195, 160 160 C125 125, 125 75, 160 40 Z"/>
+      </g>
+      <path d="M140 110 H200" stroke="rgba(232,213,183,0.6)" stroke-width="8" stroke-linecap="round"/>
+    </svg>`) },
+    { key: 'hourglass', label: 'Hourglass', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" viewBox="0 0 200 300">
+      <path d="M40 30 H160" stroke="#daa520" stroke-width="12" stroke-linecap="round"/>
+      <path d="M40 270 H160" stroke="#daa520" stroke-width="12" stroke-linecap="round"/>
+      <path d="M55 45 C70 120, 130 120, 145 45" fill="none" stroke="#daa520" stroke-width="10"/>
+      <path d="M55 255 C70 180, 130 180, 145 255" fill="none" stroke="#daa520" stroke-width="10"/>
+      <path d="M78 95 C92 120, 108 120, 122 95" fill="none" stroke="rgba(232,213,183,0.8)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M78 205 C92 180, 108 180, 122 205" fill="none" stroke="rgba(232,213,183,0.55)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="100" cy="150" r="6" fill="rgba(232,213,183,0.75)"/>
+    </svg>`) },
+    { key: 'blindfold', label: 'Blindfold', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="140" viewBox="0 0 360 140">
+      <rect x="30" y="50" width="300" height="50" rx="20" fill="rgba(0,0,0,0.55)" stroke="#daa520" stroke-width="8"/>
+      <path d="M50 60 C80 20, 120 20, 150 60" fill="none" stroke="rgba(232,213,183,0.35)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M210 60 C240 20, 280 20, 310 60" fill="none" stroke="rgba(232,213,183,0.35)" stroke-width="6" stroke-linecap="round"/>
+    </svg>`) },
+    { key: 'spirit_fog', label: 'Spirit Fog', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768">
+      <defs>
+        <radialGradient id="f" cx="50%" cy="55%" r="70%">
+          <stop offset="0%" stop-color="rgba(232,213,183,0.22)"/>
+          <stop offset="60%" stop-color="rgba(232,213,183,0.10)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+        </radialGradient>
+      </defs>
+      <circle cx="384" cy="420" r="340" fill="url(#f)"/>
+      <path d="M90 520 C180 460, 280 620, 380 560 C470 510, 560 610, 680 540" fill="none" stroke="rgba(232,213,183,0.12)" stroke-width="28" stroke-linecap="round"/>
+      <path d="M120 600 C220 540, 320 700, 430 640 C520 590, 610 690, 720 620" fill="none" stroke="rgba(232,213,183,0.10)" stroke-width="24" stroke-linecap="round"/>
+    </svg>`) },
+    { key: 'star_map', label: 'Star Map', src: svgSticker(`<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768">
+      <rect x="0" y="0" width="768" height="768" fill="rgba(0,0,0,0)"/>
+      <g fill="#e8d5b7" opacity="0.22">
+        <circle cx="120" cy="160" r="3"/><circle cx="180" cy="260" r="2"/><circle cx="310" cy="110" r="2"/>
+        <circle cx="520" cy="220" r="3"/><circle cx="640" cy="140" r="2"/><circle cx="610" cy="340" r="2"/>
+        <circle cx="420" cy="420" r="3"/><circle cx="250" cy="460" r="2"/><circle cx="140" cy="560" r="3"/>
+        <circle cx="340" cy="640" r="2"/><circle cx="560" cy="610" r="3"/><circle cx="680" cy="520" r="2"/>
+      </g>
+      <g stroke="#daa520" opacity="0.18" stroke-width="3" fill="none">
+        <path d="M120 160 L180 260 L310 110"/>
+        <path d="M520 220 L640 140 L610 340"/>
+        <path d="M140 560 L250 460 L420 420 L560 610 L680 520"/>
+      </g>
+    </svg>`) }
+  ];
+
+  function fitBaseImage(img) {
+    const s = Math.min(img.width, img.height);
+    const sx = (img.width - s) / 2;
+    const sy = (img.height - s) / 2;
+    state.baseCrop = { sx, sy, s };
+  }
+
+  function drawBase() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(0, 0, W, H);
+    if (!state.baseImg) return;
+    const { sx, sy, s } = state.baseCrop;
+    ctx.drawImage(state.baseImg, sx, sy, s, s, 0, 0, W, H);
+  }
+
+  function drawFrame() {
+    if (state.frame === 'none') return;
+
+    if (state.frame === 'gold') {
+      const pad = 20;
+      ctx.save();
+      ctx.globalAlpha = 0.95;
+      ctx.strokeStyle = '#daa520';
+      ctx.lineWidth = 18;
+      ctx.beginPath();
+      ctx.arc(W/2, H/2, (Math.min(W,H)/2) - pad, 0, Math.PI*2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(W/2, H/2, (Math.min(W,H)/2) - pad - 26, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    if (state.frame === 'seal') {
+      ctx.save();
+      ctx.strokeStyle = '#daa520';
+      ctx.globalAlpha = 0.95;
+      ctx.lineWidth = 10;
+      const m = 26;
+      ctx.strokeRect(m, m, W - m*2, H - m*2);
+
+      ctx.globalAlpha = 0.22;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(m+18, m+18, W - (m+18)*2, H - (m+18)*2);
+
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 10;
+      const c = 62;
+      const drawCorner = (x,y,dx,dy) => {
+        ctx.beginPath(); ctx.moveTo(x, y+dy*c); ctx.lineTo(x, y); ctx.lineTo(x+dx*c, y); ctx.stroke();
+      };
+      drawCorner(m, m, 1, 1);
+      drawCorner(W-m, m, -1, 1);
+      drawCorner(m, H-m, 1, -1);
+      drawCorner(W-m, H-m, -1, -1);
+      ctx.restore();
+    }
+  }
+
+  function drawText() {
+    const text = (textInput.value || '').trim();
+    if (!text) return;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#e8d5b7';
+    ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+    ctx.lineWidth = 10;
+
+    let fontSize = 64;
+    const maxWidth = W * 0.86;
+    do {
+      ctx.font = `bold ${fontSize}px Georgia`;
+      if (ctx.measureText(text).width <= maxWidth) break;
+      fontSize -= 2;
+    } while (fontSize > 28);
+
+    const drawLine = (y) => {
+      ctx.strokeText(text, W/2, y);
+      ctx.fillText(text, W/2, y);
+    };
+
+    if (state.textMode === 'top' || state.textMode === 'both') drawLine(90);
+    if (state.textMode === 'bottom' || state.textMode === 'both') drawLine(H - 60);
+
+    ctx.restore();
+  }
+
+  function drawStickers() {
+    for (const s of state.stickers) {
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.rotate(s.rot || 0);
+      ctx.drawImage(s.img, -s.w/2, -s.h/2, s.w, s.h);
+
+      if (s.id === state.selectedId) {
+        ctx.strokeStyle = 'rgba(218,165,32,0.9)';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(-s.w/2, -s.h/2, s.w, s.h);
+      }
+      ctx.restore();
+    }
+  }
+
+  function render() {
+    drawBase();
+    drawStickers();
+    drawFrame();
+    drawText();
+  }
+
+  function addSticker(src, opts = {}) {
+    const img = new Image();
+    img.onload = () => {
+      const base = Math.min(W, H);
+      const defaultW = base * (opts.scale ?? 0.28);
+      const w = Math.max(40, Math.min(W*0.9, defaultW));
+      const h = Math.max(40, Math.min(H*0.9, w * (img.height / img.width)));
+      const id = 'st_' + Math.random().toString(16).slice(2);
+      const x = opts.x ?? (W/2);
+      const y = opts.y ?? (H/2);
+      const rot = opts.rot ?? 0;
+      state.stickers.push({ img, x, y, w, h, rot, id, key: opts.key || '' });
+      state.selectedId = id;
+      render();
+    };
+    img.src = src;
+  }
+
+  // Sticker UI buttons
+  STICKERS.forEach(st => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn small';
+    btn.textContent = st.label;
+    btn.addEventListener('click', () => addSticker(st.src, { key: st.key }));
+    stickerBar.appendChild(btn);
+  });
+
+  // Presets (minimal, lore-forward)
+  const PRESETS = [
+    {
+      label: 'The Librarian',
+      apply() {
+        state.stickers = [];
+        state.selectedId = null;
+        state.frame = 'gold';
+        state.textMode = 'bottom';
+        textInput.value = '$WanShiTong';
+        // Seal + Sigil
+        const seal = STICKERS.find(s => s.key === 'wax_seal');
+        const sigil = STICKERS.find(s => s.key === 'sigil');
+        if (seal) addSticker(seal.src, { key: seal.key, x: W*0.23, y: H*0.78, scale: 0.30 });
+        if (sigil) addSticker(sigil.src, { key: sigil.key, x: W*0.78, y: H*0.78, scale: 0.24 });
+        render();
+      }
+    },
+    {
+      label: 'Forbidden Knowledge',
+      apply() {
+        state.stickers = [];
+        state.selectedId = null;
+        state.frame = 'seal';
+        state.textMode = 'both';
+        textInput.value = 'THE LIBRARY REMEMBERS';
+        const fog = STICKERS.find(s => s.key === 'spirit_fog');
+        const starmap = STICKERS.find(s => s.key === 'star_map');
+        const chains = STICKERS.find(s => s.key === 'chains');
+        const scroll = STICKERS.find(s => s.key === 'scroll');
+        if (starmap) addSticker(starmap.src, { key: starmap.key, x: W/2, y: H/2, scale: 0.98 });
+        if (fog) addSticker(fog.src, { key: fog.key, x: W/2, y: H/2, scale: 0.98 });
+        if (chains) addSticker(chains.src, { key: chains.key, x: W/2, y: H*0.78, scale: 0.62 });
+        if (scroll) addSticker(scroll.src, { key: scroll.key, x: W*0.78, y: H*0.26, scale: 0.30 });
+        render();
+      }
+    },
+    {
+      label: 'The Judge',
+      apply() {
+        state.stickers = [];
+        state.selectedId = null;
+        state.frame = 'gold';
+        state.textMode = 'top';
+        textInput.value = 'NO WAR IN THE LIBRARY';
+        const blind = STICKERS.find(s => s.key === 'blindfold');
+        const hour = STICKERS.find(s => s.key === 'hourglass');
+        const seal = STICKERS.find(s => s.key === 'wax_seal');
+        if (blind) addSticker(blind.src, { key: blind.key, x: W/2, y: H*0.36, scale: 0.62 });
+        if (hour) addSticker(hour.src, { key: hour.key, x: W*0.82, y: H*0.60, scale: 0.30 });
+        if (seal) addSticker(seal.src, { key: seal.key, x: W*0.20, y: H*0.78, scale: 0.28 });
+        render();
+      }
+    },
+    {
+      label: 'The Archivist',
+      apply() {
+        state.stickers = [];
+        state.selectedId = null;
+        state.frame = 'seal';
+        state.textMode = 'bottom';
+        textInput.value = '$WanShiTong';
+        const tome = STICKERS.find(s => s.key === 'tome');
+        const crown = STICKERS.find(s => s.key === 'feather_crown');
+        const eyes = STICKERS.find(s => s.key === 'owl_eyes');
+        if (crown) addSticker(crown.src, { key: crown.key, x: W/2, y: H*0.16, scale: 0.64 });
+        if (eyes) addSticker(eyes.src, { key: eyes.key, x: W/2, y: H*0.40, scale: 0.70 });
+        if (tome) addSticker(tome.src, { key: tome.key, x: W*0.82, y: H*0.80, scale: 0.30 });
+        render();
+      }
+    }
+  ];
+
+  if (presetsBar) {
+    PRESETS.forEach(p => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn small';
+      btn.textContent = p.label;
+      btn.addEventListener('click', p.apply);
+      presetsBar.appendChild(btn);
+    });
+  }
+
+  // Upload
+  upload.addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      state.baseImg = img;
+      fitBaseImage(img);
+      state.stickers = [];
+      state.selectedId = null;
+      render();
+    };
+    img.src = URL.createObjectURL(file);
+  });
+
+  // Text mode buttons
+  document.querySelectorAll('[data-textstyle]').forEach(btn => {
+    btn.addEventListener('click', () => { state.textMode = btn.getAttribute('data-textstyle'); render(); });
+  });
+
+  // Frame buttons
+  document.querySelectorAll('[data-frame]').forEach(btn => {
+    btn.addEventListener('click', () => { state.frame = btn.getAttribute('data-frame'); render(); });
+  });
+
+  clearTextBtn.addEventListener('click', () => { textInput.value = ''; render(); });
+  textInput.addEventListener('input', () => render());
+
+  // Drag/select
+  let dragging = false;
+  let dragOffset = {x:0,y:0};
+
+  function hitTest(x,y) {
+    for (let i = state.stickers.length - 1; i >= 0; i--) {
+      const s = state.stickers[i];
+      // approximate AABB (ignoring rotation)
+      if (x >= s.x - s.w/2 && x <= s.x + s.w/2 && y >= s.y - s.h/2 && y <= s.y + s.h/2) return s;
+    }
+    return null;
+  }
+
+  function getPos(ev) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    return { x: (ev.clientX - rect.left) * scaleX, y: (ev.clientY - rect.top) * scaleY };
+  }
+
+  canvas.addEventListener('mousedown', ev => {
+    const p = getPos(ev);
+    const s = hitTest(p.x,p.y);
+    if (!s) { state.selectedId = null; render(); return; }
+    state.selectedId = s.id;
+    // bring to top
+    state.stickers = state.stickers.filter(x => x.id !== s.id).concat([s]);
+    dragging = true;
+    dragOffset = { x: p.x - s.x, y: p.y - s.y };
+    render();
+  });
+
+  window.addEventListener('mousemove', ev => {
+    if (!dragging) return;
+    const p = getPos(ev);
+    const s = state.stickers.find(x => x.id === state.selectedId);
+    if (!s) return;
+    s.x = p.x - dragOffset.x;
+    s.y = p.y - dragOffset.y;
+    render();
+  });
+
+  window.addEventListener('mouseup', () => dragging = false);
+
+  // Wheel to resize selected sticker
+  canvas.addEventListener('wheel', ev => {
+    const s = state.stickers.find(x => x.id === state.selectedId);
+    if (!s) return;
+    ev.preventDefault();
+    const delta = Math.sign(ev.deltaY);
+    const factor = delta > 0 ? 0.94 : 1.06;
+    s.w = Math.max(40, Math.min(W*0.95, s.w * factor));
+    s.h = Math.max(40, Math.min(H*0.95, s.h * factor));
+    render();
+  }, { passive: false });
+
+  // Delete key removes selected sticker
+  window.addEventListener('keydown', ev => {
+    if (ev.key !== 'Delete' && ev.key !== 'Backspace') return;
+    if (!state.selectedId) return;
+    state.stickers = state.stickers.filter(s => s.id !== state.selectedId);
+    state.selectedId = null;
+    render();
+  });
+
+  // Reset
+  resetBtn.addEventListener('click', () => {
+    state.baseImg = null;
+    state.stickers = [];
+    state.selectedId = null;
+    state.textMode = 'bottom';
+    state.frame = 'gold';
+    textInput.value = '$WanShiTong';
+    upload.value = '';
+    render();
+  });
+
+  // Download
+  dlBtn.addEventListener('click', () => {
+    render();
+    const a = document.createElement('a');
+    a.download = 'WanShiTong-PFP.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+
+  // First render
+  render();
+})();
+</script>
 </body>
 </html>

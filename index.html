@@ -527,13 +527,13 @@
 
         <div class="links-row">
           <a class="pill" href="#" id="xLink">X / Community</a>
-          
+          <a class="pill" href="#" id="tgLink">Telegram</a>
           <a class="pill" href="#" id="dexLink">Dexscreener</a>
-          
+          <a class="pill" href="#" id="siteLink">Docs</a>
         </div>
 
         <div class="disclaimer">
-          <strong>Wan Shi Tong warns:</strong> Knowledge is given freely, but consequences are not. Enter this library of your own will, and bear the results of what you seek.
+          <strong>Disclaimer:</strong> This is satire and community entertainment. No promises, no guarantees. Do your own research.
         </div>
       </div>
     </section>
@@ -565,9 +565,12 @@
         <div class="roadmap">
           <div class="milestone"><span>Phase I</span> Summon the Scholars (launch, socials, memes)</div>
           <div class="milestone"><span>Phase II</span> The Archive Expands (lore drops, raids, community quests)</div>
-          <div class="milestone"><span>Phase III</span> Ten Thousand Things (AI librarian, knowledge ledger, mini-quests)</div>
+          <div class="milestone"><span>Phase III</span> Ten Thousand Things (oracle responses, lore drops, and community quests)</div>
         </div>
       </div>
+</div>
+
+
     </section>
 
     <div class="knowledge-sections">
@@ -730,9 +733,11 @@
     document.getElementById('buyBtn').setAttribute('href', LINKS.buy);
     document.getElementById('chartBtn').setAttribute('href', LINKS.chart);
     document.getElementById('xLink').setAttribute('href', LINKS.x);
-        document.getElementById('dexLink').setAttribute('href', LINKS.dex);
-    
-    ['buyBtn','chartBtn','xLink','dexLink'].forEach(id => {
+    document.getElementById('tgLink').setAttribute('href', LINKS.tg);
+    document.getElementById('dexLink').setAttribute('href', LINKS.dex);
+    document.getElementById('siteLink').setAttribute('href', LINKS.docs);
+
+    ['buyBtn','chartBtn','xLink','tgLink','dexLink','siteLink'].forEach(id => {
       const el = document.getElementById(id);
       el.setAttribute('target', '_blank');
       el.setAttribute('rel', 'noopener noreferrer');
@@ -755,14 +760,28 @@
       offerBtn.textContent = 'Judging...';
 
       try {
-        const res = await fetch('/.netlify/functions/knowledge', {
+        const endpoint = '/.netlify/functions/knowledge';
+        // If you're previewing from a local file (file://), Netlify Functions won't exist.
+        if (location.protocol === 'file:') {
+          throw new Error('Local preview cannot call Netlify Functions. Deploy to Netlify to enable the Librarian.');
+        }
+
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, knowledge })
         });
 
-        const data = await res.json();
-        aiReply.textContent = data.reply || 'The Library is silent.';
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) {}
+
+        if (!res.ok) {
+          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Function error (${res.status}).`;
+          throw new Error(msg + (text ? `\n${text}` : ''));
+        }
+
+        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Library is silent.');
       } catch (err) {
         aiReply.textContent = 'The sands interfere… try again later.';
       } finally {

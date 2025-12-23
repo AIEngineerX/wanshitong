@@ -3,12 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wan Shi Tong's Library – $WanShiTong</title>
-  <meta name="description" content="$WanShiTong - He Who Knows Ten Thousand Things. The wisest meme coin on Solana. Join the library of knowledge seekers.">
-  <meta property="og:title" content="Wan Shi Tong's Library - $WanShiTong">
-  <meta property="og:description" content="He Who Knows Ten Thousand Things now guards your bags on Solana">
-  <meta property="og:image" content="https://wanshitong.xyz/wan-shi-tong.png">
-  <meta name="twitter:card" content="summary_large_image">
+  <title>Wan Shi Tong's Library — $WanShiTong</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -33,28 +28,11 @@
       background: #fff;
       border-radius: 50%;
       animation: twinkle 3s infinite;
-      transition: transform 0.1s ease-out;
     }
 
     @keyframes twinkle {
       0%, 100% { opacity: 0.25; }
       50% { opacity: 0.9; }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
     }
 
     header {
@@ -63,7 +41,6 @@
       background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
       position: relative;
       z-index: 1;
-      animation: fadeInUp 0.8s ease-out;
     }
 
     .owl-icon {
@@ -76,13 +53,6 @@
       box-shadow: 0 0 30px rgba(218, 165, 32, 0.5);
       animation: float 3s ease-in-out infinite;
       position: relative;
-      transition: transform 0.2s ease-out, box-shadow 0.3s ease;
-      cursor: pointer;
-      will-change: transform;
-    }
-
-    .owl-icon:hover {
-      box-shadow: 0 0 50px rgba(218, 165, 32, 0.8);
     }
 
     .owl-icon img {
@@ -93,20 +63,16 @@
       display: block;
     }
 
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
     h1 {
       font-size: 3em;
       margin-bottom: 10px;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
       letter-spacing: 3px;
-      transition: text-shadow 0.3s ease;
-    }
-
-    h1:hover {
-      text-shadow: 
-        0 0 10px #daa520,
-        0 0 20px #daa520,
-        0 0 30px #daa520,
-        2px 2px 4px rgba(0,0,0,0.8);
     }
 
     .subtitle {
@@ -126,109 +92,6 @@
       font-size: 0.95em;
     }
 
-    .price-ticker {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.85);
-      border: 2px solid #8b6914;
-      border-radius: 12px;
-      padding: 16px 20px;
-      backdrop-filter: blur(10px);
-      z-index: 100;
-      min-width: 240px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      transition: transform 0.3s ease;
-    }
-
-    .price-ticker:hover {
-      transform: translateY(-4px);
-      border-color: #daa520;
-    }
-
-    .ticker-title {
-      font-size: 0.85em;
-      opacity: 0.8;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .ticker-price {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #daa520;
-      margin-bottom: 6px;
-      font-family: 'Courier New', monospace;
-    }
-
-    .ticker-change {
-      font-size: 0.95em;
-      font-family: 'Courier New', monospace;
-    }
-
-    .ticker-change.positive { color: #00ff88; }
-    .ticker-change.negative { color: #ff4444; }
-
-    .ticker-link {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(218,165,32,0.25);
-      font-size: 0.85em;
-      opacity: 0.8;
-    }
-
-    .ticker-link a {
-      color: #daa520;
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-
-    .ticker-link a:hover { opacity: 1; }
-
-    .floating-particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .sand-particle {
-      position: absolute;
-      background: rgba(194,178,128,0.4);
-      border-radius: 50%;
-      animation: float-particle linear infinite;
-    }
-
-    @keyframes float-particle {
-      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
-      10% { opacity: 0.6; }
-      90% { opacity: 0.6; }
-      100% { transform: translateY(-100vh) translateX(var(--drift)) rotate(360deg); opacity: 0; }
-    }
-
-    .spirit-wisp {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(138,43,226,0.5) 0%, rgba(138,43,226,0) 70%);
-      animation: drift-wisp linear infinite;
-      filter: blur(8px);
-    }
-
-    @keyframes drift-wisp {
-      0% { transform: translate(0, 0) scale(1); opacity: 0; }
-      10% { opacity: 0.7; }
-      50% { transform: translate(var(--drift-x), var(--drift-y)) scale(1.5); }
-      90% { opacity: 0.7; }
-      100% { transform: translate(calc(var(--drift-x) * 2), calc(var(--drift-y) * 2)) scale(1); opacity: 0; }
-    }
-
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -237,6 +100,7 @@
       z-index: 1;
     }
 
+    /* ===== Hover Lore ===== */
     .lore-trigger { position: relative; }
     .lore-popover {
       position: absolute;
@@ -296,10 +160,8 @@
       border-top: 2px solid #8b6914;
     }
 
-    .token-hero { 
-      margin: 0 0 26px;
-      animation: fadeInUp 0.8s ease-out 0.2s both;
-    }
+    /* ===== Token Landing ===== */
+    .token-hero { margin: 0 0 26px; }
     .token-card {
       background: rgba(61, 35, 20, 0.6);
       border: 2px solid #8b6914;
@@ -327,14 +189,6 @@
       letter-spacing: 3px;
       font-weight: bold;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-      transition: text-shadow 0.3s ease;
-    }
-    .token-name:hover {
-      text-shadow: 
-        0 0 10px #daa520,
-        0 0 20px #daa520,
-        0 0 30px #daa520,
-        2px 2px 4px rgba(0,0,0,0.8);
     }
     .token-tagline { opacity: 0.95; margin-top: 6px; max-width: 70ch; }
     .token-actions { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -383,13 +237,6 @@
       border: 1px solid rgba(218,165,32,0.25);
     }
     .copy-status { opacity: 0.9; font-size: 0.9em; justify-self: end; }
-
-    .share-row {
-      margin-top: 18px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
 
     .token-stats {
       display: grid;
@@ -444,11 +291,7 @@
       border-radius: 12px;
       padding: 22px;
       backdrop-filter: blur(5px);
-      animation: fadeInUp 0.6s ease-out both;
     }
-    .panel:nth-child(1) { animation-delay: 0.3s; }
-    .panel:nth-child(2) { animation-delay: 0.4s; }
-    .panel:nth-child(3) { animation-delay: 0.5s; }
     .panel h3 { color: #daa520; margin-bottom: 12px; font-size: 1.5em; }
     .clean-list { list-style: none; padding-left: 0; }
     .clean-list li {
@@ -476,13 +319,12 @@
     }
     .muted { opacity: 0.9; line-height: 1.6; }
 
+    /* Original content sections */
     .knowledge-sections {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 30px;
       margin-bottom: 50px;
-      align-items: stretch;
-      justify-items: stretch;
     }
 
     .section {
@@ -493,16 +335,7 @@
       transition: all 0.3s ease;
       cursor: pointer;
       backdrop-filter: blur(5px);
-      min-height: 270px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      animation: fadeInUp 0.6s ease-out both;
     }
-
-    .section:nth-child(1) { animation-delay: 0.6s; }
-    .section:nth-child(2) { animation-delay: 0.7s; }
-    .section:nth-child(3) { animation-delay: 0.8s; }
 
     .section:hover {
       transform: translateY(-5px);
@@ -512,7 +345,7 @@
 
     .section h2 {
       color: #daa520;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
       font-size: 1.8em;
       display: flex;
       align-items: center;
@@ -520,22 +353,7 @@
     }
 
     .section-icon { font-size: 1.3em; }
-    .section-icon svg{
-      width: 22px;
-      height: 22px;
-      stroke: #daa520;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      opacity: 0.9;
-      transition: all 0.2s ease;
-    }
-    .section:hover .section-icon svg{
-      opacity: 1;
-      transform: translateY(-1px);
-    }
-    .section p { line-height: 1.6; opacity: 0.9; margin-top: 0; }
+    .section p { line-height: 1.6; opacity: 0.9; }
 
     .quote-section {
       background: rgba(0, 0, 0, 0.5);
@@ -543,7 +361,6 @@
       padding: 30px;
       margin: 50px 0;
       border-radius: 5px;
-      animation: fadeInUp 0.6s ease-out 0.9s both;
     }
 
     .quote {
@@ -567,7 +384,6 @@
       padding: 40px;
       max-width: 720px;
       margin: 50px auto 30px;
-      animation: fadeInUp 0.6s ease-out 1s both;
     }
 
     .knowledge-form h3 {
@@ -619,25 +435,6 @@
       box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .loading-spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 3px solid rgba(232, 213, 183, 0.3);
-      border-top-color: #e8d5b7;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     .submission-message {
       background: rgba(0, 0, 0, 0.55);
       border: 2px solid rgba(218, 165, 32, 0.35);
@@ -650,62 +447,6 @@
       white-space: pre-wrap;
     }
 
-    /* PFP Generator specific styles */
-    .pfp-controls { display: grid; gap: 16px; }
-    .control-group { display: flex; flex-direction: column; gap: 8px; }
-    .control-group label { font-size: 0.95em; margin-bottom: 4px; }
-    .button-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-
-    .preset-btn {
-      aspect-ratio: 1;
-      background: rgba(0,0,0,0.4);
-      border: 2px solid #8b6914;
-      border-radius: 8px;
-      padding: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 0.85em;
-      color: #e8d5b7;
-      text-align: center;
-    }
-
-    .preset-btn:hover { border-color: #daa520; transform: scale(1.05); }
-    .preset-icon { font-size: 1.5em; }
-
-    input[type="range"] {
-      width: 100%;
-      height: 6px;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid #8b6914;
-      border-radius: 3px;
-      outline: none;
-      padding: 0;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      background: #daa520;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      background: #daa520;
-      border-radius: 50%;
-      cursor: pointer;
-      border: none;
-    }
-
-    .undo-redo { display: flex; gap: 8px; }
-
     footer {
       text-align: center;
       padding: 40px 20px;
@@ -715,44 +456,59 @@
       position: relative;
     }
 
-    @media (max-width: 768px) {
-      .token-actions { width: 100%; }
-      .token-actions .btn { flex: 1; min-width: 140px; }
-      .ca-box { grid-template-columns: 1fr; }
-      .section { min-height: auto; }
-      .price-ticker { bottom: 10px; right: 10px; min-width: 200px; padding: 12px 16px; }
-      .ticker-price { font-size: 1.5em; }
-      #pfpGen > div > div > div:first-child { grid-template-columns: 1fr !important; }
-    }
-
     @media (max-width: 520px) {
       h1 { font-size: 2.2em; }
       .token-name { font-size: 2.1em; }
       .token-card { padding: 22px; }
     }
+  /* ===== Layout Cleanup (Cards) ===== */
+.knowledge-sections {
+  align-items: stretch;
+  justify-items: stretch;
+}
+.section {
+  min-height: 270px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section h2 { margin-bottom: 8px; }
+.section p { margin-top: 0; }
+@media (max-width: 980px) {
+  .section { min-height: auto; }
+}
+  /* ===== Clean Sigil Icons ===== */
+.section-icon svg{
+  width: 22px;
+  height: 22px;
+  stroke: #daa520;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+.section:hover .section-icon svg{
+  opacity: 1;
+}
+.section:hover .section-icon svg{
+  filter: drop-shadow(0 0 10px rgba(218,165,32,0.35));
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
   </style>
 </head>
 
 <body>
   <div class="stars" id="stars"></div>
-  <div class="floating-particles" id="floatingParticles"></div>
-
-  <div class="price-ticker" id="priceTicker">
-    <div class="ticker-title">$WanShiTong</div>
-    <div class="ticker-price" id="tickerPrice">Loading...</div>
-    <div class="ticker-change" id="tickerChange">--</div>
-    <div class="ticker-link">
-      <a href="https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn" target="_blank" rel="noopener noreferrer">View Chart →</a>
-    </div>
-  </div>
 
   <header>
     <div class="owl-icon lore-trigger" id="loreTrigger" tabindex="0">
       <img src="wan-shi-tong.png" alt="Wan Shi Tong" />
       <div class="lore-popover" id="lorePopover" aria-hidden="true">
-        <div class="lore-title">The Knowledge Spirit Speaks</div>
+        <div class="lore-title">The Librarian’s Oath</div>
         <div class="lore-text" id="loreText"></div>
-        <div class="lore-hint">Hover to hear the ancient wisdom. Click for more.</div>
+        <div class="lore-hint">Hover to listen. Click to seal your offering.</div>
       </div>
     </div>
 
@@ -769,12 +525,12 @@
           <div>
             <div class="token-kicker">The Library Opens</div>
             <div class="token-name">$WanShiTong</div>
-            <div class="token-tagline">The ancient Knowledge Spirit who guards the greatest library in existence. Once buried beneath the Si Wong Desert, now protecting your portfolio with ten thousand years of wisdom.</div>
+            <div class="token-tagline">He Who Knows Ten Thousand Things — now guarding your bags as $WanShiTong.</div>
           </div>
 
           <div class="token-actions">
-            <a class="btn primary" href="https://jup.ag/swap/SOL-DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump" target="_blank" rel="noopener noreferrer">Buy on Jupiter</a>
-            <a class="btn" href="https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn" target="_blank" rel="noopener noreferrer">View Chart</a>
+            <a class="btn primary" href="#" id="buyBtn">Buy on DEX</a>
+            <a class="btn" href="#" id="chartBtn">View Chart</a>
           </div>
         </div>
 
@@ -783,11 +539,6 @@
           <div class="ca-value" id="caValue">DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump</div>
           <button class="btn small" type="button" id="copyCa">Copy</button>
           <span class="copy-status" id="copyStatus" aria-live="polite"></span>
-        </div>
-
-        <div class="share-row">
-          <button class="btn small" type="button" id="shareTwitter">Share on 𝕏</button>
-          <button class="btn small" type="button" id="copyLink">Copy Link</button>
         </div>
 
         <div class="token-stats">
@@ -810,12 +561,12 @@
         </div>
 
         <div class="links-row">
-          <a class="pill" href="https://x.com/i/communities/2002918673451831748" target="_blank" rel="noopener noreferrer">𝕏 / Community</a>
-          <a class="pill" href="https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn" target="_blank" rel="noopener noreferrer">Dexscreener</a>
-        </div>
+          <a class="pill" href="#" id="xLink">X / Community</a>
+<a class="pill" href="#" id="dexLink">Dexscreener</a>
+</div>
 
         <div class="disclaimer">
-          <strong>Wan Shi Tong warns:</strong> I do not help those who seek knowledge for war or personal gain. The library exists for those who truly wish to learn. Enter at your own discretion.
+          <strong>Wan Shi Tong warns:</strong> Knowledge is given freely, but consequences are not. Enter this library of your own will, and bear the results of what you seek.
         </div>
       </div>
     </section>
@@ -829,70 +580,58 @@
           <li><span>Taxes:</span> <strong>0%</strong></li>
           <li><span>Allocation:</span> <strong>100% community</strong></li>
         </ul>
-        <p class="muted">No utility except wisdom, memes, and the collective knowledge of ten thousand things. The only forbidden act: bringing war to the library.</p>
+        <p class="muted">The only utility is knowledge, vibes, and the meme. The only rule: don’t bring war.</p>
       </div>
 
       <div class="panel">
         <h3>How to Buy</h3>
         <ol class="steps">
           <li>Get SOL in your wallet (Phantom, Backpack).</li>
-          <li>Open Jupiter and paste the Contract Address.</li>
+          <li>Open the DEX and paste the Contract Address.</li>
           <li>Swap SOL → <strong>$WanShiTong</strong>.</li>
-          <li>Contribute knowledge. Share lore. Guard the archives.</li>
+          <li>Offer knowledge. Share memes. Protect the library.</li>
         </ol>
       </div>
 
       <div class="panel">
         <h3>Roadmap</h3>
         <div class="roadmap">
-          <div class="milestone"><span>Phase I</span> The Library Opens (launch, community building, initial lore drops)</div>
-          <div class="milestone"><span>Phase II</span> Knowledge Seekers Gather (raids, collaborations, expanded archives)</div>
-          <div class="milestone"><span>Phase III</span> Ten Thousand Things (ongoing lore, community governance, eternal wisdom)</div>
+          <div class="milestone"><span>Phase I</span> Summon the Scholars (launch, socials, memes)</div>
+          <div class="milestone"><span>Phase II</span> The Archive Expands (lore drops, raids, community quests)</div>
+          <div class="milestone"><span>Phase III</span> Ten Thousand Things (oracle responses, lore drops, and community quests)</div>
         </div>
       </div>
+<div class="lore-text">
+      "Knowledge is not a weapon. It is a trust."
+— Wan Shi Tong
+    </div>
+  </div>
+</div>
+
+
     </section>
 
     <div class="knowledge-sections">
       <div class="section">
         <h2><span class="section-icon">
 <svg viewBox="0 0 24 24" aria-hidden="true">
-  <circle cx="12" cy="12" r="9"/>
-  <path d="M8 10h8M8 13h8M8 16h5"/>
-</svg>
-</span> The Library's Guardian</h2>
-        <p>Wan Shi Tong is an ancient knowledge spirit who built the greatest library in the world, hidden beneath the Si Wong Desert. For millennia, he collected knowledge from every corner of existence, demanding payment in unique information from all who enter. His towering form and countless eyes see through deception—he knows when mortals seek knowledge for war.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">
-<svg viewBox="0 0 24 24" aria-hidden="true">
-  <circle cx="17" cy="7" r="1.5"/>
-  <path d="M12 3a9 9 0 1 0 0 18"/>
-</svg>
-</span> Betrayal & Judgment</h2>
-        <p>When Team Avatar sought planetary knowledge to defeat the Fire Nation, Wan Shi Tong saw through their intentions. Furious at being used as a weapon, he dragged his entire library into the Spirit World, declaring that humans could no longer be trusted. His judgment was absolute—those who misuse knowledge face his wrath.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">
-<svg viewBox="0 0 24 24" aria-hidden="true">
   <path d="M4 12a8 8 0 0 0 16 0"/>
   <path d="M12 4v3"/>
 </svg>
-</span> Spirit World Eternal</h2>
-        <p>The library now exists beyond physical reach, in the Spirit World where time flows differently. Wan Shi Tong remains vigilant, aided by his knowledge seekers—fox spirits who once roamed the mortal world gathering information. His collection spans ten thousand things, from ancient scrolls to cosmic secrets, forever guarded by the one who knows all.</p>
+</span> Spirit World Lore</h2>
+        <p>Archives of spirits, portals, and the delicate balance between realms. The library is a bridge between worlds—once buried in the desert, now beyond the physical, where only worthy offerings open doors.</p>
       </div>
     </div>
 
     <div class="quote-section">
-      <p class="quote">"You think you are the first person to believe their war was justified? Countless others before you have come here seeking weapons, weaknesses, battle strategies!"</p>
-      <p class="quote-author">— Wan Shi Tong, to Professor Zei</p>
+      <p class="quote">"You think you are the first person to believe their war was justified? Countless others before you have come here seeking weapons, weaknesses, battle strategies."</p>
+      <p class="quote-author">— Wan Shi Tong</p>
     </div>
 
     <div class="knowledge-form">
       <h3>Contribute Knowledge</h3>
       <p style="text-align: center; margin-bottom: 22px; opacity: 0.9;">
-        "Entry to my library has always required the same fee: knowledge. Bring me something I do not already possess, and I will grant you access."
+        Entry to my library requires payment in the form of knowledge I do not possess.
       </p>
 
       <form id="knowledgeForm">
@@ -902,7 +641,7 @@
         </div>
         <div class="form-group">
           <label for="knowledge">What Knowledge Do You Bring?</label>
-          <textarea id="knowledge" required placeholder="Share something unique that even the greatest library has not yet collected..."></textarea>
+          <textarea id="knowledge" required placeholder="Share something unique, something I have not yet collected..."></textarea>
         </div>
         <button type="submit" id="offerBtn">Present Your Offering</button>
 
@@ -910,77 +649,61 @@
       </form>
     </div>
 
-    <section class="token-grid" id="pfpGen" style="animation-delay: 1.1s;">
+  </div>
+
+    <section class="token-grid" id="pfpGen">
       <div class="panel" style="grid-column: 1 / -1;">
-        <h3>Forge Your Library Sigil</h3>
-        <p class="muted" style="margin-bottom: 18px;">
-          Create your mark in the ancient style. Upload your image, add mystical elements, customize, and export. All processing happens locally—no uploads to external servers.
+        <h3>Create Your Library Sigil</h3>
+        <p class="muted" style="margin-bottom: 14px;">
+          Upload an image, add relics, stamp your mark, and export a PFP-ready meme. Runs locally in your browser.
         </p>
 
-        <div style="display:grid; grid-template-columns: 1fr; gap: 18px;">
+        <div style="display:grid; grid-template-columns: 1fr; gap: 14px;">
           <div style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-            <input type="file" id="pfpUpload" accept="image/*" style="padding:10px 12px; font-size: 0.9em;" />
-            <div class="undo-redo">
-              <button type="button" class="btn small" id="undoBtn" title="Undo">↶ Undo</button>
-              <button type="button" class="btn small" id="redoBtn" title="Redo">↷ Redo</button>
-            </div>
-            <button type="button" class="btn" id="pfpReset">Reset All</button>
-            <button type="button" class="btn primary" id="pfpDownload">⬇ Download PNG</button>
+            <input type="file" id="pfpUpload" accept="image/*" class="btn" style="padding:10px 12px;" />
+            <button type="button" class="btn" id="pfpReset">Reset</button>
+            <button type="button" class="btn primary" id="pfpDownload">Download PNG</button>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start;">
+          <div style="display:grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start;">
             <div>
               <canvas id="pfpCanvas" width="768" height="768"
-                style="width:100%; max-width: 640px; aspect-ratio: 1 / 1; display:block; border-radius: 12px; border: 2px solid #8b6914; background: rgba(0,0,0,0.3); cursor: crosshair;"></canvas>
-              <div class="muted" style="margin-top:12px; font-size:0.9em; line-height: 1.5;">
-                <strong>Controls:</strong> Click & drag stickers to move • Mouse wheel to resize selected • Delete/Backspace to remove • Arrow keys to nudge position
+                style="width:100%; max-width: 640px; aspect-ratio: 1 / 1; display:block; border-radius: 14px; border: 2px solid #8b6914; background: rgba(0,0,0,0.25);"></canvas>
+              <div class="muted" style="margin-top:10px; font-size:0.95em;">
+                Tip: Drag stickers on the canvas. Use the wheel/trackpad to resize the selected sticker. Press Delete to remove.
               </div>
             </div>
 
-            <div class="pfp-controls">
-              <div class="control-group">
-                <label>🎨 Quick Presets</label>
-                <div class="preset-grid" id="pfpPresets"></div>
+            <div class="panel" style="padding:16px; border-radius:12px;">
+              <h3 style="font-size:1.2em;">Controls</h3>
+
+              <label style="margin-top:12px;">Presets</label>
+              <div id="pfpPresets" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+
+              <label style="margin-top:12px;">Overlay Text</label>
+              <input id="pfpText" type="text" placeholder="$WanShiTong" value="$WanShiTong" />
+
+              <label style="margin-top:12px;">Text Style</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn small" data-textstyle="top">Top</button>
+                <button type="button" class="btn small" data-textstyle="bottom">Bottom</button>
+                <button type="button" class="btn small" data-textstyle="both">Both</button>
+                <button type="button" class="btn small" id="pfpClearText">Clear</button>
               </div>
 
-              <div class="control-group">
-                <label>✏️ Text Overlay</label>
-                <input id="pfpText" type="text" placeholder="Enter your text..." value="$WanShiTong" />
-                <input type="range" id="textSize" min="32" max="128" value="64" />
-                <div style="display: flex; gap: 8px; justify-content: space-between; font-size: 0.85em; opacity: 0.8;">
-                  <span>Small</span>
-                  <span id="textSizeValue">64px</span>
-                  <span>Large</span>
-                </div>
+              <label style="margin-top:12px;">Stickers</label>
+              <div id="pfpStickers" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+              <label style="margin-top:12px;">Frame</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn small" data-frame="none">None</button>
+                <button type="button" class="btn small" data-frame="gold">Gold Ring</button>
+                <button type="button" class="btn small" data-frame="seal">Library Seal</button>
               </div>
 
-              <div class="control-group">
-                <label>📍 Text Position</label>
-                <div class="button-row">
-                  <button type="button" class="btn small" data-textstyle="top">Top</button>
-                  <button type="button" class="btn small" data-textstyle="bottom">Bottom</button>
-                  <button type="button" class="btn small" data-textstyle="both">Both</button>
-                  <button type="button" class="btn small" id="pfpClearText">Clear</button>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label>🎭 Elements & Symbols</label>
-                <div class="button-row" id="pfpStickers"></div>
-              </div>
-
-              <div class="control-group">
-                <label>🖼️ Frame Style</label>
-                <div class="button-row">
-                  <button type="button" class="btn small" data-frame="none">None</button>
-                  <button type="button" class="btn small" data-frame="gold">Gold Circle</button>
-                  <button type="button" class="btn small" data-frame="seal">Ancient Seal</button>
-                  <button type="button" class="btn small" data-frame="desert">Desert Frame</button>
-                </div>
-              </div>
-
-              <div class="disclaimer" style="margin-top:14px; font-size: 0.85em;">
-                <strong>Privacy Note:</strong> All image processing happens in your browser. Nothing is uploaded to any server.
+              <div class="disclaimer" style="margin-top:14px;">
+                <strong>Note:</strong> This generator runs locally in your browser. No image uploads are sent to a server.
               </div>
             </div>
           </div>
@@ -988,132 +711,33 @@
       </div>
     </section>
 
-  </div>
 
   <footer>
-    <p>The Library exists beyond the physical realm, deep in the Spirit World</p>
-    <p>Guarded eternally by Wan Shi Tong and his Knowledge Seekers</p>
-    <p style="margin-top: 10px; opacity: 0.6;">Not affiliated with Avatar: The Last Airbender or Nickelodeon</p>
+    <p>The Library exists beyond the physical realm, in the Si Wong Desert</p>
+    <p>Guarded eternally by the Knowledge Seekers</p>
   </footer>
 
   <script>
-    // ===== Floating Particles (Sand & Spirit Wisps) =====
-    const particlesContainer = document.getElementById('floatingParticles');
-    
-    function createSandParticle() {
-      const particle = document.createElement('div');
-      particle.className = 'sand-particle';
-      const size = Math.random() * 3 + 1;
-      particle.style.width = size + 'px';
-      particle.style.height = size + 'px';
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.bottom = '-10px';
-      particle.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
-      particle.style.animationDuration = (Math.random() * 15 + 20) + 's';
-      particle.style.animationDelay = Math.random() * 5 + 's';
-      particlesContainer.appendChild(particle);
-      setTimeout(() => particle.remove(), 30000);
-    }
-    
-    function createSpiritWisp() {
-      const wisp = document.createElement('div');
-      wisp.className = 'spirit-wisp';
-      wisp.style.left = Math.random() * 100 + '%';
-      wisp.style.top = Math.random() * 100 + '%';
-      wisp.style.setProperty('--drift-x', (Math.random() - 0.5) * 300 + 'px');
-      wisp.style.setProperty('--drift-y', (Math.random() - 0.5) * 300 + 'px');
-      wisp.style.animationDuration = (Math.random() * 8 + 6) + 's';
-      wisp.style.animationDelay = Math.random() * 3 + 's';
-      particlesContainer.appendChild(wisp);
-      setTimeout(() => wisp.remove(), 20000);
-    }
-    
-    setInterval(createSandParticle, 2000);
-    setInterval(createSpiritWisp, 5000);
-    for(let i = 0; i < 8; i++) createSandParticle();
-    for(let i = 0; i < 3; i++) createSpiritWisp();
-
-    // ===== Live Price Ticker =====
-    async function updatePrice() {
-      try {
-        const response = await fetch('https://api.dexscreener.com/latest/dex/pairs/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn');
-        const data = await response.json();
-        const pair = (data && data.pairs && data.pairs[0]) ? data.pairs[0] : data.pair;
-
-        if (pair && pair.priceUsd) {
-          const price = parseFloat(pair.priceUsd);
-          const change24h = parseFloat(pair.priceChange && pair.priceChange.h24 ? pair.priceChange.h24 : 0);
-
-          document.getElementById('tickerPrice').textContent =
-            '$' + (price < 0.01 ? price.toFixed(6) : price.toFixed(4));
-
-          const changeEl = document.getElementById('tickerChange');
-          const changeText = (change24h >= 0 ? '+' : '') + change24h.toFixed(2) + '%';
-          changeEl.textContent = changeText + ' 24h';
-          changeEl.className = 'ticker-change ' + (change24h >= 0 ? 'positive' : 'negative');
-        }
-      } catch (error) {
-        console.log('Price fetch failed:', error);
-        document.getElementById('tickerPrice').textContent = 'View Chart';
-      }
-    }
-    
-    updatePrice();
-    setInterval(updatePrice, 30000);
-
-    // ===== Stars with Parallax =====
+    // ===== Stars =====
     const starsContainer = document.getElementById('stars');
-    const starElements = [];
     for (let i = 0; i < 100; i++) {
       const star = document.createElement('div');
       star.className = 'star';
-      const size = Math.random() * 3 + 1;
-      star.style.width = size + 'px';
-      star.style.height = size + 'px';
+      star.style.width = (Math.random() * 3 + 1) + 'px';
+      star.style.height = star.style.width;
       star.style.left = Math.random() * 100 + '%';
       star.style.top = Math.random() * 100 + '%';
       star.style.animationDelay = Math.random() * 3 + 's';
-      star.dataset.speed = (Math.random() * 0.3).toFixed(2);
       starsContainer.appendChild(star);
-      starElements.push(star);
     }
-
-    window.addEventListener('scroll', () => {
-      const scrolled = window.pageYOffset;
-      starElements.forEach(star => {
-        const speed = parseFloat(star.dataset.speed);
-        star.style.transform = `translateY(${scrolled * speed}px)`;
-      });
-    });
-
-    // ===== 3D Owl Tilt Effect (throttled) =====
-    const owlIcon = document.querySelector('.owl-icon');
-    let rafId = null;
-    function onMouseMove(e){
-      if (!owlIcon) return;
-      const x = (e.clientX / window.innerWidth - 0.5) * 15;
-      const y = (e.clientY / window.innerHeight - 0.5) * 15;
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        owlIcon.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
-        rafId = null;
-      });
-    }
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseleave', () => {
-      if (owlIcon) owlIcon.style.transform = '';
-    });
 
     // ===== Hover Lore Typewriter =====
     const loreLines = [
-      "I am Wan Shi Tong, a Knowledge Spirit.",
-      "I have collected information for over ten thousand years.",
-      "Mortals always believe their cause is just.",
-      "I was betrayed by those who sought knowledge for war.",
-      "My library now exists in the Spirit World, beyond mortal reach.",
-      "The foxes serve me, gathering knowledge across the realms.",
-      "Those who misuse information face judgment.",
-      "I see through all deception with my many eyes."
+      "I am Wan Shi Tong. I collect knowledge.",
+      "Bring me something I do not know… and you may enter.",
+      "Seek weapons, and I will cast you into the desert.",
+      "Seek alpha, and I will test your intent.",
+      "In this library, the only currency is truth."
     ];
 
     const loreTextEl = document.getElementById('loreText');
@@ -1135,7 +759,7 @@
           clearInterval(typeTimer);
           typing = false;
         }
-      }, 25);
+      }, 22);
     }
 
     function nextLore() {
@@ -1155,6 +779,7 @@
       }
     });
 
+    // Initialize first line
     typeLine(loreLines[0]);
     loreIndex = 1;
 
@@ -1166,34 +791,35 @@
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(caValue.textContent.trim());
-        copyStatus.textContent = "Copied ✓";
+        copyStatus.textContent = "Copied.";
         setTimeout(() => (copyStatus.textContent = ""), 1500);
       } catch (e) {
-        copyStatus.textContent = "Copy failed";
+        copyStatus.textContent = "Copy failed. Select and copy manually.";
         setTimeout(() => (copyStatus.textContent = ""), 2500);
       }
     });
 
-    // ===== Social Share Buttons =====
-    document.getElementById('shareTwitter').addEventListener('click', () => {
-      const text = encodeURIComponent('He Who Knows Ten Thousand Things is about to teach the market a lesson 🦉\\n\\n$WanShiTong\\nCA: DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump');
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    // ===== Link wiring =====
+    const LINKS = {
+      buy: "#",      // Add your Jupiter/Raydium swap URL here
+      chart: "https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn",    // Dexscreener chart
+      x: "https://x.com/i/communities/2002918673451831748",
+      tg: "#",       // Add your Telegram invite here
+      dex: "https://dexscreener.com/solana/gb1dccxamrtdcw1zhhd6nu3mrdxalzdgyld8qfcr2mwn",      // Dexscreener link
+    };
+
+    document.getElementById('buyBtn').setAttribute('href', LINKS.buy);
+    document.getElementById('chartBtn').setAttribute('href', LINKS.chart);
+    document.getElementById('xLink').setAttribute('href', LINKS.x);
+    document.getElementById('dexLink').setAttribute('href', LINKS.dex);
+
+    ['buyBtn','chartBtn','xLink','dexLink'].forEach(id => {
+      const el = document.getElementById(id);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
     });
 
-    document.getElementById('copyLink').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        const btn = document.getElementById('copyLink');
-        const original = btn.textContent;
-        btn.textContent = 'Copied ✓';
-        setTimeout(() => btn.textContent = original, 1500);
-      } catch (e) {
-        alert('Failed to copy link');
-      }
-    });
-
-    // ===== AI Offering =====
+    // ===== AI Offering (Netlify Function) =====
     const form = document.getElementById('knowledgeForm');
     const aiReply = document.getElementById('aiReply');
     const offerBtn = document.getElementById('offerBtn');
@@ -1205,14 +831,15 @@
       const knowledge = document.getElementById('knowledge').value.trim();
 
       aiReply.style.display = 'block';
-      aiReply.innerHTML = '<span class="loading-spinner"></span>The Knowledge Spirit considers your offering...';
+      aiReply.textContent = 'The Librarian considers your offering...';
       offerBtn.disabled = true;
-      offerBtn.innerHTML = '<span class="loading-spinner"></span>Judging...';
+      offerBtn.textContent = 'Judging...';
 
       try {
         const endpoint = '/.netlify/functions/knowledge';
+        // If you're previewing from a local file (file://), Netlify Functions won't exist.
         if (location.protocol === 'file:') {
-          throw new Error('Local preview cannot call Netlify Functions. Use netlify dev or deploy.');
+          throw new Error('Local preview cannot call Netlify Functions. Deploy to Netlify to enable the Librarian.');
         }
 
         const res = await fetch(endpoint, {
@@ -1226,13 +853,13 @@
         try { data = JSON.parse(text); } catch (_) {}
 
         if (!res.ok) {
-          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Error (${res.status}).`;
-          throw new Error(msg);
+          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Function error (${res.status}).`;
+          throw new Error(msg + (text ? `\n${text}` : ''));
         }
 
-        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Spirit is silent.');
+        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Library is silent.');
       } catch (err) {
-        aiReply.textContent = 'The Spirit World connection falters... try again.\\n\\n' + err.message;
+        aiReply.textContent = 'The sands interfere… try again later.';
       } finally {
         offerBtn.disabled = false;
         offerBtn.textContent = 'Present Your Offering';
@@ -1248,20 +875,7 @@
         }, 200);
       });
     });
-
-    // ===== Easter Egg =====
-    let keySequence = [];
-    const secretPhrase = 'sokka';
-    window.addEventListener('keydown', (e) => {
-      keySequence.push(e.key.toLowerCase());
-      if (keySequence.length > secretPhrase.length) keySequence.shift();
-      if (keySequence.join('') === secretPhrase) {
-        alert('🗡️ Sokka: "So... this is the spirit that tried to keep us from the Fire Nation info. Knowledge guy, meat guy... we should talk."');
-        keySequence = [];
-      }
-    });
   
-
     // ===== PFP / Meme Generator (Client-side Canvas) =====
 (function() {
   const upload = document.getElementById('pfpUpload');
@@ -1732,6 +1346,6 @@
   // First render
   render();
 })();
-  </script>
+</script>
 </body>
 </html>

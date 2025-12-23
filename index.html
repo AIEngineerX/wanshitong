@@ -478,6 +478,7 @@
   .section { min-height: auto; }
 }
   </style>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 
 <body>
@@ -661,12 +662,25 @@
 
         <div style="display:grid; grid-template-columns: 1fr; gap: 14px;">
           <div id="modelWrap" style="width:100%; aspect-ratio: 16 / 10; border-radius: 12px; border: 2px solid #8b6914; background: rgba(0,0,0,0.3); overflow:hidden; position:relative;">
-            <canvas id="modelCanvas" style="width:100%; height:100%; display:block;"></canvas>
-            <div id="modelStatus" style="position:absolute; left:12px; bottom:12px; right:12px; background: rgba(0,0,0,0.55); border: 1px solid rgba(218,165,32,0.25); border-radius: 10px; padding: 10px 12px; font-size: 0.95em; line-height: 1.4; display:none;"></div>
-          </div>
+            <model-viewer id="glbViewer"
+              src="/models/wan_shi_tong.glb"
+              alt="Wan Shi Tong 3D Model"
+              camera-controls
+              touch-action="pan-y"
+              interaction-prompt="none"
+              style="width:100%; height:100%; background: transparent; display:block;">
+            </model-viewer>
+
+            <!-- Fallback: local OBJ viewer (no external dependencies) -->
+            <canvas id="modelCanvas" style="width:100%; height:100%; display:none;"></canvas>
+
+            <div id="modelStatus" style="position:absolute; left:12px; right:12px; bottom:12px; background: rgba(0,0,0,0.7); border: 1px solid rgba(218,165,32,0.35); padding: 10px 12px; border-radius: 10px; font-size: 0.95em; line-height: 1.4; display:block;">
+              Loading 3D model…
+            </div>
+</div>
 
           <div class="disclaimer" style="margin-top: 0; font-size: 0.9em;">
-            <strong>Setup:</strong> Place your OBJ/MTL/texture files in <code>/models/</code> and update the paths in the script (search for <code>MODEL_PATHS</code>). This viewer loads assets client-side.
+            <strong>Setup:</strong> Preferred: place the GLB in <code>/models/</code> and update the paths in the script (search for <code>objPath</code>). This viewer loads assets client-side.
           </div>
         </div>
       </div>
@@ -1309,19 +1323,56 @@
 })();
 </script>
 
-  <script src="js/objviewer.js"></script>
+  
 <script>
-  // Local 3D viewer (no CDNs)
+  // Prefer GLB via <model-viewer>. If unavailable or fails, fall back to local OBJ viewer.
   window.addEventListener('load', () => {
-    window.initWanShiViewer({
-      canvasId: "modelCanvas",
-      statusId: "modelStatus",
-      // Filenames must match what exists in /models/
-      objPath: "models/wanshi.obj",
-      mtlPath: "models/wanshi.mtl"
+    const status = document.getElementById('modelStatus');
+    const mv = document.getElementById('glbViewer');
+    const canvas = document.getElementById('modelCanvas');
+
+    function useFallback(message){
+      if (mv) mv.style.display = 'none';
+      if (canvas) canvas.style.display = 'block';
+      if (status) status.textContent = message || 'Loading fallback model…';
+      if (window.initWanShiViewer){
+        window.initWanShiViewer({
+          canvasId: "modelCanvas",
+          statusId: "modelStatus",
+          objPath: "/models/wanshi.obj",
+          mtlPath: "/models/wanshi.mtl"
+        });
+      } else {
+        if (status) status.textContent = 'Fallback viewer not available.';
+      }
+    }
+
+    // If model-viewer custom element didn't register, use fallback.
+    if (!mv || !customElements.get('model-viewer')) {
+      return useFallback('3D viewer unavailable. Using fallback…');
+    }
+
+    // model-viewer events
+    mv.addEventListener('load', () => {
+      if (status) status.style.display = 'none';
+      // keep canvas hidden
+      if (canvas) canvas.style.display = 'none';
     });
+
+    mv.addEventListener('error', () => {
+      useFallback('Spirit World link failed. Using fallback…');
+    });
+
+    // If GLB doesn't load within 6s, fall back (covers blocked unpkg/CDN).
+    setTimeout(() => {
+      if (status && status.style.display !== 'none') {
+        // still loading
+        useFallback('Taking too long. Using fallback…');
+      }
+    }, 6000);
   });
 </script>
 
+<script src="js/objviewer.js"></script>
 </body>
 </html>

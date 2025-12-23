@@ -180,30 +180,7 @@
       }
     }
 
-    
-    // If the OBJ did not provide normals, the default (0,0,1) can cause the model to render nearly black
-    // depending on lighting direction. Compute simple flat normals per triangle.
-    const onlyDefaultNormals = (normals.length === 1);
-    if(onlyDefaultNormals){
-      for(let i=0;i<outPos.length;i+=9){
-        const ax = outPos[i],   ay = outPos[i+1], az = outPos[i+2];
-        const bx = outPos[i+3], by = outPos[i+4], bz = outPos[i+5];
-        const cx = outPos[i+6], cy = outPos[i+7], cz = outPos[i+8];
-        const abx = bx-ax, aby = by-ay, abz = bz-az;
-        const acx = cx-ax, acy = cy-ay, acz = cz-az;
-        let nx = (aby*acz - abz*acy);
-        let ny = (abz*acx - abx*acz);
-        let nz = (abx*acy - aby*acx);
-        const len = Math.hypot(nx, ny, nz) || 1;
-        nx/=len; ny/=len; nz/=len;
-        // write same normal for 3 vertices (flat)
-        outNor[i]   = nx; outNor[i+1] = ny; outNor[i+2] = nz;
-        outNor[i+3] = nx; outNor[i+4] = ny; outNor[i+5] = nz;
-        outNor[i+6] = nx; outNor[i+7] = ny; outNor[i+8] = nz;
-      }
-    }
-
-// compute bounds
+    // compute bounds
     let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
     for (let i=0;i<outPos.length;i+=3){
       const x=outPos[i], y=outPos[i+1], z=outPos[i+2];
@@ -225,28 +202,12 @@
   function createTexture(gl, img){
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
-
-    // Upload
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-
-    // WebGL 1.0 requires special handling for non-power-of-two textures.
-    const isPOT = (v)=> (v & (v - 1)) === 0;
-    const pot = isPOT(img.width) && isPOT(img.height);
-
-    if(pot){
-      gl.generateMipmap(gl.TEXTURE_2D);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    }else{
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    }
-
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.bindTexture(gl.TEXTURE_2D, null);
     return tex;
   }
 

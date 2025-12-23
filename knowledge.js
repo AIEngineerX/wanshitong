@@ -15,7 +15,7 @@ export async function handler(event) {
     const response = await client.responses.create({
       model: "gpt-4.1-mini",
       input: `You are Wan Shi Tong, the ancient owl spirit who guards all knowledge.
-Respond in-character. Be stern, wise, and slightly judgmental.
+Respond in-character. Be stern, wise, and slightly judgmental. Keep it to 1–3 short paragraphs.
 
 Visitor name: ${name}
 Knowledge offered: ${knowledge}`
@@ -32,6 +32,7 @@ Knowledge offered: ${knowledge}`
     console.error("Wan Shi Tong error:", err);
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         reply: "The Librarian cannot speak—an error stirs in the stacks."
       })

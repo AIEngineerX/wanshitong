@@ -1,121 +1,98 @@
-/**
- * Netlify Function: /.netlify/functions/knowledge
- * Purpose: Accept a user's "knowledge offering" and return a Wan Shi Tong–style response via OpenAI.
- *
- * Requirements:
- * - Set OPENAI_API_KEY in Netlify environment variables (Site settings → Environment variables)
- * - Optional: OPENAI_MODEL (default: gpt-4o-mini)
- */
-
-const JSON_HEADERS = {
-  "Content-Type": "application/json; charset=utf-8",
-};
-
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
-
-function ok(bodyObj) {
-  return {
-    statusCode: 200,
-    headers: { ...JSON_HEADERS, ...CORS_HEADERS },
-    body: JSON.stringify(bodyObj),
-  };
-}
-
-function bad(statusCode, message, extra = {}) {
-  return {
-    statusCode,
-    headers: { ...JSON_HEADERS, ...CORS_HEADERS },
-    body: JSON.stringify({ error: message, ...extra }),
-  };
-}
-
-function safeJsonParse(str) {
-  try { return JSON.parse(str); } catch { return null; }
-}
-
-exports.handler = async (event) => {
-  // Preflight
+export async function handler(event) {
+  // CORS / preflight
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: { ...CORS_HEADERS } };
+    return {
+      statusCode: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
+      body: "",
+    };
   }
 
   if (event.httpMethod !== "POST") {
-    return bad(405, "Method not allowed. Use POST.");
+    return {
+      statusCode: 405,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Method not allowed. Use POST." }),
+    };
   }
-
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return bad(500, "Server misconfigured: OPENAI_API_KEY is not set.");
-  }
-
-  const payload = safeJsonParse(event.body || "{}");
-  const name = (payload?.name || "").toString().trim().slice(0, 80);
-  const knowledge = (payload?.knowledge || "").toString().trim().slice(0, 2000);
-
-  if (!name || !knowledge) {
-    return bad(400, "Missing required fields: name, knowledge.");
-  }
-
-  const model = (process.env.OPENAI_MODEL || "gpt-4o-mini").toString().trim();
-
-  // Prompting: Keep it short, in-character, non-financial-advice.
-  const system = [
-    "You are Wan Shi Tong, the Knowledge Spirit from the desert library.",
-    "Voice: ancient, exacting, slightly judgmental, but not cruel.",
-    "You do NOT give financial advice, trading signals, or instructions for wrongdoing.",
-    "You respond in 2–6 sentences.",
-    "You may praise genuine knowledge; you reject offerings that are empty, violent, or purely self-serving.",
-  ].join(" ");
-
-  const user = [
-    `Name: ${name}`,
-    `Offering: ${knowledge}`,
-    "",
-    "Respond as Wan Shi Tong. If the offering is trivial, request something more specific and rare.",
-  ].join("\n");
 
   try {
-    // Using Chat Completions for maximum compatibility (no npm dependency required).
-    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return {
+        statusCode: 500,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Missing OPENAI_API_KEY in environment variables." }),
+      };
+    }
+
+    const { name, knowledge } = JSON.parse(event.body || "{}");
+
+    const userName = (name || "").toString().slice(0, 80);
+    const offering = (knowledge || "").toString().slice(0, 1200);
+
+    const system = [
+      "You are Wan Shi Tong, the Knowledge Spirit.",
+      "Respond in-character: concise, wise, slightly stern, never vulgar.",
+      "If the user asks for war/violence tactics, refuse and warn them.",
+      "Keep replies under 70 words.",
+    ].join(" ");
+
+    const prompt = `Visitor: ${userName || "Anonymous"}\nOffering: ${offering || "(no offering)"}\n\nRespond as Wan Shi Tong.`;
+
+    const r = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model,
-        messages: [
+        model: "gpt-4.1-mini",
+        input: [
           { role: "system", content: system },
-          { role: "user", content: user },
+          { role: "user", content: prompt },
         ],
-        temperature: 0.9,
-        max_tokens: 180,
       }),
     });
 
-    const text = await resp.text();
-    const data = safeJsonParse(text);
+    const raw = await r.text();
+    let data;
+    try { data = JSON.parse(raw); } catch { data = null; }
 
-    if (!resp.ok) {
-      // Return useful info to debug without leaking secrets.
-      const msg =
-        (data && (data.error?.message || data.error)) ||
-        `OpenAI request failed with status ${resp.status}.`;
-      return bad(502, "Upstream AI error.", { details: msg });
+    if (!r.ok) {
+      return {
+        statusCode: r.status,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: "OpenAI request failed",
+          status: r.status,
+          details: data || raw,
+        }),
+      };
     }
 
     const reply =
-      data?.choices?.[0]?.message?.content?.trim() ||
-      "The stacks are quiet. Bring me something I do not already possess.";
+      data?.output_text ||
+      data?.output?.[0]?.content?.[0]?.text ||
+      "The Library is silent.";
 
-    return ok({ reply });
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({ reply }),
+    };
   } catch (err) {
-    return bad(502, "The Librarian cannot speak—an error stirs in the stacks.", {
-      details: err?.message || String(err),
-    });
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: err?.message || "Unknown error" }),
+    };
   }
-};
+}

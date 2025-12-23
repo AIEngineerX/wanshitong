@@ -477,6 +477,25 @@
 @media (max-width: 980px) {
   .section { min-height: auto; }
 }
+  /* ===== Clean Sigil Icons ===== */
+.section-icon svg{
+  width: 22px;
+  height: 22px;
+  stroke: #daa520;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+.section:hover .section-icon svg{
+  opacity: 1;
+}
+.section:hover .section-icon svg{
+  filter: drop-shadow(0 0 10px rgba(218,165,32,0.35));
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
   </style>
 </head>
 
@@ -594,32 +613,12 @@
 
     <div class="knowledge-sections">
       <div class="section">
-        <h2><span class="section-icon">📚</span> Ancient Texts</h2>
-        <p>Scrolls, codices, and forgotten chronicles gathered by the <em>Knowledge Seekers</em>—fox spirits who roam the world retrieving what mortals misplace. Every volume is cataloged, sealed, and remembered.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">🌍</span> Geography & Maps</h2>
-        <p>Cartography of all four nations, hidden oases of the Si Wong Desert, and routes only spirits remember. Some maps lead to rooms that do not appear twice—unless the library wills it.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">⚗️</span> Natural Philosophy</h2>
-        <p>Astronomy, alchemy, biology, and the celestial mechanics of the world—like the ancient calendar that revealed the <em>Day of Black Sun</em>. Knowledge here is precise, not kind.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">🎭</span> Arts & Culture</h2>
-        <p>Poetry, music, theater, and the living record of civilizations. A library is not merely facts—it is the memory of a people, preserved against the erasure of war.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">⚔️</span> History & Warfare</h2>
-        <p>Treaties, dynasties, and the rise and fall of empires—kept for truth, not conquest. Seek strategy to harm others and you will be cast out into the sands.</p>
-      </div>
-
-      <div class="section">
-        <h2><span class="section-icon">✨</span> Spirit World Lore</h2>
+        <h2><span class="section-icon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M4 12a8 8 0 0 0 16 0"/>
+  <path d="M12 4v3"/>
+</svg>
+</span> Spirit World Lore</h2>
         <p>Archives of spirits, portals, and the delicate balance between realms. The library is a bridge between worlds—once buried in the desert, now beyond the physical, where only worthy offerings open doors.</p>
       </div>
     </div>
@@ -652,19 +651,63 @@
 
   </div>
 
-        <section class="token-grid" id="model3d">
+    <section class="token-grid" id="pfpGen">
       <div class="panel" style="grid-column: 1 / -1;">
-        <h3>Explore the Archivist</h3>
-        <p class="muted" style="margin-bottom: 18px;">
-          A small window into the Spirit World. Drag to rotate, scroll to zoom. If the model files are not present, you will see a notice below.
+        <h3>Create Your Library Sigil</h3>
+        <p class="muted" style="margin-bottom: 14px;">
+          Upload an image, add relics, stamp your mark, and export a PFP-ready meme. Runs locally in your browser.
         </p>
 
         <div style="display:grid; grid-template-columns: 1fr; gap: 14px;">
-          <div id="modelWrap" style="width:100%; aspect-ratio: 16 / 10; border-radius: 12px; border: 2px solid #8b6914; background: rgba(0,0,0,0.3); overflow:hidden; position:relative;">
-            <canvas id="modelCanvas" style="width:100%; height:100%; display:block;"></canvas>
-            <div id="modelStatus" style="position:absolute; left:12px; bottom:12px; right:12px; background: rgba(0,0,0,0.55); border: 1px solid rgba(218,165,32,0.25); border-radius: 10px; padding: 10px 12px; font-size: 0.95em; line-height: 1.4; display:none;"></div>
+          <div style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <input type="file" id="pfpUpload" accept="image/*" class="btn" style="padding:10px 12px;" />
+            <button type="button" class="btn" id="pfpReset">Reset</button>
+            <button type="button" class="btn primary" id="pfpDownload">Download PNG</button>
           </div>
-</div>
+
+          <div style="display:grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start;">
+            <div>
+              <canvas id="pfpCanvas" width="768" height="768"
+                style="width:100%; max-width: 640px; aspect-ratio: 1 / 1; display:block; border-radius: 14px; border: 2px solid #8b6914; background: rgba(0,0,0,0.25);"></canvas>
+              <div class="muted" style="margin-top:10px; font-size:0.95em;">
+                Tip: Drag stickers on the canvas. Use the wheel/trackpad to resize the selected sticker. Press Delete to remove.
+              </div>
+            </div>
+
+            <div class="panel" style="padding:16px; border-radius:12px;">
+              <h3 style="font-size:1.2em;">Controls</h3>
+
+              <label style="margin-top:12px;">Presets</label>
+              <div id="pfpPresets" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+
+              <label style="margin-top:12px;">Overlay Text</label>
+              <input id="pfpText" type="text" placeholder="$WanShiTong" value="$WanShiTong" />
+
+              <label style="margin-top:12px;">Text Style</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn small" data-textstyle="top">Top</button>
+                <button type="button" class="btn small" data-textstyle="bottom">Bottom</button>
+                <button type="button" class="btn small" data-textstyle="both">Both</button>
+                <button type="button" class="btn small" id="pfpClearText">Clear</button>
+              </div>
+
+              <label style="margin-top:12px;">Stickers</label>
+              <div id="pfpStickers" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+              <label style="margin-top:12px;">Frame</label>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn small" data-frame="none">None</button>
+                <button type="button" class="btn small" data-frame="gold">Gold Ring</button>
+                <button type="button" class="btn small" data-frame="seal">Library Seal</button>
+              </div>
+
+              <div class="disclaimer" style="margin-top:14px;">
+                <strong>Note:</strong> This generator runs locally in your browser. No image uploads are sent to a server.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1304,20 +1347,5 @@
   render();
 })();
 </script>
-
-  <script src="js/objviewer.js"></script>
-<script>
-  // Local 3D viewer (no CDNs)
-  window.addEventListener('load', () => {
-    window.initWanShiViewer({
-      canvasId: "modelCanvas",
-      statusId: "modelStatus",
-      // Filenames must match what exists in /models/
-      objPath: "models/wanshi.obj",
-      mtlPath: "models/wanshi.mtl"
-    });
-  });
-</script>
-
 </body>
 </html>

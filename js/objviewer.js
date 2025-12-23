@@ -339,68 +339,101 @@
     let phi = Math.PI * 0.35;
     let dist = radius * 2.6;
 
-    let isDragging=false, isPanning=false;
-    let lastX=0, lastY=0;
+    
+  // Interaction: pointer drag to rotate, right-drag (or Shift+drag) to pan, wheel to zoom.
+  // Uses Pointer Events so it works on desktop + mobile consistently.
+  canvas.style.touchAction = "none";
 
-    function screenToPan(dx, dy){
-      // scale pan with distance
-      const panScale = dist * 0.0012;
-      // derive camera basis
-      const eye = getEye();
-      const forward = vec3Normalize(vec3Sub(target, eye));
-      const right = vec3Normalize(vec3Cross(forward, [0,1,0]));
-      const up = vec3Normalize(vec3Cross(right, forward));
-      target = vec3Add(target, vec3Add(vec3Scale(right, -dx*panScale), vec3Scale(up, dy*panScale)));
+  let activePointerId = null;
+  let isDragging = false;
+  let isPanning = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  function beginPointer(e) {
+    // Only track one pointer at a time.
+    if (activePointerId !== null) return;
+
+    activePointerId = e.pointerId;
+    try { canvas.setPointerCapture(activePointerId); } catch (_) {}
+
+    // Left button => rotate. Right button or Shift => pan.
+    // On touch, default to rotate.
+    const isRightButton = (typeof e.button === "number" && e.button === 2);
+    isPanning = isRightButton || e.shiftKey;
+    isDragging = !isPanning;
+
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    e.preventDefault();
+  }
+
+  function movePointer(e) {
+    if (activePointerId === null || e.pointerId !== activePointerId) return;
+
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    const rotSpeed = 0.006;
+    const panSpeed = 0.0025 * camera.distance;
+
+    if (isDragging) {
+      camera.theta -= dx * rotSpeed;
+      camera.phi -= dy * rotSpeed;
+      camera.phi = Math.max(0.12, Math.min(Math.PI - 0.12, camera.phi));
+      camera.updateEye();
+      render();
+    } else if (isPanning) {
+      // Pan in camera local space (screen-aligned).
+      const right = normalize(cross(camera.eye, camera.up));
+      const up = normalize(camera.up);
+
+      const moveRight = scale(right, -dx * panSpeed);
+      const moveUp = scale(up, dy * panSpeed);
+
+      camera.target = add(camera.target, add(moveRight, moveUp));
+      camera.updateEye();
+      render();
     }
 
-    function getEye(){
-      phi = clamp(phi, 0.05, Math.PI-0.05);
-      const x = target[0] + dist * Math.sin(phi) * Math.cos(theta);
-      const y = target[1] + dist * Math.cos(phi);
-      const z = target[2] + dist * Math.sin(phi) * Math.sin(theta);
-      return [x,y,z];
-    }
+    e.preventDefault();
+  }
 
-    canvas.addEventListener("contextmenu", (e)=>e.preventDefault());
-    canvas.addEventListener("mousedown", (e)=>{
-      isDragging = e.button === 0;
-      isPanning = e.button === 2 || e.shiftKey;
-      lastX = e.clientX; lastY = e.clientY;
-    });
-    window.addEventListener("mouseup", ()=>{
-      isDragging=false; isPanning=false;
-    });
-    window.addEventListener("mousemove", (e)=>{
-      if (!isDragging && !isPanning) return;
-      const dx = e.clientX - lastX;
-      const dy = e.clientY - lastY;
-      lastX = e.clientX; lastY = e.clientY;
-      if (isPanning){
-        screenToPan(dx, dy);
-      } else {
-        theta += dx * 0.008;
-        phi += dy * 0.008;
-      }
-    });
-    canvas.addEventListener("wheel", (e)=>{
-      e.preventDefault();
-      const delta = Math.sign(e.deltaY);
-      dist *= (delta > 0) ? 1.08 : 0.92;
-      dist = clamp(dist, radius*0.8, radius*10.0);
-    }, {passive:false});
+  function endPointer(e) {
+    if (activePointerId === null || e.pointerId !== activePointerId) return;
 
-    function resize(){
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const rect = canvas.getBoundingClientRect();
-      const w = Math.max(2, Math.floor(rect.width * dpr));
-      const h = Math.max(2, Math.floor(rect.height * dpr));
-      if (canvas.width !== w || canvas.height !== h){
-        canvas.width = w; canvas.height = h;
-        gl.viewport(0,0,w,h);
-      }
-      return [w,h];
-    }
-    window.addEventListener("resize", resize);
+    try { canvas.releasePointerCapture(activePointerId); } catch (_) {}
+    activePointerId = null;
+    isDragging = false;
+    isPanning = false;
+
+    e.preventDefault();
+  }
+
+  canvas.addEventListener("pointerdown", beginPointer);
+  canvas.addEventListener("pointermove", movePointer);
+  canvas.addEventListener("pointerup", endPointer);
+  canvas.addEventListener("pointercancel", endPointer);
+  canvas.addEventListener("pointerleave", endPointer);
+
+  // Disable context menu so right-drag can pan.
+  canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  canvas.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    // Zoom: wheel down => zoom out; wheel up => zoom in.
+    const delta = Math.sign(e.deltaY);
+    camera.distance *= (delta > 0) ? 1.08 : 0.92;
+    camera.distance = Math.max(0.6, Math.min(12, camera.distance));
+    camera.updateEye();
+    render();
+  }, { passive: false });
+
+
+  addEventListener("resize", resize);
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);

@@ -339,6 +339,9 @@
     let phi = Math.PI * 0.35;
     let dist = radius * 2.6;
 
+    // Clear the loading message once assets are ready.
+    setStatus(statusEl, "");
+
     
   // Interaction: pointer drag to rotate, right-drag (or Shift+drag) to pan, wheel to zoom.
   // Uses Pointer Events so it works on desktop + mobile consistently.

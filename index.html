@@ -730,52 +730,7 @@
       .token-name { font-size: 2.1em; }
       .token-card { padding: 22px; }
     }
-  
-/* ===== Living Sigil (Wan Shi Tong) ===== */
-.sigil-container{
-  position:relative;
-  width:100%;
-  max-width:520px;
-  margin:0 auto;
-  border-radius:14px;
-  overflow:hidden;
-  border:2px solid #8b6914;
-  background: rgba(0,0,0,0.30);
-  box-shadow: 0 0 26px rgba(218,165,32,0.18);
-}
-.sigil-container img{ width:100%; display:block; }
-
-.sigil-container img{ transition: filter 180ms ease, transform 180ms ease; }
-.sigil-container.active img{ filter: drop-shadow(0 0 16px rgba(255,30,30,0.75)) drop-shadow(0 0 34px rgba(255,30,30,0.35)); transform: scale(1.005); }
-
-
-.sigil-container.active @keyframes sigilFlash{
-  0%{ opacity:0; transform: scale(0.98); }
-  20%{ opacity:1; transform: scale(1.0); }
-  100%{ opacity:0.32; transform: scale(1.0); }
-}
-
-.sigil-btn{
-  margin-top: 14px;
-  padding: 10px 18px;
-  font-family: inherit;
-  font-size: 0.95rem;
-  color: #f5d27a;
-  background: rgba(0,0,0,0.45);
-  border: 1px solid #8b6914;
-  border-radius: 10px;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: all 0.25s ease;
-}
-.sigil-btn:hover{
-  background: rgba(218,165,32,0.15);
-  box-shadow: 0 0 14px rgba(218,165,32,0.35);
-}
-.sigil-btn:active{ transform: scale(0.985); }
-.sigil-hint{ margin-top: 6px; font-size: 0.8rem; opacity: 0.75; }
-
-</style>
+  </style>
 </head>
 
 <body>
@@ -934,43 +889,53 @@
       <p class="quote-author">— Wan Shi Tong, to Professor Zei</p>
     </div>
 
-    <div class="knowledge-form">
-      <h3>Contribute Knowledge</h3>
+    
+    <div class="knowledge-form" id="memeLibrary">
+      <h3>Meme Library (Forbidden Pages)</h3>
       <p style="text-align: center; margin-bottom: 22px; opacity: 0.9;">
-        "Entry to my library has always required the same fee: knowledge. Bring me something I do not already possess, and I will grant you access."
+        The Librarian does not predict. He preserves. Browse the shelves, copy a caption, and share a page.
       </p>
 
-      <form id="knowledgeForm">
-        <div class="form-group">
-          <label for="name">Your Name:</label>
-          <input type="text" id="name" required />
-        </div>
-        <div class="form-group">
-          <label for="knowledge">What Knowledge Do You Bring?</label>
-          <textarea id="knowledge" required placeholder="Share something unique that even the greatest library has not yet collected..."></textarea>
-        </div>
-        <button type="submit" id="offerBtn">Present Your Offering</button>
+      <div class="meme-frame">
+        <img id="memeImg" alt="Forbidden Page" loading="lazy" />
+      </div>
 
-        <div class="submission-message" id="aiReply"></div>
-      </form>
+      <div class="submission-message" id="memeCaption" style="display:block; margin-top: 14px;"></div>
+
+      <div class="button-row" style="justify-content:center; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
+        <button class="btn small" id="memePrev" type="button">Prev</button>
+        <button class="btn small" id="memeRandom" type="button">Random Page</button>
+        <button class="btn small" id="memeNext" type="button">Next</button>
+        <button class="btn small" id="memeCopy" type="button">Copy Caption</button>
+        <button class="btn small" id="memeShare" type="button">Share on 𝕏</button>
+      </div>
+
+      <details style="margin-top: 14px;">
+        <summary style="cursor:pointer; opacity:0.9;">Archive a Page (saved to this browser)</summary>
+        <div style="margin-top: 10px;">
+          <input id="memeUrl" placeholder="Image URL (jpg/png/gif/webp)" style="width:100%; margin-bottom:10px;" />
+          <input id="memeText" placeholder="Caption / marginal note" style="width:100%; margin-bottom:10px;" />
+          <button class="btn small" id="memeAdd" type="button">Archive Page</button>
+          <div class="muted" style="margin-top: 8px; opacity: .75;">Saved locally (no wallet, no server).</div>
+        </div>
+      </details>
     </div>
 
-    
+
     <section class="token-grid" id="modelViewer" style="animation-delay: 1.1s;">
       <div class="panel" style="grid-column: 1 / -1;">
         <h3>Enter the Spirit World</h3>
         <p class="muted" style="margin-bottom: 18px;">
-          Consult the Librarian. Summon his gaze when you are ready.
+          Behold Wan Shi Tong in three dimensions. Drag to rotate • scroll to zoom • double‑click to reset.
         </p>
 
-        <div style="display:grid; grid-template-columns: 1fr; gap: 12px; justify-items:center;">
-          <div class="sigil-container" id="sigil" style="width:min(520px, 100%);">
-            <img id="sigilImg" src="wan-shi-tong.png" data-normal="wan-shi-tong.png" data-awakened="wan-shi-tong-laser.jpg" alt="Wan Shi Tong watches" />
-</div>
+        <div style="display:grid; grid-template-columns: 1fr; gap: 12px;">
+          <canvas id="threeCanvas" width="900" height="520"
+            style="width:100%; height: clamp(360px, 48vh, 560px); display:block; border-radius: 12px; border: 2px solid #8b6914; background: rgba(0,0,0,0.30);"></canvas>
+          <div id="modelStatus" class="submission-message" style="display:block; margin-top: 0;">Loading 3D model...</div>
+        </div>
 
-          <button id="awakenBtn" class="sigil-btn" type="button">Awaken the Librarian</button>
-          <p class="muted sigil-hint">Knowledge responds only when summoned.</p>
-</div>
+        
       </div>
     </section>
 </div>
@@ -1178,50 +1143,94 @@
     });
 
     // ===== AI Offering =====
-    const form = document.getElementById('knowledgeForm');
-    const aiReply = document.getElementById('aiReply');
-    const offerBtn = document.getElementById('offerBtn');
+    const form = 
+    // ===== Meme Library (Forbidden Pages) =====
+    (function() {
+      const img = document.getElementById('memeImg');
+      const cap = document.getElementById('memeCaption');
+      if (!img || !cap) return;
 
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
+      const LS_KEY = 'wst_meme_library_v1';
 
-      const name = document.getElementById('name').value.trim();
-      const knowledge = document.getElementById('knowledge').value.trim();
+      const DEFAULT_MEMES = [
+        { src: 'wan-shi-tong.png', text: 'Page 001 — Knowledge is expensive.' },
+        { src: 'photo_2025-12-24_12-21-34.jpg', text: 'Page 002 — The Library does not predict. It punishes impatience.' },
+        { src: 'wanshi.png', text: 'Page 003 — Receipts over prophecies.' }
+      ];
 
-      aiReply.style.display = 'block';
-      aiReply.innerHTML = '<span class="loading-spinner"></span>The Knowledge Spirit considers your offering...';
-      offerBtn.disabled = true;
-      offerBtn.innerHTML = '<span class="loading-spinner"></span>Judging...';
+      let userPages = [];
+      try { userPages = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (_) { userPages = []; }
 
-      try {
-        const endpoint = '/.netlify/functions/knowledge';
-        if (location.protocol === 'file:') {
-          throw new Error('Local preview cannot call Netlify Functions. Use netlify dev or deploy.');
+      const library = DEFAULT_MEMES.concat(Array.isArray(userPages) ? userPages : []);
+      let idx = 0;
+
+      function render() {
+        if (!library.length) {
+          cap.textContent = 'The shelves are empty.';
+          img.removeAttribute('src');
+          return;
         }
-
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, knowledge })
-        });
-
-        const text = await res.text();
-        let data = null;
-        try { data = JSON.parse(text); } catch (_) {}
-
-        if (!res.ok) {
-          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Error (${res.status}).`;
-          throw new Error(msg);
-        }
-
-        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Spirit is silent.');
-      } catch (err) {
-        aiReply.textContent = 'The Spirit World connection falters... try again.\\n\\n' + err.message;
-      } finally {
-        offerBtn.disabled = false;
-        offerBtn.textContent = 'Present Your Offering';
+        const item = library[idx];
+        img.onerror = () => {
+          // If a local asset is missing, fall back to the next page
+          img.onerror = null;
+          idx = (idx + 1) % library.length;
+          render();
+        };
+        img.src = item.src;
+        cap.textContent = item.text || '';
       }
-    });
+
+      function next() { idx = (idx + 1) % library.length; render(); }
+      function prev() { idx = (idx - 1 + library.length) % library.length; render(); }
+      function random() { idx = Math.floor(Math.random() * library.length); render(); }
+
+      document.getElementById('memeNext')?.addEventListener('click', next);
+      document.getElementById('memePrev')?.addEventListener('click', prev);
+      document.getElementById('memeRandom')?.addEventListener('click', random);
+
+      document.getElementById('memeCopy')?.addEventListener('click', async () => {
+        const item = library[idx] || {};
+        const payload = `${item.text || ''}\n${location.href}`.trim();
+        try {
+          await navigator.clipboard.writeText(payload);
+          cap.textContent = (item.text || '') + '\n\n(Copied.)';
+          setTimeout(() => { cap.textContent = item.text || ''; }, 900);
+        } catch (_) {}
+      });
+
+      document.getElementById('memeShare')?.addEventListener('click', () => {
+        const item = library[idx] || {};
+        const tweet = encodeURIComponent(`${item.text || ''}\n\n$WanShiTong`);
+        const url = encodeURIComponent(location.href);
+        window.open(`https://twitter.com/intent/tweet?text=${tweet}&url=${url}`, '_blank');
+      });
+
+      document.getElementById('memeAdd')?.addEventListener('click', () => {
+        const url = document.getElementById('memeUrl')?.value?.trim();
+        const text = document.getElementById('memeText')?.value?.trim() || 'A page with no marginal note.';
+        if (!url) return;
+
+        const entry = { src: url, text };
+        userPages.push(entry);
+        try { localStorage.setItem(LS_KEY, JSON.stringify(userPages)); } catch (_) {}
+
+        library.push(entry);
+        idx = library.length - 1;
+
+        // Clear inputs
+        const u = document.getElementById('memeUrl');
+        const t = document.getElementById('memeText');
+        if (u) u.value = '';
+        if (t) t.value = '';
+
+        render();
+      });
+
+      render();
+    })();
+
+
 
     // ===== Section click feedback =====
     document.querySelectorAll('.section').forEach(section => {
@@ -1717,88 +1726,33 @@
   render();
 })();
   </script>
-
+  <script src="js/objviewer.js"></script>
   <script>
-    // ===== Living Sigil Controls =====
-    (function () {
-      const sigil = document.getElementById("sigil");
-      const btn = document.getElementById("awakenBtn");
-      const img = document.getElementById("sigilImg");
-      const status = document.getElementById("modelStatus");
+    // ===== 3D Model Viewer =====
+    // MODEL_PATHS: update these if you rename files in /models/
+    const MODEL_PATHS = {
+      obj: "models/wanshi.obj",
+      mtl: "models/wanshi.mtl"
+    };
 
-      if (!sigil || !btn || !img) return;
-
-      const normalSrc = img.dataset.normal || img.getAttribute("src");
-      const awakenedSrc = img.dataset.awakened;
-
-      function setStatus(msg) {
-        if (!status) return;
-        status.textContent = msg;
-      }
-
-      let cooldownUntil = 0;
-      let revertTimer = null;
-
-      function awaken(intensityMs = 1200) {
-        const now = Date.now();
-        if (now < cooldownUntil) {
-          const s = Math.ceil((cooldownUntil - now) / 1000);
-          setStatus("The Librarian withdraws… " + s + "s");
+    window.addEventListener("load", () => {
+      try {
+        if (typeof initWanShiViewer !== "function") {
+          const s = document.getElementById("modelStatus");
+          if (s) s.textContent = "3D viewer failed to initialize (missing viewer script).";
           return;
         }
-
-        // Swap to the awakened (laser) frame
-        if (awakenedSrc) img.src = awakenedSrc;
-
-        // Add a subtle red aura (CSS)
-        sigil.classList.add("active");
-
-        // Text + cooldown
-        setStatus("He sees you.");
-        btn.disabled = true;
-        btn.textContent = "The Librarian Withdraws";
-
-        // Revert back to normal image after the flash
-        if (revertTimer) window.clearTimeout(revertTimer);
-        revertTimer = window.setTimeout(() => {
-          img.src = normalSrc;
-          sigil.classList.remove("active");
-        }, intensityMs);
-
-        // Cooldown so it feels like a ritual, not a toy
-        cooldownUntil = now + 4500;
-        window.setTimeout(() => {
-          if (Date.now() >= cooldownUntil) {
-            btn.disabled = false;
-            btn.textContent = "Awaken the Librarian";
-            setStatus("Ready.");
-          }
-        }, 1400);
+        initWanShiViewer({
+          canvasId: "threeCanvas",
+          statusId: "modelStatus",
+          objPath: MODEL_PATHS.obj,
+          mtlPath: MODEL_PATHS.mtl
+        });
+      } catch (e) {
+        const s = document.getElementById("modelStatus");
+        if (s) s.textContent = "3D viewer error: " + (e && e.message ? e.message : String(e));
       }
-
-      btn.addEventListener("click", () => awaken(1200));
-
-      // Light “awaken” on meaningful actions (shorter + no button lock)
-      function nudge() {
-        const now = Date.now();
-        if (now < cooldownUntil) return;
-        sigil.classList.add("active");
-        if (awakenedSrc) img.src = awakenedSrc;
-        window.setTimeout(() => { img.src = normalSrc; sigil.classList.remove("active"); }, 650);
-      }
-
-      document.getElementById("offerBtn")?.addEventListener("click", nudge);
-      document.getElementById("vaultProphecy")?.addEventListener("click", nudge);
-      document.getElementById("vaultLore")?.addEventListener("click", nudge);
-      document.getElementById("vaultMantra")?.addEventListener("click", nudge);
-      document.getElementById("vaultQuest")?.addEventListener("click", nudge);
-
-      // Rare idle flicker (very low chance per load)
-      if (Math.random() < 0.08) {
-        window.setTimeout(() => nudge(), 2200);
-      }
-    })();
+    });
   </script>
-
 </body>
 </html>

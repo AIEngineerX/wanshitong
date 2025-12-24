@@ -731,9 +731,8 @@
       .token-card { padding: 22px; }
     }
   
-
-    /* ===== Living Sigil (replaces 3D model) ===== */
-    .sigil-container {
+    /* ===== Living Sigil (2D replacement for 3D) ===== */
+    .sigil-container{
       position: relative;
       width: 100%;
       max-width: 520px;
@@ -741,48 +740,46 @@
       border-radius: 14px;
       overflow: hidden;
       border: 2px solid #8b6914;
-      background: rgba(0,0,0,0.35);
-      box-shadow: 0 0 30px rgba(218,165,32,0.25);
+      background: rgba(0,0,0,0.30);
+      box-shadow: 0 0 30px rgba(218,165,32,0.18);
     }
-    .sigil-container img {
+    .sigil-container img{
       width: 100%;
       display: block;
     }
-    .sigil-eyes {
+    .sigil-eyes{
       position: absolute;
       inset: 0;
       pointer-events: none;
 
-      /* Tuned eye positions for wan-shi-tong.png */
+      /* Tuned eye positions + RED glow */
       background:
-        radial-gradient(
-          circle at 46% 32%,
-          rgba(218,165,32,0.65),
-          rgba(218,165,32,0.25) 22%,
+        radial-gradient(circle at 46% 32%,
+          rgba(255, 60, 60, 0.70),
+          rgba(255, 60, 60, 0.25) 22%,
           transparent 38%
         ),
-        radial-gradient(
-          circle at 54% 32%,
-          rgba(218,165,32,0.65),
-          rgba(218,165,32,0.25) 22%,
+        radial-gradient(circle at 54% 32%,
+          rgba(255, 60, 60, 0.70),
+          rgba(255, 60, 60, 0.25) 22%,
           transparent 38%
         );
 
-      opacity: 0.12;
+      opacity: 0.10;
       filter: blur(0.6px);
       animation: watchPulse 9s ease-in-out infinite;
     }
-    @keyframes watchPulse {
-      0%, 100% { opacity: 0.10; }
-      50% { opacity: 0.32; }
+    @keyframes watchPulse{
+      0%,100%{ opacity: 0.08; }
+      50%{ opacity: 0.28; }
     }
-    .sigil-container.active .sigil-eyes {
+    .sigil-container.active .sigil-eyes{
       animation: none;
-      opacity: 0.75;
+      opacity: 0.80;
       filter: blur(0.3px);
     }
 
-</style>
+  </style>
 </head>
 
 <body>
@@ -963,23 +960,21 @@
     </div>
 
     
-    <section class="token-grid" id="modelViewer" style="animation-delay: 1.1s;">
+        <section class="token-grid" id="modelViewer" style="animation-delay: 1.1s;">
       <div class="panel" style="grid-column: 1 / -1;">
         <h3>Enter the Spirit World</h3>
         <p class="muted" style="margin-bottom: 18px;">
-          Behold Wan Shi Tong in three dimensions. Drag to rotate • scroll to zoom • double‑click to reset.
+          The Librarian watches. Once per day, the eyes awaken.
         </p>
 
-        <div style="display:grid; grid-template-columns: 1fr; gap: 12px;">
-          <div class="sigil-container" id="sigil">
-            <img src="wan-shi-tong.png" alt="Wan Shi Tong watches" />
-            <div class="sigil-eyes"></div>
-          </div>
-          <div id="modelStatus" class="submission-message" style="display:block; margin-top: 0;">The Librarian notices you once per day.</div>
-        </div>
+        <div class="sigil-container" id="sigil" aria-label="Wan Shi Tong sigil">
+          <img src="wan-shi-tong.png" alt="Wan Shi Tong watches" />
+          <div class="sigil-eyes" aria-hidden="true"></div>
         </div>
 
-        
+        <div id="modelStatus" class="submission-message" style="display:block; margin-top: 12px;">
+          Knowledge leaves a trace.
+        </div>
       </div>
     </section>
 </div>
@@ -1685,36 +1680,31 @@
     const s = state.stickers.find(x => x.id === state.selectedId);
     if (!s) return;
     ev.preventDefault();
-    const delta = Math.sign(ev
-    // ===== Living Sigil (replaces 3D model) =====
-    const sigil = document.getElementById("sigil");
-    const modelStatus = document.getElementById("modelStatus");
+    const delta = Math.sign(ev.deltaY);
+    const factor = delta > 0 ? 0.94 : 1.06;
+    s.w = Math.max(40, Math.min(W*0.95, s.w * factor));
+    s.h = Math.max(40, Math.min(H*0.95, s.h * factor));
+    render();
+  }, { passive: false });
 
-    function awakenSigil(duration = 1600) {
-      if (!sigil) return;
-      sigil.classList.add("active");
-      setTimeout(() => sigil.classList.remove("active"), duration);
-    }
+  // Delete key removes selected sticker
+  window.addEventListener('keydown', ev => {
+    if (ev.key !== 'Delete' && ev.key !== 'Backspace') return;
+    if (!state.selectedId) return;
+    state.stickers = state.stickers.filter(s => s.id !== state.selectedId);
+    state.selectedId = null;
+    render();
+  });
 
-    // Once-per-day awakening (per visitor/device)
-    try {
-      const todayKey = "wan_shi_awakened_" + new Date().toISOString().slice(0, 10);
-      if (!localStorage.getItem(todayKey)) {
-        setTimeout(() => {
-          awakenSigil(2200);
-          localStorage.setItem(todayKey, "true");
-          if (modelStatus) modelStatus.textContent = "The Library has noticed you today.";
-        }, 1800);
-      }
-    } catch (_) {
-      // If storage is blocked, do nothing.
-    }
-
-    // React to meaningful actions
-    document.getElementById("offerBtn")?.addEventListener("click", () => awakenSigil(1800));
-    document.getElementById("copyCa")?.addEventListener("click", () => awakenSigil(900));
-    document.getElementById("shareTwitter")?.addEventListener("click", () => awakenSigil(900));
-upload.value = '';
+  // Reset
+  resetBtn.addEventListener('click', () => {
+    state.baseImg = null;
+    state.stickers = [];
+    state.selectedId = null;
+    state.textMode = 'bottom';
+    state.frame = 'gold';
+    textInput.value = '$WanShiTong';
+    upload.value = '';
     render();
   });
 
@@ -1731,33 +1721,34 @@ upload.value = '';
   render();
 })();
   </script>
-  <script src="js/objviewer.js"></script>
-  <script>
-    // ===== 3D Model Viewer =====
-    // MODEL_PATHS: update these if you rename files in /models/
-    const MODEL_PATHS = {
-      obj: "models/wanshi.obj",
-      mtl: "models/wanshi.mtl"
-    };
 
-    window.addEventListener("load", () => {
-      try {
-        if (typeof initWanShiViewer !== "function") {
-          const s = document.getElementById("modelStatus");
-          if (s) s.textContent = "3D viewer failed to initialize (missing viewer script).";
-          return;
-        }
-        initWanShiViewer({
-          canvasId: "threeCanvas",
-          statusId: "modelStatus",
-          objPath: MODEL_PATHS.obj,
-          mtlPath: MODEL_PATHS.mtl
-        });
-      } catch (e) {
-        const s = document.getElementById("modelStatus");
-        if (s) s.textContent = "3D viewer error: " + (e && e.message ? e.message : String(e));
+  <script>
+    (function(){
+      const sigil = document.getElementById('sigil');
+      const status = document.getElementById('modelStatus');
+      if (!sigil) return;
+
+      function awakenSigil(duration){
+        sigil.classList.add('active');
+        setTimeout(()=>sigil.classList.remove('active'), duration || 1600);
       }
-    });
+
+      // Once-per-day awakening (local date)
+      const todayKey = "wan_shi_awakened_" + new Date().toISOString().slice(0,10);
+      if (!localStorage.getItem(todayKey)){
+        setTimeout(()=>{
+          awakenSigil(2200);
+          localStorage.setItem(todayKey, "true");
+          if (status) status.textContent = "The Librarian notices you. Choose your moment.";
+        }, 1800);
+      }
+
+      // React to meaningful actions if present
+      document.getElementById('offerBtn')?.addEventListener('click', ()=>awakenSigil(1800));
+      document.getElementById('copyCa')?.addEventListener('click', ()=>awakenSigil(900));
+      document.getElementById('shareTwitter')?.addEventListener('click', ()=>awakenSigil(900));
+    })();
   </script>
+
 </body>
 </html>

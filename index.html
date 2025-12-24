@@ -748,38 +748,90 @@
       display: block;
     }
     .sigil-eyes{
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
 
-      /* Tuned eye positions + RED glow */
-      background:
-        radial-gradient(circle at 46% 32%,
-          rgba(255, 60, 60, 0.70),
-          rgba(255, 60, 60, 0.25) 22%,
-          transparent 38%
-        ),
-        radial-gradient(circle at 54% 32%,
-          rgba(255, 60, 60, 0.70),
-          rgba(255, 60, 60, 0.25) 22%,
-          transparent 38%
-        );
+/* Two eye sparks + thin horizontal flare (kept tight so the face does NOT tint) */
+.sigil-eyes::before,
+.sigil-eyes::after{
+  content:"";
+  position:absolute;
+  width:78px;
+  height:78px;
+  top:27%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
 
-      opacity: 0.10;
-      filter: blur(0.6px);
-      animation: watchPulse 9s ease-in-out infinite;
-    }
-    @keyframes watchPulse{
-      0%,100%{ opacity: 0.08; }
-      50%{ opacity: 0.28; }
-    }
-    .sigil-container.active .sigil-eyes{
-      animation: none;
-      opacity: 0.80;
-      filter: blur(0.3px);
-    }
+  /* core glow + starburst rays */
+  background:
+    radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,0.95) 0%,
+      rgba(255,255,255,0.55) 8%,
+      rgba(255,0,0,0.95) 18%,
+      rgba(255,0,0,0.40) 38%,
+      rgba(255,0,0,0.00) 65%),
+    conic-gradient(from 0deg,
+      rgba(255,0,0,0.00) 0deg,
+      rgba(255,0,0,0.55) 10deg,
+      rgba(255,0,0,0.00) 20deg,
+      rgba(255,0,0,0.55) 30deg,
+      rgba(255,0,0,0.00) 40deg,
+      rgba(255,0,0,0.55) 50deg,
+      rgba(255,0,0,0.00) 60deg,
+      rgba(255,0,0,0.55) 70deg,
+      rgba(255,0,0,0.00) 360deg);
+  border-radius:50%;
+  filter: blur(0.2px);
+  mix-blend-mode: screen;
+  opacity: 0.16;
+  animation: eyePulse 9s ease-in-out infinite;
+}
 
-  </style>
+/* Left and right eye positions (tuned for wan-shi-tong.png) */
+.sigil-eyes::before{ left:46.4%; }
+.sigil-eyes::after { left:53.6%; }
+
+/* Thin horizontal flare line across both eyes */
+.sigil-eyes{
+  background:
+    linear-gradient(90deg,
+      rgba(255,0,0,0.00) 0%,
+      rgba(255,0,0,0.08) 35%,
+      rgba(255,255,255,0.22) 50%,
+      rgba(255,0,0,0.08) 65%,
+      rgba(255,0,0,0.00) 100%);
+  background-position: 50% 27%;
+  background-size: 100% 2px;
+  background-repeat:no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.10;
+  animation: linePulse 9s ease-in-out infinite;
+}
+
+@keyframes eyePulse{
+  0%,100%{ opacity: 0.12; transform: translate(-50%,-50%) scale(0.92); }
+  50%    { opacity: 0.28; transform: translate(-50%,-50%) scale(1.02); }
+}
+@keyframes linePulse{
+  0%,100%{ opacity: 0.06; }
+  50%    { opacity: 0.14; }
+}
+
+/* “Awaken” mode: brief, intense (used for once-per-day + key actions) */
+.sigil-container.active .sigil-eyes::before,
+.sigil-container.active .sigil-eyes::after{
+  opacity: 0.88;
+  filter: blur(0px);
+  animation: none;
+}
+.sigil-container.active .sigil-eyes{
+  opacity: 0.22;
+  animation: none;
+}
+
+</style>
 </head>
 
 <body>

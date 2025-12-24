@@ -745,78 +745,11 @@
 }
 .sigil-container img{ width:100%; display:block; }
 
-.sigil-eyes{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  mix-blend-mode: screen;
-  opacity:0;
-  filter: blur(0.35px);
+.sigil-container img{ transition: filter 180ms ease, transform 180ms ease; }
+.sigil-container.active img{ filter: drop-shadow(0 0 16px rgba(255,30,30,0.75)) drop-shadow(0 0 34px rgba(255,30,30,0.35)); transform: scale(1.005); }
 
-  /* Tuned positions for wan-shi-tong.png (laser eyes) */
-  background:
-    radial-gradient(circle at 46.4% 27.2%,
-      rgba(255,30,30,0.98),
-      rgba(255,30,30,0.75) 6%,
-      rgba(255,30,30,0.22) 14%,
-      transparent 22%),
-    radial-gradient(circle at 53.6% 27.2%,
-      rgba(255,30,30,0.98),
-      rgba(255,30,30,0.75) 6%,
-      rgba(255,30,30,0.22) 14%,
-      transparent 22%),
 
-    /* starburst rays */
-    conic-gradient(from 0deg at 46.4% 27.2%,
-      rgba(255,30,30,0.00) 0deg,
-      rgba(255,30,30,0.65) 6deg,
-      rgba(255,30,30,0.00) 14deg,
-      rgba(255,30,30,0.55) 22deg,
-      rgba(255,30,30,0.00) 30deg,
-      rgba(255,30,30,0.45) 40deg,
-      rgba(255,30,30,0.00) 48deg,
-      rgba(255,30,30,0.35) 60deg,
-      rgba(255,30,30,0.00) 70deg,
-      rgba(255,30,30,0.30) 86deg,
-      rgba(255,30,30,0.00) 96deg,
-      rgba(255,30,30,0.25) 114deg,
-      rgba(255,30,30,0.00) 126deg,
-      rgba(255,30,30,0.22) 146deg,
-      rgba(255,30,30,0.00) 360deg),
-    conic-gradient(from 0deg at 53.6% 27.2%,
-      rgba(255,30,30,0.00) 0deg,
-      rgba(255,30,30,0.65) 6deg,
-      rgba(255,30,30,0.00) 14deg,
-      rgba(255,30,30,0.55) 22deg,
-      rgba(255,30,30,0.00) 30deg,
-      rgba(255,30,30,0.45) 40deg,
-      rgba(255,30,30,0.00) 48deg,
-      rgba(255,30,30,0.35) 60deg,
-      rgba(255,30,30,0.00) 70deg,
-      rgba(255,30,30,0.30) 86deg,
-      rgba(255,30,30,0.00) 96deg,
-      rgba(255,30,30,0.25) 114deg,
-      rgba(255,30,30,0.00) 126deg,
-      rgba(255,30,30,0.22) 146deg,
-      rgba(255,30,30,0.00) 360deg),
-
-    /* thin horizontal flare */
-    linear-gradient(90deg,
-      transparent 0%,
-      transparent 30%,
-      rgba(255,30,30,0.00) 40%,
-      rgba(255,30,30,0.35) 50%,
-      rgba(255,30,30,0.00) 60%,
-      transparent 70%,
-      transparent 100%);
-}
-
-.sigil-container.active .sigil-eyes{
-  opacity:1;
-  animation: sigilFlash 1.25s ease-out forwards;
-}
-
-@keyframes sigilFlash{
+.sigil-container.active @keyframes sigilFlash{
   0%{ opacity:0; transform: scale(0.98); }
   20%{ opacity:1; transform: scale(1.0); }
   100%{ opacity:0.32; transform: scale(1.0); }
@@ -1032,17 +965,12 @@
 
         <div style="display:grid; grid-template-columns: 1fr; gap: 12px; justify-items:center;">
           <div class="sigil-container" id="sigil" style="width:min(520px, 100%);">
-            <img src="wan-shi-tong.png" alt="Wan Shi Tong watches" />
-            <div class="sigil-eyes"></div>
-          </div>
+            <img id="sigilImg" src="wan-shi-tong.png" data-normal="wan-shi-tong.png" data-awakened="wan-shi-tong-laser.jpg" alt="Wan Shi Tong watches" />
+</div>
 
           <button id="awakenBtn" class="sigil-btn" type="button">Awaken the Librarian</button>
           <p class="muted sigil-hint">Knowledge responds only when summoned.</p>
-
-          <div id="modelStatus" class="submission-message" style="display:block; margin-top: 0; width:100%; max-width:520px;">
-            Ready.
-          </div>
-        </div>
+</div>
       </div>
     </section>
 </div>
@@ -1795,9 +1723,13 @@
     (function () {
       const sigil = document.getElementById("sigil");
       const btn = document.getElementById("awakenBtn");
+      const img = document.getElementById("sigilImg");
       const status = document.getElementById("modelStatus");
 
-      if (!sigil || !btn) return;
+      if (!sigil || !btn || !img) return;
+
+      const normalSrc = img.dataset.normal || img.getAttribute("src");
+      const awakenedSrc = img.dataset.awakened;
 
       function setStatus(msg) {
         if (!status) return;
@@ -1805,8 +1737,9 @@
       }
 
       let cooldownUntil = 0;
+      let revertTimer = null;
 
-      function awaken() {
+      function awaken(intensityMs = 1200) {
         const now = Date.now();
         if (now < cooldownUntil) {
           const s = Math.ceil((cooldownUntil - now) / 1000);
@@ -1814,38 +1747,56 @@
           return;
         }
 
-        // Flash eyes
-        sigil.classList.add("active");
-        setStatus("He sees you.");
-        window.setTimeout(() => sigil.classList.remove("active"), 1250);
+        // Swap to the awakened (laser) frame
+        if (awakenedSrc) img.src = awakenedSrc;
 
-        // Upgrade 1: short cooldown so it feels like a ritual, not a toy
+        // Add a subtle red aura (CSS)
+        sigil.classList.add("active");
+
+        // Text + cooldown
+        setStatus("He sees you.");
+        btn.disabled = true;
+        btn.textContent = "The Librarian Withdraws";
+
+        // Revert back to normal image after the flash
+        if (revertTimer) window.clearTimeout(revertTimer);
+        revertTimer = window.setTimeout(() => {
+          img.src = normalSrc;
+          sigil.classList.remove("active");
+        }, intensityMs);
+
+        // Cooldown so it feels like a ritual, not a toy
         cooldownUntil = now + 4500;
         window.setTimeout(() => {
-          if (Date.now() >= cooldownUntil) setStatus("Ready.");
-        }, 900);
+          if (Date.now() >= cooldownUntil) {
+            btn.disabled = false;
+            btn.textContent = "Awaken the Librarian";
+            setStatus("Ready.");
+          }
+        }, 1400);
       }
 
-      btn.addEventListener("click", awaken);
+      btn.addEventListener("click", () => awaken(1200));
 
-      // Upgrade 2: meaningful interactions also “wake” him lightly (no beam spam)
-      document.getElementById('offerBtn')?.addEventListener('click', () => {
+      // Light “awaken” on meaningful actions (shorter + no button lock)
+      function nudge() {
+        const now = Date.now();
+        if (now < cooldownUntil) return;
         sigil.classList.add("active");
-        window.setTimeout(() => sigil.classList.remove("active"), 800);
-      });
-
-      // Upgrade 3: subtle idle flicker (rare)
-      function rareFlicker() {
-        // 3% chance every 35s
-        if (Math.random() < 0.03) {
-          sigil.classList.add("active");
-          window.setTimeout(() => sigil.classList.remove("active"), 650);
-        }
-        window.setTimeout(rareFlicker, 35000);
+        if (awakenedSrc) img.src = awakenedSrc;
+        window.setTimeout(() => { img.src = normalSrc; sigil.classList.remove("active"); }, 650);
       }
-      window.setTimeout(rareFlicker, 35000);
 
-      setStatus("Ready.");
+      document.getElementById("offerBtn")?.addEventListener("click", nudge);
+      document.getElementById("vaultProphecy")?.addEventListener("click", nudge);
+      document.getElementById("vaultLore")?.addEventListener("click", nudge);
+      document.getElementById("vaultMantra")?.addEventListener("click", nudge);
+      document.getElementById("vaultQuest")?.addEventListener("click", nudge);
+
+      // Rare idle flicker (very low chance per load)
+      if (Math.random() < 0.08) {
+        window.setTimeout(() => nudge(), 2200);
+      }
     })();
   </script>
 

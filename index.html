@@ -1671,29 +1671,32 @@
   render();
 })();
   </script>
-  <script src="js/objviewer.js"></script>
+  <script type="module" src="js/glbviewer.js"></script>
   <script>
-    // ===== 3D Model Viewer =====
-    // MODEL_PATHS: update these if you rename files in /models/
-    const MODEL_PATHS = {
-      obj: "models/wanshi.obj",
-      mtl: "models/wanshi.mtl"
-    };
+    // ===== 3D Model Viewer (GLB) =====
+// MODEL_PATHS: update this if you rename the file in /models/
+const MODEL_PATHS = {
+  glb: "models/wan_shi_tong.glb"
+};
 
-    window.addEventListener("load", () => {
-      try {
-        if (typeof initWanShiViewer !== "function") {
-          const s = document.getElementById("modelStatus");
-          if (s) s.textContent = "3D viewer failed to initialize (missing viewer script).";
-          return;
-        }
-        initWanShiViewer({
-          canvasId: "threeCanvas",
-          statusId: "modelStatus",
-          objPath: MODEL_PATHS.obj,
-          mtlPath: MODEL_PATHS.mtl
-        });
-      } catch (e) {
+window.addEventListener("load", () => {
+  try {
+    if (typeof initWanShiViewer !== "function") {
+      const s = document.getElementById("modelStatus");
+      if (s) s.textContent = "3D viewer failed to initialize (missing viewer script).";
+      return;
+    }
+    initWanShiViewer({
+      canvasId: "threeCanvas",
+      statusId: "modelStatus",
+      glbPath: MODEL_PATHS.glb
+    });
+  } catch (e) {
+    const s = document.getElementById("modelStatus");
+    if (s) s.textContent = "3D viewer error: " + (e && e.message ? e.message : String(e));
+  }
+});
+} catch (e) {
         const s = document.getElementById("modelStatus");
         if (s) s.textContent = "3D viewer error: " + (e && e.message ? e.message : String(e));
       }

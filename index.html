@@ -14,10 +14,17 @@
 
     body {
       font-family: 'Georgia', serif;
-      background: linear-gradient(135deg, #1a0a0a 0%, #3d2314 50%, #1a0a0a 100%);
+      /* Mystical winter/aurora background (replaces prior gradient) */
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(120, 210, 255, 0.08), transparent 60%),
+        radial-gradient(900px 600px at 85% 18%, rgba(120, 255, 190, 0.06), transparent 62%),
+        radial-gradient(1000px 700px at 55% 85%, rgba(255, 200, 120, 0.05), transparent 60%),
+        linear-gradient(180deg, rgba(10, 14, 18, 0.98), rgba(8, 8, 10, 0.98));
+      background-attachment: fixed;
       color: #e8d5b7;
       min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
     }
 
     .stars {
@@ -731,62 +738,148 @@
       .token-card { padding: 22px; }
     }
   
-/* ===== Wan Shi Tong: Spirit Runner (Mini Game) ===== */
-#wstGamePanel{
-  margin-top: 18px;
-  padding: 18px;
-  border: 2px solid #8b6914;
-  border-radius: 16px;
-  background: rgba(0,0,0,0.35);
-  box-shadow: 0 0 28px rgba(218,165,32,0.14);
-}
-#wstGamePanel h3{ margin:0 0 8px 0; }
-#wstGameWrap{ display:grid; grid-template-columns: 1fr; gap: 12px; }
-#wstGameCanvas{
-  width:100%;
-  height: 380px;
-  border-radius: 14px;
-  border: 1px solid rgba(218,165,32,0.25);
-  background: rgba(0,0,0,0.25);
-  display:block;
-}
-#wstGameHud{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:space-between;
-}
-#wstGameHud .pill{
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(218,165,32,0.35);
-  background: rgba(0,0,0,0.35);
-  font-size: 12px;
-}
-#wstGameBtns{ display:flex; gap:10px; flex-wrap:wrap; }
-#wstGameBtns button{
-  cursor:pointer;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(218,165,32,0.55);
-  border-radius: 10px;
-  padding: 10px 12px;
-  color: #f7e7b7;
-  font-family: inherit;
-}
-#wstGameBtns button:hover{ background: rgba(218,165,32,0.12); }
-#wstLeaderboard{
-  margin-top: 10px;
-  padding: 12px;
-  border: 1px solid rgba(218,165,32,0.25);
-  border-radius: 12px;
-  background: rgba(0,0,0,0.25);
-  font-size: 12px;
-}
-#wstLeaderboard ol{ margin:8px 0 0 18px; padding:0; }
-#wstLeaderboard .muted{ opacity: .75; }
 
-</style>
+    /* =========================================================
+       Mystical Snow Overlay (site-wide)
+       ========================================================= */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1.6px),
+        radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1.7px),
+        radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1.8px);
+      background-size: 120px 120px, 180px 180px, 260px 260px;
+      filter: blur(0.2px);
+      animation: snowFallA 38s linear infinite;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.35) 2px, transparent 3px),
+        radial-gradient(circle at 30% 40%, rgba(120, 210, 255, 0.08), transparent 40%),
+        radial-gradient(circle at 70% 30%, rgba(120, 255, 190, 0.06), transparent 42%);
+      background-size: 320px 320px, 900px 900px, 1100px 1100px;
+      mix-blend-mode: screen;
+      filter: blur(0.6px);
+      animation: snowFallB 55s linear infinite, auroraDrift 18s ease-in-out infinite;
+    }
+
+    /* Keep content above overlays */
+    body > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes snowFallA {
+      from { background-position: 0 -200px, 0 -400px, 0 -600px; }
+      to   { background-position: 0 1200px, 0 1600px, 0 2000px; }
+    }
+
+    @keyframes snowFallB {
+      from { background-position: 0 -300px, 0 -700px, 0 -900px; }
+      to   { background-position: 0 1500px, 0 1900px, 0 2400px; }
+    }
+
+    @keyframes auroraDrift {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50%      { transform: translate3d(2%, 1%, 0) scale(1.02); }
+    }
+
+    /* ===== Meme Library (fit all aspect ratios) ===== */
+    .meme-frame{
+      width: 100%;
+      max-width: 900px;
+      aspect-ratio: 16 / 9;
+      margin: 0 auto;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid #8b6914;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .meme-frame img{
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .meme-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      justify-content:center;
+      margin-top: 14px;
+    }
+    .sigil-wrap{
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid #8b6914;
+      background: rgba(0,0,0,0.35);
+      box-shadow: 0 0 30px rgba(218,165,32,0.18);
+    }
+    .sigil-wrap img{ width: 100%; display:block; }
+    .sigil-wrap img.awakened{ filter: drop-shadow(0 0 14px rgba(255,60,60,0.55)); }
+
+
+/* ===== Spirit Run (Mini Game) ===== */
+.wst-game{
+  border: 1px solid rgba(139,105,20,0.55);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(0,0,0,0.22);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+.wst-game-head{
+  display:flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.wst-game-title{
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  font-size: 18px;
+  color: #f6d57a;
+  text-shadow: 0 0 18px rgba(246,213,122,0.25);
+}
+.wst-game-actions{ display:flex; gap: 8px; flex-wrap: wrap; }
+#wstGameCanvas{
+  width: 100%;
+  height: auto;
+  display:block;
+  border-radius: 12px;
+  border: 2px solid rgba(139,105,20,0.85);
+  background: radial-gradient(1200px 360px at 50% 0%, rgba(90,145,255,0.12), rgba(0,0,0,0.35)),
+              linear-gradient(180deg, rgba(20,20,28,0.55), rgba(10,10,12,0.55));
+}
+.wst-game-hud{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items:center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 13px;
+}
+  </style>
 </head>
 
 <body>
@@ -945,79 +1038,69 @@
       <p class="quote-author">— Wan Shi Tong, to Professor Zei</p>
     </div>
 
-    <div class="knowledge-form">
-      <h3>Contribute Knowledge</h3>
-      <p style="text-align: center; margin-bottom: 22px; opacity: 0.9;">
-        "Entry to my library has always required the same fee: knowledge. Bring me something I do not already possess, and I will grant you access."
+    <div class="knowledge-form" id="memeLibrary">
+      <h3>The Meme Library (Forbidden Pages)</h3>
+      <p style="text-align: center; margin-bottom: 18px; opacity: 0.9;">
+        No predictions. Only relics, receipts, and forbidden pages.
       </p>
 
-      <form id="knowledgeForm">
-        <div class="form-group">
-          <label for="name">Your Name:</label>
-          <input type="text" id="name" required />
-        </div>
-        <div class="form-group">
-          <label for="knowledge">What Knowledge Do You Bring?</label>
-          <textarea id="knowledge" required placeholder="Share something unique that even the greatest library has not yet collected..."></textarea>
-        </div>
-        <button type="submit" id="offerBtn">Present Your Offering</button>
+      <div class="meme-frame">
+        <img id="memeImg" alt="Forbidden Page" loading="lazy" />
+      </div>
 
-        <div class="submission-message" id="aiReply"></div>
-      </form>
+      <div class="submission-message" id="memeCaption" style="display:block; margin-top: 14px;"></div>
+
+      <div class="meme-actions">
+        <button type="button" class="btn small" id="memePrev">Prev</button>
+        <button type="button" class="btn small" id="memeRandom">Random Page</button>
+        <button type="button" class="btn small" id="memeNext">Next</button>
+        <button type="button" class="btn small" id="memeCopy">Copy Caption</button>
+        <button type="button" class="btn small" id="memeShare">Share on X</button>
+      </div>
     </div>
 
-    
-    <section class="token-grid" id="modelViewer" style="animation-delay: 1.1s;">
+    <section class="token-grid" id="spiritWorld" style="animation-delay: 1.1s;">
       <div class="panel" style="grid-column: 1 / -1;">
         <h3>Enter the Spirit World</h3>
         <p class="muted" style="margin-bottom: 18px;">
-          Behold Wan Shi Tong in three dimensions. Drag to rotate • scroll to zoom • double‑click to reset.
+          No model. No loading. The Librarian appears when summoned.
         </p>
 
-        <div style="display:grid; grid-template-columns: 1fr; gap: 12px;">
-          <canvas id="threeCanvas" width="900" height="520"
-            style="width:100%; height: clamp(360px, 48vh, 560px); display:block; border-radius: 12px; border: 2px solid #8b6914; background: rgba(0,0,0,0.30);"></canvas>
-          <div id="modelStatus" class="submission-message" style="display:block; margin-top: 0;">Loading 3D model...</div>
+        <div class="sigil-wrap">
+          <img id="spiritImg" src="wan-shi-tong.png" alt="Wan Shi Tong" loading="lazy" />
         </div>
 
-        
+        <div style="display:flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
+          <button type="button" class="btn" id="awakenBtn">Awaken the Librarian</button>
+        </div>
+
+<!-- ===== Spirit Run (Mini Game) ===== -->
+<div class="wst-game" id="wstGame" style="margin-top: 18px;">
+  <div class="wst-game-head">
+    <div>
+      <div class="wst-game-title">Spirit Run</div>
+      <div class="muted" style="margin-top:6px;">Jump the flames • collect knowledge • survive the desert.</div>
+    </div>
+    <div class="wst-game-actions">
+      <button type="button" class="btn small" id="wstGameStart">Start</button>
+      <button type="button" class="btn small" id="wstGamePause" aria-pressed="false">Pause</button>
+      <button type="button" class="btn small" id="wstGameReset">Reset</button>
+    </div>
+  </div>
+
+  <canvas id="wstGameCanvas" width="900" height="260" aria-label="Spirit Run game canvas"></canvas>
+
+  <div class="wst-game-hud">
+    <div><span class="tag">🦉</span> <strong id="wstGameScore">0</strong> score</div>
+    <div><span class="tag">🔥</span> <strong id="wstGameBest">0</strong> best</div>
+    <div class="muted">Controls: <strong>Space</strong>/<strong>↑</strong> jump • <strong>P</strong> pause</div>
+  </div>
+</div>
       </div>
     </section>
 </div>
 
-  
-<section id="wstGamePanel">
-  <h3>Wan Shi Tong: Spirit Runner</h3>
-  <p class="muted" style="margin-top:6px;">
-    Controls: <strong>←/→</strong> move, <strong>Space</strong> jump, <strong>X</strong> whirlwind, <strong>R</strong> restart.
-    Clear Fire Nation flames with a spirit gust.
-  </p>
-
-  <div id="wstGameWrap">
-    <canvas id="wstGameCanvas" width="960" height="380"></canvas>
-
-    <div id="wstGameHud">
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        <div class="pill">Score: <span id="wstScore">0</span></div>
-        <div class="pill">Best: <span id="wstBest">0</span></div>
-        <div class="pill">Whirlwind: <span id="wstWhirl">Ready</span></div>
-      </div>
-      <div id="wstGameBtns">
-        <button type="button" id="wstStartBtn">Start</button>
-        <button type="button" id="wstRestartBtn">Restart</button>
-        <button type="button" id="wstSubmitScoreBtn">Submit Score</button>
-      </div>
-    </div>
-
-    <div id="wstLeaderboard">
-      <strong>Leaderboard (local)</strong>
-      <div class="muted">Stored in this browser only.</div>
-      <ol id="wstLeaderboardList"></ol>
-    </div>
-  </div>
-</section>
-
-<footer>
+  <footer>
     <p>The Library exists beyond the physical realm, deep in the Spirit World</p>
     <p>Guarded eternally by Wan Shi Tong and his Knowledge Seekers</p>
     <p style="margin-top: 10px; opacity: 0.6;">
@@ -1216,52 +1299,6 @@
         setTimeout(() => btn.textContent = original, 1500);
       } catch (e) {
         alert('Failed to copy link');
-      }
-    });
-
-    // ===== AI Offering =====
-    const form = document.getElementById('knowledgeForm');
-    const aiReply = document.getElementById('aiReply');
-    const offerBtn = document.getElementById('offerBtn');
-
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const knowledge = document.getElementById('knowledge').value.trim();
-
-      aiReply.style.display = 'block';
-      aiReply.innerHTML = '<span class="loading-spinner"></span>The Knowledge Spirit considers your offering...';
-      offerBtn.disabled = true;
-      offerBtn.innerHTML = '<span class="loading-spinner"></span>Judging...';
-
-      try {
-        const endpoint = '/.netlify/functions/knowledge';
-        if (location.protocol === 'file:') {
-          throw new Error('Local preview cannot call Netlify Functions. Use netlify dev or deploy.');
-        }
-
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, knowledge })
-        });
-
-        const text = await res.text();
-        let data = null;
-        try { data = JSON.parse(text); } catch (_) {}
-
-        if (!res.ok) {
-          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Error (${res.status}).`;
-          throw new Error(msg);
-        }
-
-        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Spirit is silent.');
-      } catch (err) {
-        aiReply.textContent = 'The Spirit World connection falters... try again.\\n\\n' + err.message;
-      } finally {
-        offerBtn.disabled = false;
-        offerBtn.textContent = 'Present Your Offering';
       }
     });
 
@@ -1759,395 +1796,419 @@
   render();
 })();
   </script>
-  <script src="js/objviewer.js"></script>
+
   <script>
-    // ===== 3D Model Viewer =====
-    // MODEL_PATHS: update these if you rename files in /models/
-    const MODEL_PATHS = {
-      obj: "models/wanshi.obj",
-      mtl: "models/wanshi.mtl"
-    };
+    // ===== Meme Library + Spirit World (no 3D) =====
+    (function () {
+      // --- Meme Library ---
+      const MEMES = [
+        { src: "memes/page-001.jpg", text: "Page 001 — Snowball season. Knowledge hits harder." },
+        { src: "memes/page-002.jpg", text: "Page 002 — Even the Library throws snowballs." },
+        { src: "memes/page-003.jpg", text: "Page 003 — He who knows ten thousand things knows your entry." },
+        { src: "memes/page-004.jpg", text: "Page 004 — Wings spread. Liquidity flees." },
+        { src: "memes/page-005.jpg", text: "Page 005 — The hunt is quiet. The receipts are loud." },
+        { src: "memes/page-006.jpg", text: "Page 006 — The Librarian watches the seeker." }
+      ];
 
-    window.addEventListener("load", () => {
-      try {
-        if (typeof initWanShiViewer !== "function") {
-          const s = document.getElementById("modelStatus");
-          if (s) s.textContent = "3D viewer failed to initialize (missing viewer script).";
-          return;
-        }
-        initWanShiViewer({
-          canvasId: "threeCanvas",
-          statusId: "modelStatus",
-          objPath: MODEL_PATHS.obj,
-          mtlPath: MODEL_PATHS.mtl
-        });
-      } catch (e) {
-        const s = document.getElementById("modelStatus");
-        if (s) s.textContent = "3D viewer error: " + (e && e.message ? e.message : String(e));
+      let idx = 0;
+      const img = document.getElementById("memeImg");
+      const cap = document.getElementById("memeCaption");
+
+      function renderMeme() {
+        if (!img || !cap) return;
+        const item = MEMES[idx] || MEMES[0];
+        img.src = item.src;
+        cap.textContent = item.text || "";
       }
-    });
-  </script>
 
+      document.getElementById("memeNext")?.addEventListener("click", () => { idx = (idx + 1) % MEMES.length; renderMeme(); });
+      document.getElementById("memePrev")?.addEventListener("click", () => { idx = (idx - 1 + MEMES.length) % MEMES.length; renderMeme(); });
+      document.getElementById("memeRandom")?.addEventListener("click", () => { idx = Math.floor(Math.random() * MEMES.length); renderMeme(); });
 
-<script>
-(() => {
+      document.getElementById("memeCopy")?.addEventListener("click", async () => {
+        const item = MEMES[idx] || {};
+        const payload = (item.text || "").trim();
+        try { await navigator.clipboard.writeText(payload); } catch (e) {}
+      });
+
+      document.getElementById("memeShare")?.addEventListener("click", () => {
+        const item = MEMES[idx] || {};
+        const tweet = encodeURIComponent((item.text || "").trim());
+        const url = encodeURIComponent(window.location.href);
+        window.open(`https://twitter.com/intent/tweet?text=${tweet}&url=${url}`, "_blank", "noopener,noreferrer");
+      });
+
+      renderMeme();
+
+      // --- Spirit World (laser activation) ---
+      const awakenBtn = document.getElementById("awakenBtn");
+      const spiritImg = document.getElementById("spiritImg");
+      const normalSrc = "wan-shi-tong.png";
+      const laserSrc = "wan-shi-tong-laser.jpg";
+      let coolingDown = false;
+
+      function awaken(duration = 1200) {
+        if (!spiritImg) return;
+        spiritImg.src = laserSrc;
+        spiritImg.classList.add("awakened");
+        setTimeout(() => {
+          spiritImg.src = normalSrc;
+          spiritImg.classList.remove("awakened");
+        }, duration);
+      }
+
+      awakenBtn?.addEventListener("click", () => {
+        if (coolingDown) return;
+        coolingDown = true;
+        awaken(1200);
+        setTimeout(() => { coolingDown = false; }, 1800);
+      });
+    })();
+  
+
+// ===== Spirit Run (Mini Game) =====
+(function(){
   const canvas = document.getElementById('wstGameCanvas');
-  if (!canvas) return;
+  const startBtn = document.getElementById('wstGameStart');
+  const pauseBtn = document.getElementById('wstGamePause');
+  const resetBtn = document.getElementById('wstGameReset');
+  const scoreEl = document.getElementById('wstGameScore');
+  const bestEl = document.getElementById('wstGameBest');
+
+  if (!canvas || !startBtn || !pauseBtn || !resetBtn || !scoreEl || !bestEl) return;
+
   const ctx = canvas.getContext('2d');
+  const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  let logicalW = canvas.width;
+  let logicalH = canvas.height;
 
-  const ui = {
-    score: document.getElementById('wstScore'),
-    best: document.getElementById('wstBest'),
-    whirl: document.getElementById('wstWhirl'),
-    start: document.getElementById('wstStartBtn'),
-    restart: document.getElementById('wstRestartBtn'),
-    submit: document.getElementById('wstSubmitScoreBtn'),
-    lb: document.getElementById('wstLeaderboardList'),
-  };
+  function resizeCanvas(){
+    // keep logical size stable, but render crisp on high DPI
+    const cssW = canvas.clientWidth || 900;
+    const cssH = Math.max(220, Math.min(280, Math.round(cssW * 0.28)));
+    canvas.style.height = cssH + 'px';
 
-  const W = canvas.width, H = canvas.height;
-
-  // --- Tuning (slower pace) ---
-  const GRAV = 1800;
-  const JUMP = 760;
-  const RUN_SPEED = 260;          // world scroll speed (slower)
-  const FIRE_MIN_GAP = 240;       // further spacing
-  const FIRE_MAX_GAP = 430;
-  const FIRE_SIZE = { w: 34, h: 44 };
-
-  // Whirlwind
-  const WHIRL_COOLDOWN_MS = 4500;
-  const WHIRL_RADIUS = 140;
-  const WHIRL_DURATION_MS = 520;
-
-  let running = false;
-  let lastT = 0;
-  let score = 0;
-  let best = 0;
-
-  const BEST_KEY = 'wst_spirit_runner_best';
-  const LB_KEY = 'wst_spirit_runner_lb';
-
-  function loadBest(){
-    const v = Number(localStorage.getItem(BEST_KEY));
-    best = Number.isFinite(v) ? v : 0;
-    ui.best.textContent = String(best);
+    logicalW = Math.round(cssW * DPR);
+    logicalH = Math.round(cssH * DPR);
+    canvas.width = logicalW;
+    canvas.height = logicalH;
   }
-
-  function saveBest(){
-    localStorage.setItem(BEST_KEY, String(best));
-    ui.best.textContent = String(best);
-  }
-
-  function loadLB(){
-    const raw = localStorage.getItem(LB_KEY);
-    let arr = [];
-    try { arr = raw ? JSON.parse(raw) : []; } catch {}
-    return Array.isArray(arr) ? arr : [];
-  }
-
-  function saveLB(arr){
-    localStorage.setItem(LB_KEY, JSON.stringify(arr.slice(0, 10)));
-  }
-
-  function renderLB(){
-    const arr = loadLB();
-    ui.lb.innerHTML = '';
-    arr.slice(0, 7).forEach((e) => {
-      const li = document.createElement('li');
-      li.textContent = `${e.name} — ${e.score}`;
-      ui.lb.appendChild(li);
-    });
-    if (!arr.length){
-      const li = document.createElement('li');
-      li.textContent = 'No scores yet.';
-      ui.lb.appendChild(li);
-    }
-  }
-
-  // Player (emoji style)
-  const player = {
-    x: 140,
-    y: H - 72,
-    r: 18,
-    vy: 0,
-    onGround: true,
-  };
-
-  const groundY = H - 38;
-
-  // Fire obstacles
-  const fires = [];
-  let nextFireX = W + 240;
-
-  // Whirlwind state
-  let lastWhirl = -1e9;
-  let whirlUntil = 0;
-
-  // Input
-  const keys = new Set();
-  window.addEventListener('keydown', (e) => {
-    const k = e.key.toLowerCase();
-    if (['arrowleft','arrowright',' ','x','r'].includes(k) || e.code === 'Space'){
-      if (e.code === 'Space') keys.add('space'); else keys.add(k);
-      if (k === 'r') reset();
-      if (k === 'x') tryWhirl();
-      e.preventDefault();
-    }
-  }, { passive:false });
-
-  window.addEventListener('keyup', (e) => {
-    const k = e.key.toLowerCase();
-    if (e.code === 'Space') keys.delete('space');
-    keys.delete(k);
+  resizeCanvas();
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    draw(true);
   });
 
-  ui.start?.addEventListener('click', () => { if(!running){ running=true; lastT=performance.now(); requestAnimationFrame(loop); }});
-  ui.restart?.addEventListener('click', reset);
-  ui.submit?.addEventListener('click', submitScore);
+  const GROUND_RATIO = 0.82; // ground line
+  const player = {
+    x: 90,
+    y: 0,
+    vy: 0,
+    r: 18 * DPR,
+    onGround: true,
+    emoji: '🦉'
+  };
+
+  const flames = []; // obstacles
+  let running = false;
+  let paused = false;
+  let score = 0;
+  let best = 0;
+  let tPrev = 0;
+
+  const SPEED = 2.15 * DPR;         // slowed down
+  const GRAV = 0.48 * DPR;          // gravity
+  const JUMP = 10.6 * DPR;          // jump impulse (tuned)
+  const MIN_GAP = 200 * DPR;        // fire spacing: minimum pixels between obstacles
+  const SPAWN_MS_MIN = 1200;        // fire spacing: slower spawn cadence
+  const SPAWN_MS_MAX = 1900;
+
+  function loadBest(){
+    try { best = parseInt(localStorage.getItem('wstGameBest') || '0', 10) || 0; } catch(_) { best = 0; }
+    bestEl.textContent = best;
+  }
+  function saveBest(){
+    try { localStorage.setItem('wstGameBest', String(best)); } catch(_) {}
+  }
+  loadBest();
+
+  function groundY(){ return Math.floor(logicalH * GROUND_RATIO); }
 
   function reset(){
-    running = false;
+    flames.length = 0;
     score = 0;
-    ui.score.textContent = '0';
-    player.y = H - 72;
+    scoreEl.textContent = '0';
+    player.y = groundY() - player.r;
     player.vy = 0;
     player.onGround = true;
-    fires.length = 0;
-    nextFireX = W + 240;
-    lastWhirl = -1e9;
-    whirlUntil = 0;
-    ui.whirl.textContent = 'Ready';
-    draw(performance.now());
+    tPrev = 0;
+    draw(true);
   }
 
-  function submitScore(){
-    const name = (prompt('Name for leaderboard (local):', 'KnowledgeSeeker') || 'KnowledgeSeeker')
-      .trim().slice(0, 18) || 'KnowledgeSeeker';
+  function randomInt(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
 
-    const arr = loadLB();
-    arr.push({ name, score: Math.floor(score), ts: Date.now() });
-    arr.sort((a,b) => b.score - a.score);
-    saveLB(arr);
-    renderLB();
+  let spawnTimer = null;
+  function scheduleSpawn(){
+    if (spawnTimer) clearTimeout(spawnTimer);
+    const delay = randomInt(SPAWN_MS_MIN, SPAWN_MS_MAX);
+    spawnTimer = setTimeout(() => {
+      spawnFlame();
+      if (running && !paused) scheduleSpawn();
+    }, delay);
   }
 
-  function tryWhirl(){
-    const now = performance.now();
-    if (now - lastWhirl < WHIRL_COOLDOWN_MS) return;
-    lastWhirl = now;
-    whirlUntil = now + WHIRL_DURATION_MS;
+  function spawnFlame(){
+    const last = flames.length ? flames[flames.length - 1] : null;
+    const startX = logicalW + 60 * DPR;
+    if (last && (startX - last.x) < MIN_GAP) return;
 
-    // Clear fires within radius ahead of player
-    for (let i = fires.length - 1; i >= 0; i--){
-      const f = fires[i];
-      const cx = f.x + f.w/2;
-      const cy = f.y + f.h/2;
-      const dx = cx - player.x;
-      const dy = cy - (player.y);
-      const d = Math.hypot(dx, dy);
-      if (d <= WHIRL_RADIUS){
-        fires.splice(i,1);
-        score += 25; // reward for skill
-      }
-    }
-  }
-
-  function rectHitCircle(rx, ry, rw, rh, cx, cy, cr){
-    // clamp point
-    const px = Math.max(rx, Math.min(cx, rx+rw));
-    const py = Math.max(ry, Math.min(cy, ry+rh));
-    const dx = cx - px;
-    const dy = cy - py;
-    return (dx*dx + dy*dy) <= cr*cr;
-  }
-
-  function spawnFire(){
-    const gap = FIRE_MIN_GAP + Math.random()*(FIRE_MAX_GAP - FIRE_MIN_GAP);
-    nextFireX += gap;
-    fires.push({
-      x: nextFireX,
-      y: groundY - FIRE_SIZE.h + 6,
-      w: FIRE_SIZE.w,
-      h: FIRE_SIZE.h,
-      phase: Math.random()*10
+    const h = randomInt(Math.floor(34*DPR), Math.floor(52*DPR)); // more "real" flame size variance
+    flames.push({
+      x: startX,
+      w: Math.floor(28*DPR),
+      h,
+      emoji: '🔥',
+      passed: false
     });
   }
 
-  function update(dt, now){
-    // gravity
-    player.vy += GRAV * dt;
-    player.y += player.vy * dt;
-
-    // ground collide
-    if (player.y >= groundY - player.r){
-      player.y = groundY - player.r;
-      player.vy = 0;
-      player.onGround = true;
-    } else {
-      player.onGround = false;
-    }
-
-    // jump
-    const jump = keys.has('space') || keys.has('arrowup');
-    if (jump && player.onGround){
+  function jump(){
+    if (!running || paused) return;
+    if (player.onGround){
       player.vy = -JUMP;
       player.onGround = false;
     }
-
-    // scroll world + spawn
-    const dx = RUN_SPEED * dt;
-    for (const f of fires) f.x -= dx;
-
-    // remove offscreen
-    while (fires.length && fires[0].x + fires[0].w < -20) fires.shift();
-
-    // ensure enough fires ahead
-    if (fires.length < 6 && nextFireX - (W + 100) < 900){
-      spawnFire();
-    }
-
-    // collision
-    for (const f of fires){
-      if (rectHitCircle(f.x, f.y, f.w, f.h, player.x, player.y, player.r)){
-        running = false;
-        if (score > best){ best = Math.floor(score); saveBest(); }
-        // show hint
-        ui.whirl.textContent = 'Press Restart';
-        return;
-      }
-    }
-
-    // score
-    score += dt * 10; // slower score growth
-    ui.score.textContent = String(Math.floor(score));
-
-    // whirlwind UI
-    const cd = WHIRL_COOLDOWN_MS - (now - lastWhirl);
-    if (now < whirlUntil){
-      ui.whirl.textContent = 'ACTIVE';
-    } else if (cd > 0){
-      ui.whirl.textContent = `${Math.ceil(cd/1000)}s`;
-    } else {
-      ui.whirl.textContent = 'Ready';
-    }
   }
 
-  function draw(now){
-    const t = now / 1000;
+  function togglePause(force){
+    if (!running) return;
+    paused = typeof force === 'boolean' ? force : !paused;
+    pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    pauseBtn.textContent = paused ? 'Resume' : 'Pause';
 
-    // background
-    ctx.clearRect(0,0,W,H);
-    // dusk gradient
-    const g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0, 'rgba(10,14,18,0.95)');
-    g.addColorStop(1, 'rgba(0,0,0,0.65)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-
-    // distant dunes + mist
-    ctx.fillStyle = 'rgba(218,165,32,0.06)';
-    for (let i=0;i<6;i++){
-      const yy = 220 + i*22 + Math.sin(t*0.7 + i)*6;
-      ctx.fillRect(0, yy, W, 2);
+    if (!paused){
+      tPrev = performance.now();
+      scheduleSpawn();
+      requestAnimationFrame(loop);
+    } else {
+      if (spawnTimer) clearTimeout(spawnTimer);
     }
+    draw(true);
+  }
 
-    // ground
+  function stopGame(reason){
+    running = false;
+    paused = false;
+    if (spawnTimer) clearTimeout(spawnTimer);
+    if (score > best){
+      best = score;
+      bestEl.textContent = best;
+      saveBest();
+    }
+    // flash a small message
+    ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.55)';
-    ctx.fillRect(0, groundY, W, H-groundY);
-    ctx.strokeStyle = 'rgba(218,165,32,0.25)';
+    ctx.fillRect(0,0,logicalW,logicalH);
+    ctx.fillStyle = '#f6d57a';
+    ctx.font = `${Math.floor(22*DPR)}px Georgia, serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(reason || 'The Librarian judges you.', logicalW/2, logicalH/2 - 10*DPR);
+    ctx.font = `${Math.floor(14*DPR)}px Georgia, serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('Press Start to try again.', logicalW/2, logicalH/2 + 18*DPR);
+    ctx.restore();
+  }
+
+  function rectsOverlap(ax,ay,aw,ah,bx,by,bw,bh){
+    return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+  }
+
+  // draw a simple "more real" backdrop: dune line + drifting embers
+  const embers = Array.from({length: 22}, () => ({
+    x: Math.random(),
+    y: Math.random(),
+    s: 0.3 + Math.random()*0.9,
+    a: 0.05 + Math.random()*0.15
+  }));
+
+  function draw(force){
+    ctx.clearRect(0,0,logicalW,logicalH);
+
+    // sky shimmer
+    ctx.save();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(0,0,0,0.0)';
+    ctx.fillRect(0,0,logicalW,logicalH);
+
+    // dune / ground
+    const gy = groundY();
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = 'rgba(139,105,20,0.22)';
     ctx.beginPath();
-    ctx.moveTo(0, groundY+0.5);
-    ctx.lineTo(W, groundY+0.5);
+    ctx.moveTo(0, gy);
+    const bump = Math.floor(22*DPR);
+    for (let x=0; x<=logicalW; x+=Math.floor(80*DPR)){
+      const y = gy + Math.sin((x/160)*Math.PI)*bump;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(logicalW, logicalH);
+    ctx.lineTo(0, logicalH);
+    ctx.closePath();
+    ctx.fill();
+
+    // ground line
+    ctx.globalAlpha = 0.65;
+    ctx.strokeStyle = 'rgba(246,213,122,0.35)';
+    ctx.lineWidth = Math.max(1, Math.floor(2*DPR));
+    ctx.beginPath();
+    ctx.moveTo(0, gy);
+    ctx.lineTo(logicalW, gy);
     ctx.stroke();
 
-    // fires
-    for (const f of fires){
-      const flick = 0.55 + 0.45*Math.sin((t*12) + f.phase);
-      // outer flame
-      ctx.fillStyle = `rgba(255, 65, 65, ${0.50 + 0.25*flick})`;
+    // embers (subtle)
+    ctx.globalAlpha = 1;
+    for (const e of embers){
+      const ex = e.x * logicalW;
+      const ey = e.y * gy;
+      ctx.fillStyle = `rgba(255,180,80,${e.a})`;
       ctx.beginPath();
-      ctx.ellipse(f.x + f.w/2, f.y + f.h/2, f.w/2, f.h/2, 0, 0, Math.PI*2);
+      ctx.arc(ex, ey, e.s*DPR, 0, Math.PI*2);
       ctx.fill();
-      // inner flame
-      ctx.fillStyle = `rgba(255, 180, 80, ${0.35 + 0.20*flick})`;
-      ctx.beginPath();
-      ctx.ellipse(f.x + f.w/2, f.y + f.h/2 + 3, f.w/3, f.h/3, 0, 0, Math.PI*2);
-      ctx.fill();
-      // sparks
-      ctx.fillStyle = `rgba(255, 200, 140, ${0.10 + 0.10*flick})`;
-      for (let i=0;i<3;i++){
-        const sx = f.x + (i+1)*8 + (Math.sin(t*9 + f.phase+i)*4);
-        const sy = f.y - 6 - i*6;
-        ctx.fillRect(sx, sy, 2, 2);
-      }
     }
+    ctx.restore();
 
-    // whirlwind effect
-    if (now < whirlUntil){
-      const p = 1 - ((whirlUntil - now) / WHIRL_DURATION_MS);
-      ctx.strokeStyle = `rgba(140, 255, 220, ${0.45 * (1-p)})`;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(player.x, player.y, WHIRL_RADIUS*(0.65 + 0.35*Math.sin(p*Math.PI)), 0, Math.PI*2);
-      ctx.stroke();
-      ctx.lineWidth = 1;
-      // spiral
-      ctx.strokeStyle = `rgba(122, 255, 192, ${0.25*(1-p)})`;
-      ctx.beginPath();
-      for (let a=0; a<Math.PI*4; a+=0.25){
-        const rr = (a/(Math.PI*4))*WHIRL_RADIUS;
-        const xx = player.x + Math.cos(a + p*6)*rr;
-        const yy = player.y + Math.sin(a + p*6)*rr;
-        if (a===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
-      }
-      ctx.stroke();
-    }
-
-    // player (emoji)
-    ctx.font = '30px system-ui, Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji';
+    // player (emoji style)
+    ctx.save();
+    ctx.font = `${Math.floor(40*DPR)}px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('🦉', player.x, player.y);
+    ctx.shadowColor = 'rgba(255,255,255,0.15)';
+    ctx.shadowBlur = 14 * DPR;
+    ctx.fillText(player.emoji, player.x, player.y);
+    ctx.restore();
 
-    // hint line
-    ctx.fillStyle = 'rgba(232,227,214,0.85)';
-    ctx.font = '12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText('Whirlwind (X) clears nearby fire — cooldown applies.', 12, 18);
-
-    if (!running){
-      ctx.fillStyle = 'rgba(0,0,0,0.55)';
-      ctx.fillRect(0,0,W,H);
-      ctx.fillStyle = 'rgba(218,165,32,0.95)';
-      ctx.font = '18px ui-monospace, monospace';
+    // flames
+    for (const f of flames){
+      const fx = f.x;
+      const fy = groundY() - f.h/2;
+      ctx.save();
+      ctx.font = `${Math.floor(44*DPR)}px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText('Press Start to run the Spirit Path', W/2, H/2 - 10);
-      ctx.fillStyle = 'rgba(232,227,214,0.85)';
-      ctx.font = '12px ui-monospace, monospace';
-      ctx.fillText('Avoid fire. Jump (Space). Whirlwind (X).', W/2, H/2 + 18);
-      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(255,90,0,0.25)';
+      ctx.shadowBlur = 22 * DPR;
+      ctx.fillText(f.emoji, fx, fy);
+      ctx.restore();
+    }
+
+    // overlay (paused)
+    if (running && paused){
+      ctx.save();
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.fillRect(0,0,logicalW,logicalH);
+      ctx.fillStyle = '#f6d57a';
+      ctx.font = `${Math.floor(20*DPR)}px Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Paused', logicalW/2, logicalH/2);
+      ctx.restore();
     }
   }
 
-  function loop(now){
-    const dt = Math.min(0.033, (now - lastT)/1000);
-    lastT = now;
+  function update(dt){
+    // player physics
+    player.vy += GRAV;
+    player.y += player.vy;
 
-    if (running) update(dt, now);
-    draw(now);
+    const gy = groundY() - player.r;
+    if (player.y >= gy){
+      player.y = gy;
+      player.vy = 0;
+      player.onGround = true;
+    }
 
+    // move obstacles
+    for (const f of flames){
+      f.x -= SPEED * (dt/16.67);
+      // score passing
+      if (!f.passed && f.x < player.x - 10*DPR){
+        f.passed = true;
+        score += 1;
+        scoreEl.textContent = String(score);
+      }
+    }
+    // cleanup
+    while (flames.length && flames[0].x < -120*DPR) flames.shift();
+
+    // collision check (simple bbox)
+    const pW = 34 * DPR;
+    const pH = 34 * DPR;
+    const pX = player.x - pW/2;
+    const pY = player.y - pH/2;
+
+    for (const f of flames){
+      const fW = 34 * DPR;
+      const fH = f.h;
+      const fX = f.x - fW/2;
+      const fY = groundY() - fH;
+
+      if (rectsOverlap(pX,pY,pW,pH,fX,fY,fW,fH)){
+        stopGame('The fire consumes the knowledge.');
+        return false;
+      }
+    }
+
+    // animate embers drift
+    for (const e of embers){
+      e.x -= 0.0004 * (dt/16.67);
+      e.y += 0.0002 * (dt/16.67);
+      if (e.x < -0.05) e.x = 1.05;
+      if (e.y > 1.05) e.y = -0.05;
+    }
+
+    return true;
+  }
+
+  function loop(t){
+    if (!running || paused) return;
+    if (!tPrev) tPrev = t;
+    const dt = Math.min(48, t - tPrev);
+    tPrev = t;
+
+    const ok = update(dt);
+    draw(false);
+    if (ok) requestAnimationFrame(loop);
+  }
+
+  function start(){
+    reset();
+    running = true;
+    paused = false;
+    pauseBtn.setAttribute('aria-pressed','false');
+    pauseBtn.textContent = 'Pause';
+    tPrev = performance.now();
+    scheduleSpawn();
     requestAnimationFrame(loop);
   }
 
-  // init
-  loadBest();
-  renderLB();
-  reset();
-  requestAnimationFrame((t) => { lastT = t; loop(t); });
+  // controls
+  startBtn.addEventListener('click', start);
+  resetBtn.addEventListener('click', reset);
+  pauseBtn.addEventListener('click', () => togglePause());
 
+  window.addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if (k === ' ' || k === 'arrowup'){
+      e.preventDefault();
+      if (!running) start();
+      jump();
+    } else if (k === 'p'){
+      togglePause();
+    }
+  }, { passive: false });
+
+  // first paint
+  reset();
 })();
 </script>
-
 </body>
 </html>

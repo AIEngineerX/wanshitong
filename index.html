@@ -14,17 +14,10 @@
 
     body {
       font-family: 'Georgia', serif;
-      /* Mystical winter/aurora background (replaces prior gradient) */
-      background:
-        radial-gradient(1200px 700px at 15% 10%, rgba(120, 210, 255, 0.08), transparent 60%),
-        radial-gradient(900px 600px at 85% 18%, rgba(120, 255, 190, 0.06), transparent 62%),
-        radial-gradient(1000px 700px at 55% 85%, rgba(255, 200, 120, 0.05), transparent 60%),
-        linear-gradient(180deg, rgba(10, 14, 18, 0.98), rgba(8, 8, 10, 0.98));
-      background-attachment: fixed;
+      background: linear-gradient(135deg, #1a0a0a 0%, #3d2314 50%, #1a0a0a 100%);
       color: #e8d5b7;
       min-height: 100vh;
       overflow-x: hidden;
-      position: relative;
     }
 
     .stars {
@@ -738,130 +731,55 @@
       .token-card { padding: 22px; }
     }
   
+/* ===== Added: Spirit Runner + Meme Library + Spirit Sigil (no 3D) ===== */
+#wstRunnerSection{margin-top:28px;}
+#wstRunnerCard{border:1px solid rgba(218,165,32,0.35);border-radius:16px;background:rgba(0,0,0,0.35);padding:16px;box-shadow:0 0 28px rgba(218,165,32,0.10);}
+#wstRunnerHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+#wstRunnerHeader h3{margin:0;color:#daa520;font-size:26px;letter-spacing:0.04em;}
+#wstRunnerHeader p{margin:6px 0 0;color:rgba(232,227,214,0.8);}
+#wstRunnerHud{display:flex;gap:10px;flex-wrap:wrap;}
+.wstPill{border:1px solid rgba(218,165,32,0.35);border-radius:999px;padding:7px 11px;background:rgba(0,0,0,0.35);font-size:13px;color:rgba(232,227,214,0.9);}
+#wstRunnerCanvas{width:100%;height:auto;display:block;border-radius:14px;border:1px solid rgba(218,165,32,0.25);background:linear-gradient(180deg, rgba(8,10,12,.92), rgba(0,0,0,.55));margin-top:12px;}
+#wstRunnerControls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+#wstRunnerControls .btn{width:auto;min-width:160px}
+#wstRunnerLb{margin-top:14px;border-top:1px solid rgba(218,165,32,0.18);padding-top:14px;}
+#wstRunnerLb h4{margin:0 0 8px;color:#daa520;font-size:18px;}
+#wstRunnerLb .muted{opacity:.85;font-size:13px;}
+#wstRunnerLbList{margin:10px 0 0;padding:0;list-style:none;}
+#wstRunnerLbList li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid rgba(218,165,32,0.18);border-radius:12px;background:rgba(0,0,0,0.25);margin-bottom:8px;font-size:14px;}
+@media (max-width:700px){ #wstRunnerHeader h3{font-size:22px;} .wstPill{font-size:12px;} }
 
-    /* =========================================================
-       Mystical Snow Overlay (site-wide)
-       ========================================================= */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.55;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1.6px),
-        radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1.7px),
-        radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1.8px);
-      background-size: 120px 120px, 180px 180px, 260px 260px;
-      filter: blur(0.2px);
-      animation: snowFallA 38s linear infinite;
-    }
+#wstMemeLibrary{margin-top:28px;}
+#wstMemeFrame{width:100%;max-width:980px;aspect-ratio:16/9;margin:0 auto;border-radius:14px;overflow:hidden;border:1px solid rgba(218,165,32,0.25);background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;}
+#wstMemeImg{max-width:100%;max-height:100%;object-fit:contain;display:block;}
+#wstMemeCaption{margin:14px 0 0;border:1px solid rgba(218,165,32,0.25);border-radius:12px;background:rgba(0,0,0,0.25);padding:12px;color:rgba(232,227,214,0.9);}
+#wstMemeBtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px;}
+#wstMemeBtns .btn{min-width:160px;width:auto}
 
-    body::after {
-      content: "";
-      position: fixed;
-      inset: -20%;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.35;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.35) 2px, transparent 3px),
-        radial-gradient(circle at 30% 40%, rgba(120, 210, 255, 0.08), transparent 40%),
-        radial-gradient(circle at 70% 30%, rgba(120, 255, 190, 0.06), transparent 42%);
-      background-size: 320px 320px, 900px 900px, 1100px 1100px;
-      mix-blend-mode: screen;
-      filter: blur(0.6px);
-      animation: snowFallB 55s linear infinite, auroraDrift 18s ease-in-out infinite;
-    }
-
-    /* Keep content above overlays */
-    body > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes snowFallA {
-      from { background-position: 0 -200px, 0 -400px, 0 -600px; }
-      to   { background-position: 0 1200px, 0 1600px, 0 2000px; }
-    }
-
-    @keyframes snowFallB {
-      from { background-position: 0 -300px, 0 -700px, 0 -900px; }
-      to   { background-position: 0 1500px, 0 1900px, 0 2400px; }
-    }
-
-    @keyframes auroraDrift {
-      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-      50%      { transform: translate3d(2%, 1%, 0) scale(1.02); }
-    }
-
-    /* ===== Meme Library (fit all aspect ratios) ===== */
-    .meme-frame{
-      width: 100%;
-      max-width: 900px;
-      aspect-ratio: 16 / 9;
-      margin: 0 auto;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 2px solid #8b6914;
-      background: rgba(0,0,0,0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .meme-frame img{
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-    .meme-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap: wrap;
-      justify-content:center;
-      margin-top: 14px;
-    }
-    .sigil-wrap{
-      width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 2px solid #8b6914;
-      background: rgba(0,0,0,0.35);
-      box-shadow: 0 0 30px rgba(218,165,32,0.18);
-    }
-    .sigil-wrap img{ width: 100%; display:block; }
-    .sigil-wrap img.awakened{ filter: drop-shadow(0 0 14px rgba(255,60,60,0.55)); }
-
-
-/* ===== Wan Shi Tong Mini-Game (additive; does not affect other sections) ===== */
-#owlGame {
-  margin: 50px auto 30px;
-  max-width: 900px;
-  border: 2px solid rgba(139,105,20,0.55);
-  border-radius: 10px;
-  background: rgba(0,0,0,0.35);
-  padding: 22px;
+#wstSpiritBottom{margin-top:28px;}
+#wstSpiritCard{border:1px solid rgba(218,165,32,0.35);border-radius:16px;background:rgba(0,0,0,0.35);padding:16px;box-shadow:0 0 28px rgba(218,165,32,0.10);}
+#wstSpiritImgWrap{position:relative;max-width:420px;margin:12px auto 0;border-radius:14px;overflow:hidden;border:1px solid rgba(218,165,32,0.25);background:rgba(0,0,0,0.35);}
+#wstSpiritImgWrap img{display:block;width:100%;height:auto;}
+.wstLaser{position:absolute;width:44px;height:44px;left:50%;top:36%;transform:translate(-50%,-50%);opacity:0;pointer-events:none;}
+.wstLaser::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,80,80,0.95) 28%, rgba(255,0,0,0.25) 60%, rgba(255,0,0,0) 72%);
+  filter:blur(0.2px);
 }
-#owlGame h3 { color:#daa520; text-align:center; margin: 0 0 10px; font-size: 1.8em; }
-#owlGame .muted { opacity: 0.85; text-align:center; margin: 0 0 14px; }
-#owlGame .game-wrap { border:1px solid rgba(218,165,32,0.25); border-radius:14px; overflow:hidden; background: rgba(0,0,0,0.45); }
-#owlGame canvas { width:100%; height:auto; display:block; background: linear-gradient(180deg, rgba(8,10,12,.92), rgba(0,0,0,.55)); }
-#owlGame .game-hud { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:10px; border-top:1px solid rgba(218,165,32,0.18); }
-#owlGame .pill { border:1px solid rgba(218,165,32,0.35); border-radius:999px; padding:6px 10px; background: rgba(0,0,0,0.35); }
-#owlGame .btn-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px; }
-#owlGame .mini { font-size: 0.85em; opacity:0.8; text-align:center; margin-top:10px; }
-#owlGame .mobile-controls{ display:none; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap;}
-#owlGame .mobile-controls button{ min-width:84px; }
-@media (max-width: 860px){
-  #owlGame .mobile-controls{ display:flex; }
+#wstLaserL{margin-left:-64px;}
+#wstLaserR{margin-left:64px;}
+#wstSpiritImgWrap.awakened .wstLaser{opacity:1;animation:wstPulse 1.2s ease-in-out infinite;}
+@keyframes wstPulse{0%,100%{transform:translate(-50%,-50%) scale(0.95);}50%{transform:translate(-50%,-50%) scale(1.08);}}
+#wstSpiritImgWrap.awakened::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:36%;
+  height:3px;
+  background:linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(255,80,80,0.85) 20%, rgba(255,255,255,0.95) 50%, rgba(255,80,80,0.85) 80%, rgba(255,0,0,0) 100%);
+  filter:blur(0.6px);
+  opacity:0.9;
+  animation:wstSweep 1.0s ease-in-out infinite;
 }
-#owlGame .leaderboard { margin-top: 16px; border-top:1px solid rgba(218,165,32,0.18); padding-top:14px; }
-#owlGame .lb-grid { display:grid; grid-template-columns: 1fr; gap:8px; max-width:520px; margin:0 auto; }
-#owlGame .lb-row { display:flex; justify-content:space-between; gap:12px; padding:8px 10px; border:1px solid rgba(218,165,32,0.20); border-radius:10px; background: rgba(0,0,0,0.25);}
+@keyframes wstSweep{0%,100%{opacity:0.55;}50%{opacity:0.95;}}
 
 </style>
 </head>
@@ -948,7 +866,79 @@
         </div>
 
         <div class="disclaimer">
-          <strong>Wan Shi Tong warns:</strong> I do not help those who seek knowledge for war or personal gain. The library exists for those who truly wish to learn. Enter at your own discretion.
+          <strong>Wan Shi Tong warns:</strong> I do not help those who seek knowledge for 
+<section class="token-grid" id="wstRunnerSection">
+  <div class="token-card" id="wstRunnerCard">
+    <div id="wstRunnerHeader">
+      <div>
+        <h3>Wan Shi Tong: Spirit Runner</h3>
+        <p class="muted">Emoji owl. Jump the flames. Press <b>X</b> to cast a whirlwind that clears nearby fire.</p>
+      </div>
+      <div id="wstRunnerHud">
+        <div class="wstPill">Score: <span id="wstScore">0</span></div>
+        <div class="wstPill">Best: <span id="wstBest">0</span></div>
+        <div class="wstPill">Whirlwind: <span id="wstWhirl">Ready</span></div>
+      </div>
+    </div>
+
+    <canvas id="wstRunnerCanvas" width="960" height="260"></canvas>
+
+    <div id="wstRunnerControls">
+      <button class="btn" id="wstStartBtn" type="button">Start</button>
+      <button class="btn" id="wstRestartBtn" type="button">Restart (R)</button>
+      <button class="btn" id="wstSubmitBtn" type="button">Submit Score</button>
+      <button class="btn" id="wstShareBtn" type="button">Share on X</button>
+    </div>
+
+    <p class="muted" style="text-align:center;margin:10px 0 0;">Controls: ←/→ move, Space jump, X whirlwind, R restart.</p>
+
+    <div id="wstRunnerLb">
+      <h4>Library Leaderboard (Local)</h4>
+      <div class="muted">Stored in your browser (no backend).</div>
+      <ul id="wstRunnerLbList"></ul>
+    </div>
+  </div>
+</section>
+
+<section class="token-grid" id="wstMemeLibrary">
+  <div class="token-card">
+    <h3>The Meme Library (Forbidden Pages)</h3>
+    <p class="muted" style="text-align:center;margin-top:6px;">No predictions. Only relics, receipts, and forbidden pages.</p>
+
+    <div id="wstMemeFrame">
+      <img id="wstMemeImg" alt="Forbidden Page" src="memes/page-001.jpg" loading="lazy">
+    </div>
+
+    <div id="wstMemeCaption">Page 001 — The first forbidden page is always the loudest.</div>
+
+    <div id="wstMemeBtns">
+      <button class="btn" id="wstPrevBtn" type="button">Prev</button>
+      <button class="btn" id="wstRandBtn" type="button">Random Page</button>
+      <button class="btn" id="wstNextBtn" type="button">Next</button>
+      <button class="btn" id="wstCopyBtn" type="button">Copy Caption</button>
+      <button class="btn" id="wstShareMemeBtn" type="button">Share on X</button>
+    </div>
+  </div>
+</section>
+
+<section class="token-grid" id="wstSpiritBottom">
+  <div class="token-card" id="wstSpiritCard">
+    <h3>Spirit World</h3>
+    <p class="muted" style="text-align:center;margin-top:6px;">Awaken the Librarian. No 3D. Just the stare.</p>
+
+    <div id="wstSpiritImgWrap">
+      <img src="wan-shi-tong.png" alt="Wan Shi Tong">
+      <div class="wstLaser" id="wstLaserL"></div>
+      <div class="wstLaser" id="wstLaserR"></div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-top:14px;">
+      <button class="btn" id="wstAwakenBtn" type="button">Awaken</button>
+    </div>
+  </div>
+</section>
+
+war or personal gain. The library exists for those who truly wish to learn. Enter at your own discretion.
         </div>
       </div>
     </section>
@@ -993,45 +983,7 @@
   <path d="M8 10h8M8 13h8M8 16h5"/>
 </svg>
 </span> The Library's Guardian</h2>
-        <p>Wan Shi Tong is an ancient knowledge spirit who built the greatest library in the w
-<div class="knowledge-form" id="owlGame">
-  <h3>Wan Shi Tong: Spirit Runner</h3>
-  <p class="muted">Emoji owl. Jump the flames. Press <strong>X</strong> to cast a whirlwind that clears nearby fire.</p>
-
-  <div class="game-wrap">
-    <canvas id="wstGame" width="900" height="420"></canvas>
-    <div class="game-hud">
-      <div class="pill">Score: <span id="wstScore">0</span></div>
-      <div class="pill">Best: <span id="wstBest">0</span></div>
-      <div class="pill">Whirlwind: <span id="wstWhirl">Ready</span></div>
-    </div>
-  </div>
-
-  <div class="btn-row">
-    <button type="button" class="btn" id="wstStartBtn">Start</button>
-    <button type="button" class="btn" id="wstRestartBtn">Restart (R)</button>
-    <button type="button" class="btn" id="wstSubmitBtn">Submit Score</button>
-    <button type="button" class="btn" id="wstShareBtn">Share on X</button>
-  </div>
-
-  <div class="mobile-controls">
-    <button type="button" class="btn" id="wstLeftBtn">◀</button>
-    <button type="button" class="btn" id="wstJumpBtn">Jump</button>
-    <button type="button" class="btn" id="wstWhirlBtn">Whirl</button>
-    <button type="button" class="btn" id="wstRightBtn">▶</button>
-  </div>
-
-  <div class="mini">Controls: ←/→ move, Space jump, X whirlwind, R restart.</div>
-
-  <div class="leaderboard">
-    <h4 style="text-align:center; color:#daa520; margin:0 0 10px;">Library Leaderboard (Local)</h4>
-    <div class="lb-grid" id="wstLb"></div>
-    <div class="mini">Leaderboard is stored in your browser (no backend).</div>
-  </div>
-</div>
-
-
-orld, hidden beneath the Si Wong Desert. For millennia, he collected knowledge from every corner of existence, demanding payment in unique information from all who enter. His towering form and countless eyes see through deception—he knows when mortals seek knowledge for war.</p>
+        <p>Wan Shi Tong is an ancient knowledge spirit who built the greatest library in the world, hidden beneath the Si Wong Desert. For millennia, he collected knowledge from every corner of existence, demanding payment in unique information from all who enter. His towering form and countless eyes see through deception—he knows when mortals seek knowledge for war.</p>
       </div>
 
       <div class="section">
@@ -1060,43 +1012,11 @@ orld, hidden beneath the Si Wong Desert. For millennia, he collected knowledge f
       <p class="quote-author">— Wan Shi Tong, to Professor Zei</p>
     </div>
 
-    <div class="knowledge-form" id="memeLibrary">
-      <h3>The Meme Library (Forbidden Pages)</h3>
-      <p style="text-align: center; margin-bottom: 18px; opacity: 0.9;">
-        No predictions. Only relics, receipts, and forbidden pages.
-      </p>
+    
 
-      <div class="meme-frame">
-        <img id="memeImg" alt="Forbidden Page" loading="lazy" />
-      </div>
 
-      <div class="submission-message" id="memeCaption" style="display:block; margin-top: 14px;"></div>
 
-      <div class="meme-actions">
-        <button type="button" class="btn small" id="memePrev">Prev</button>
-        <button type="button" class="btn small" id="memeRandom">Random Page</button>
-        <button type="button" class="btn small" id="memeNext">Next</button>
-        <button type="button" class="btn small" id="memeCopy">Copy Caption</button>
-        <button type="button" class="btn small" id="memeShare">Share on X</button>
-      </div>
-    </div>
 
-    <section class="token-grid" id="spiritWorld" style="animation-delay: 1.1s;">
-      <div class="panel" style="grid-column: 1 / -1;">
-        <h3>Enter the Spirit World</h3>
-        <p class="muted" style="margin-bottom: 18px;">
-          No model. No loading. The Librarian appears when summoned.
-        </p>
-
-        <div class="sigil-wrap">
-          <img id="spiritImg" src="wan-shi-tong.png" alt="Wan Shi Tong" loading="lazy" />
-        </div>
-
-        <div style="display:flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
-          <button type="button" class="btn" id="awakenBtn">Awaken the Librarian</button>
-        </div>
-      </div>
-    </section>
 </div>
 
   <footer>
@@ -1194,25 +1114,7 @@ orld, hidden beneath the Si Wong Desert. For millennia, he collected knowledge f
       });
     });
 
-    // ===== 3D Owl Tilt Effect (throttled) =====
-    const owlIcon = document.querySelector('.owl-icon');
-    let rafId = null;
-    function onMouseMove(e){
-      if (!owlIcon) return;
-      const x = (e.clientX / window.innerWidth - 0.5) * 15;
-      const y = (e.clientY / window.innerHeight - 0.5) * 15;
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        owlIcon.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
-        rafId = null;
-      });
-    }
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseleave', () => {
-      if (owlIcon) owlIcon.style.transform = '';
-    });
-
-    // ===== Hover Lore Typewriter =====
+    // ===== (3D viewer removed) ===== Hover Lore Typewriter =====
     const loreLines = [
       "I am Wan Shi Tong, a Knowledge Spirit.",
       "I have collected information for over ten thousand years.",
@@ -1298,6 +1200,52 @@ orld, hidden beneath the Si Wong Desert. For millennia, he collected knowledge f
         setTimeout(() => btn.textContent = original, 1500);
       } catch (e) {
         alert('Failed to copy link');
+      }
+    });
+
+    // ===== AI Offering =====
+    const form = document.getElementById('knowledgeForm');
+    const aiReply = document.getElementById('aiReply');
+    const offerBtn = document.getElementById('offerBtn');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const knowledge = document.getElementById('knowledge').value.trim();
+
+      aiReply.style.display = 'block';
+      aiReply.innerHTML = '<span class="loading-spinner"></span>The Knowledge Spirit considers your offering...';
+      offerBtn.disabled = true;
+      offerBtn.innerHTML = '<span class="loading-spinner"></span>Judging...';
+
+      try {
+        const endpoint = '/.netlify/functions/knowledge';
+        if (location.protocol === 'file:') {
+          throw new Error('Local preview cannot call Netlify Functions. Use netlify dev or deploy.');
+        }
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, knowledge })
+        });
+
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) {}
+
+        if (!res.ok) {
+          const msg = (data && (data.reply || data.error)) ? (data.reply || data.error) : `Error (${res.status}).`;
+          throw new Error(msg);
+        }
+
+        aiReply.textContent = (data && data.reply) ? data.reply : (text || 'The Spirit is silent.');
+      } catch (err) {
+        aiReply.textContent = 'The Spirit World connection falters... try again.\\n\\n' + err.message;
+      } finally {
+        offerBtn.disabled = false;
+        offerBtn.textContent = 'Present Your Offering';
       }
     });
 
@@ -1795,471 +1743,421 @@ orld, hidden beneath the Si Wong Desert. For millennia, he collected knowledge f
   render();
 })();
   </script>
-
+  <script src="js/objviewer.js"></script>
   <script>
-    // ===== Meme Library + Spirit World (no 3D) =====
-    (function () {
-      // --- Meme Library ---
-      const MEMES = [
-        { src: "memes/page-001.jpg", text: "Page 001 — Snowball season. Knowledge hits harder." },
-        { src: "memes/page-002.jpg", text: "Page 002 — Even the Library throws snowballs." },
-        { src: "memes/page-003.jpg", text: "Page 003 — He who knows ten thousand things knows your entry." },
-        { src: "memes/page-004.jpg", text: "Page 004 — Wings spread. Liquidity flees." },
-        { src: "memes/page-005.jpg", text: "Page 005 — The hunt is quiet. The receipts are loud." },
-        { src: "memes/page-006.jpg", text: "Page 006 — The Librarian watches the seeker." }
-      ];
+    // ===== 3D Model Viewer =====
+    // MODEL_PATHS: update these if you rename files in /models/
+    const MODEL_PATHS = {
+      obj: "models/wanshi.obj",
+      mtl: "models/wanshi.mtl"
+    };
 
-      let idx = 0;
-      const img = document.getElementById("memeImg");
-      const cap = document.getElementById("memeCaption");
-
-      function renderMeme() {
-        if (!img || !cap) return;
-        const item = MEMES[idx] || MEMES[0];
-        img.src = item.src;
-        cap.textContent = item.text || "";
+    window.addEventListener("load", () => {
+      try {
+        if (typeof initWanShiViewer !== "function") {
+          const s = document.getElementById("modelStatus");
+          if (s) s.textContent = "3D viewer failed to initialize (missing viewer script).";
+          return;
+        }
+        initWanShiViewer({
+          canvasId: "threeCanvas",
+          statusId: "modelStatus",
+          objPath: MODEL_PATHS.obj,
+          mtlPath: MODEL_PATHS.mtl
+        });
+      } catch (e) {
+        const s = document.getElementById("modelStatus");
+        if (s) s.textContent = "3D viewer error: " + (e && e.message ? e.message : String(e));
       }
+    });
+  </script>
 
-      document.getElementById("memeNext")?.addEventListener("click", () => { idx = (idx + 1) % MEMES.length; renderMeme(); });
-      document.getElementById("memePrev")?.addEventListener("click", () => { idx = (idx - 1 + MEMES.length) % MEMES.length; renderMeme(); });
-      document.getElementById("memeRandom")?.addEventListener("click", () => { idx = Math.floor(Math.random() * MEMES.length); renderMeme(); });
-
-      document.getElementById("memeCopy")?.addEventListener("click", async () => {
-        const item = MEMES[idx] || {};
-        const payload = (item.text || "").trim();
-        try { await navigator.clipboard.writeText(payload); } catch (e) {}
-      });
-
-      document.getElementById("memeShare")?.addEventListener("click", () => {
-        const item = MEMES[idx] || {};
-        const tweet = encodeURIComponent((item.text || "").trim());
-        const url = encodeURIComponent(window.location.href);
-        window.open(`https://twitter.com/intent/tweet?text=${tweet}&url=${url}`, "_blank", "noopener,noreferrer");
-      });
-
-      renderMeme();
-
-      // --- Spirit World (laser activation) ---
-      const awakenBtn = document.getElementById("awakenBtn");
-      const spiritImg = document.getElementById("spiritImg");
-      const normalSrc = "wan-shi-tong.png";
-      const laserSrc = "wan-shi-tong-laser.jpg";
-      let coolingDown = false;
-
-      function awaken(duration = 1200) {
-        if (!spiritImg) return;
-        spiritImg.src = laserSrc;
-        spiritImg.classList.add("awakened");
-        setTimeout(() => {
-          spiritImg.src = normalSrc;
-          spiritImg.classList.remove("awakened");
-        }, duration);
-      }
-
-      awakenBtn?.addEventListener("click", () => {
-        if (coolingDown) return;
-        coolingDown = true;
-        awaken(1200);
-        setTimeout(() => { coolingDown = false; }, 1800);
-      });
-    })();
-  
-
-
-// ===== Wan Shi Tong: Spirit Runner (additive; isolated) =====
+<script>
+/* ===== Added: Spirit Runner (fixed timestep + HiDPI), Meme Library, Spirit Awaken ===== */
 (() => {
-  const canvas = document.getElementById('wstGame');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  // ---- Spirit Runner ----
+  const c = document.getElementById('wstRunnerCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
 
   const ui = {
     score: document.getElementById('wstScore'),
     best: document.getElementById('wstBest'),
     whirl: document.getElementById('wstWhirl'),
-    lb: document.getElementById('wstLb'),
-  };
-
-  const btn = {
     start: document.getElementById('wstStartBtn'),
     restart: document.getElementById('wstRestartBtn'),
     submit: document.getElementById('wstSubmitBtn'),
     share: document.getElementById('wstShareBtn'),
-    left: document.getElementById('wstLeftBtn'),
-    right: document.getElementById('wstRightBtn'),
-    jump: document.getElementById('wstJumpBtn'),
-    whirl: document.getElementById('wstWhirlBtn'),
+    lb: document.getElementById('wstRunnerLbList')
   };
 
-  // Crisp rendering on HiDPI (reduces “choppy” look)
-  function resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.getBoundingClientRect();
-    const w = Math.max(1, Math.floor(rect.width * dpr));
-    const h = Math.max(1, Math.floor((rect.width * 0.466) * dpr)); // ~900x420 ratio
-    canvas.width = w;
-    canvas.height = h;
+  // HiDPI scale
+  function fitCanvas(){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const cssW = c.clientWidth || 960;
+    const cssH = Math.round(cssW * (260/960));
+    c.style.height = cssH + 'px';
+    c.width  = Math.round(cssW * dpr);
+    c.height = Math.round(cssH * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
-  resizeCanvas();
-  window.addEventListener('resize', () => { resizeCanvas(); });
-
-  // Fixed timestep loop (smooth motion)
-  const STEP = 1/60;
-  let acc = 0;
-  let last = performance.now();
+  requestAnimationFrame(fitCanvas);
+  window.addEventListener('resize', () => requestAnimationFrame(fitCanvas));
 
   // Game state
-  const state = {
-    running: false,
-    gameOver: false,
-    score: 0,
-    best: 0,
-    speed: 180,          // slowed down
-    gravity: 900,        // softened
-    jumpV: -440,         // jump
-    groundY: 0,
-    t: 0,
-    whirlwindCd: 0,
-    whirlwindActive: 0,
-  };
+  let running = false;
+  let score = 0;
+  let best = Number(localStorage.getItem('wst_runner_best') || 0);
+  ui.best.textContent = String(best);
 
-  // Entities
-  const owl = { x: 120, y: 0, vy: 0, w: 34, h: 34, onGround: false };
-  let fires = [];
-  let spawnTimer = 0;
-
-  const LS_BEST = 'wst_spirit_runner_best';
-  const LS_LB = 'wst_spirit_runner_lb';
-
-  function loadBest() {
-    const v = Number(localStorage.getItem(LS_BEST) || '0');
-    state.best = Number.isFinite(v) ? v : 0;
-    if (ui.best) ui.best.textContent = String(state.best);
-  }
-
-  function loadLb() {
-    try {
-      return JSON.parse(localStorage.getItem(LS_LB) || '[]') || [];
-    } catch { return []; }
-  }
-
-  function saveLb(rows) {
-    localStorage.setItem(LS_LB, JSON.stringify(rows));
-  }
-
-  function renderLb() {
-    const rows = loadLb();
-    if (!ui.lb) return;
-    ui.lb.innerHTML = rows.length
-      ? rows.map((r, i) => `<div class="lb-row"><div>#${i+1} ${escapeHtml(r.name)}</div><div>${r.score}</div></div>`).join('')
-      : `<div class="mini" style="text-align:center;">No scores yet. Be the first.</div>`;
-  }
-
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
-  function reset(run=false) {
-    state.running = run;
-    state.gameOver = false;
-    state.score = 0;
-    state.t = 0;
-    state.whirlwindCd = 0;
-    state.whirlwindActive = 0;
-
-    fires = [];
-    spawnTimer = 0;
-
-    owl.x = 120;
-    owl.vy = 0;
-    owl.onGround = false;
-    owl.y = 0;
-
-    // ground recalculated on each draw based on canvas height
-    if (ui.score) ui.score.textContent = '0';
-    updateWhirlLabel();
-  }
-
-  function updateWhirlLabel(){
-    if (!ui.whirl) return;
-    if (state.whirlwindActive > 0) ui.whirl.textContent = 'Casting';
-    else if (state.whirlwindCd <= 0) ui.whirl.textContent = 'Ready';
-    else ui.whirl.textContent = `${Math.ceil(state.whirlwindCd)}s`;
-  }
-
-  function gameOver() {
-    state.running = false;
-    state.gameOver = true;
-    if (state.score > state.best) {
-      state.best = state.score;
-      localStorage.setItem(LS_BEST, String(state.best));
-      if (ui.best) ui.best.textContent = String(state.best);
-    }
-  }
-
-  // Input
-  const keys = { left:false, right:false, jump:false, whirl:false };
-
-  function setKey(k, v){ keys[k]=v; }
-
+  const K = new Set();
   window.addEventListener('keydown', (e) => {
-    const k = e.key.toLowerCase();
-    if (k === 'arrowleft') setKey('left', true);
-    if (k === 'arrowright') setKey('right', true);
-    if (k === 'arrowup' || k === ' ') setKey('jump', true);
-    if (k === 'x') setKey('whirl', true);
-    if (k === 'r') reset(true);
-  });
+    const k = e.code;
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'Space' || k === 'KeyX' || k === 'KeyR'){
+      K.add(k);
+      if (k === 'KeyR') reset();
+      e.preventDefault();
+    }
+  }, {passive:false});
+  window.addEventListener('keyup', (e) => K.delete(e.code));
 
-  window.addEventListener('keyup', (e) => {
-    const k = e.key.toLowerCase();
-    if (k === 'arrowleft') setKey('left', false);
-    if (k === 'arrowright') setKey('right', false);
-    if (k === 'arrowup' || k === ' ') setKey('jump', false);
-    if (k === 'x') setKey('whirl', false);
-  });
+  // Tuned slower + smoother
+  const GRAV = 2200;
+  const JUMP = 860;
+  const MOVE = 520;        // slower
+  const GROUND = 208;      // y in CSS px space (not DPR)
+  const FIRE_MIN_GAP = 260; // more spacing
+  const FIRE_SPEED = 240;  // slower fire
 
-  // Mobile buttons (press & hold for move)
-  const bindHold = (el, onDown, onUp) => {
-    if (!el) return;
-    const down = (ev) => { ev.preventDefault(); onDown(); };
-    const up = (ev) => { ev.preventDefault(); onUp(); };
-    el.addEventListener('pointerdown', down, { passive:false });
-    el.addEventListener('pointerup', up, { passive:false });
-    el.addEventListener('pointercancel', up, { passive:false });
-    el.addEventListener('pointerleave', up, { passive:false });
-  };
-  bindHold(btn.left, () => setKey('left', true), () => setKey('left', false));
-  bindHold(btn.right, () => setKey('right', true), () => setKey('right', false));
-  bindHold(btn.jump, () => setKey('jump', true), () => setKey('jump', false));
-  bindHold(btn.whirl, () => setKey('whirl', true), () => setKey('whirl', false));
+  const owl = { x: 80, y: GROUND, vy: 0, on: true, r: 18 };
+  let fires = [];
+  let spawnX = 980;
 
-  btn.start?.addEventListener('click', () => { if (!state.running) state.running = true; });
-  btn.restart?.addEventListener('click', () => reset(true));
+  // Whirlwind
+  let whirlCooldown = 0; // seconds
+  const WHIRL_CD = 3.5;
+  const WHIRL_RADIUS = 210;
 
-  btn.submit?.addEventListener('click', () => {
-    if (!state.gameOver && state.running) return;
-    const name = prompt('Name for leaderboard:', 'Knowledge Seeker') || '';
-    const clean = name.trim().slice(0, 18) || 'Knowledge Seeker';
-    const rows = loadLb();
-    rows.push({ name: clean, score: state.score });
-    rows.sort((a,b) => b.score - a.score);
-    const top = rows.slice(0, 10);
-    saveLb(top);
-    renderLb();
-  });
-
-  btn.share?.addEventListener('click', () => {
-    const text = `🦉 Wan Shi Tong: Spirit Runner\nScore: ${state.score}\n\nHe Who Knows Ten Thousand Things.`;
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(location.href)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-  });
-
-  function spawnFire() {
-    const w = 24, h = 44;
-    const x = canvas.width + 30;
-    // y will be based on ground
-    fires.push({ x, y: 0, w, h });
+  function reset(){
+    running = false;
+    score = 0;
+    owl.x = 80; owl.y = GROUND; owl.vy = 0; owl.on = true;
+    fires = [];
+    spawnX = 980;
+    whirlCooldown = 0;
+    ui.score.textContent = '0';
+    ui.whirl.textContent = 'Ready';
   }
 
-  function update(step) {
-    if (!state.running) return;
+  function start(){
+    if (!running) running = true;
+  }
 
-    state.t += step;
-    state.score += Math.floor(state.speed * step * 0.08);
-    if (ui.score) ui.score.textContent = String(state.score);
+  ui.start?.addEventListener('click', start);
+  ui.restart?.addEventListener('click', reset);
 
-    // Slight ramp, still slow
-    state.speed = Math.min(260, state.speed + step * 2.2);
+  function rand(min,max){ return min + Math.random()*(max-min); }
 
-    // cooldowns
-    if (state.whirlwindCd > 0) state.whirlwindCd -= step;
-    if (state.whirlwindActive > 0) state.whirlwindActive -= step;
-    updateWhirlLabel();
+  function spawnFire(){
+    // Ensure spacing by spawnX
+    const h = rand(22, 34);
+    fires.push({ x: spawnX, y: GROUND- (h/2), w: rand(22, 30), h, alive:true });
+    spawnX += FIRE_MIN_GAP + rand(0, 160);
+  }
 
-    const ground = canvas.height - 56;
-    state.groundY = ground;
+  // collision circle vs rect
+  function hitCircleRect(cx,cy,cr, r){
+    const nx = Math.max(r.x, Math.min(cx, r.x + r.w));
+    const ny = Math.max(r.y - r.h/2, Math.min(cy, (r.y - r.h/2) + r.h));
+    const dx = cx - nx, dy = cy - ny;
+    return (dx*dx + dy*dy) <= cr*cr;
+  }
 
-    // Move owl
-    const vx = (keys.left ? -1 : 0) + (keys.right ? 1 : 0);
-    owl.x = Math.max(30, Math.min(canvas.width - 30, owl.x + vx * 260 * step));
+  function drawBG(w,h,t){
+    // dunes + embers
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(0,0,0,0.10)';
+    ctx.fillRect(0,0,w,h);
 
-    // Jump (edge-trigger)
-    if (keys.jump && owl.onGround){
-      owl.vy = state.jumpV;
-      owl.onGround = false;
+    // dunes
+    ctx.fillStyle = 'rgba(218,165,32,0.08)';
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.quadraticCurveTo(w*0.25, h-24, w*0.5, h-10);
+    ctx.quadraticCurveTo(w*0.75, h+6, w, h-18);
+    ctx.lineTo(w,h); ctx.closePath();
+    ctx.fill();
+
+    // snow specks (mystic)
+    ctx.fillStyle = 'rgba(255,255,255,0.20)';
+    for(let i=0;i<40;i++){
+      const x = (i*79 + t*30) % (w+40) - 20;
+      const y = (i*41 + t*55) % (h+40) - 20;
+      ctx.beginPath();
+      ctx.arc(x,y,(i%3)+0.6,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function drawOwl(){
+    // Emoji owl
+    ctx.font = '32px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🦉', owl.x, owl.y-18);
+  }
+
+  function drawFire(f,t){
+    // stylized flame (outer+inner + sparks), less blocky
+    const baseX = f.x, baseY = f.y;
+    const pulse = 0.75 + 0.25*Math.sin(t*10 + baseX*0.01);
+    // outer
+    ctx.fillStyle = `rgba(255,80,80,${0.55*pulse})`;
+    ctx.beginPath();
+    ctx.ellipse(baseX, baseY, f.w*0.9, f.h*0.55, 0, 0, Math.PI*2);
+    ctx.fill();
+    // inner
+    ctx.fillStyle = `rgba(255,200,120,${0.35*pulse})`;
+    ctx.beginPath();
+    ctx.ellipse(baseX, baseY-2, f.w*0.55, f.h*0.35, 0, 0, Math.PI*2);
+    ctx.fill();
+    // sparks
+    ctx.fillStyle = `rgba(255,255,255,${0.08*pulse})`;
+    for(let i=0;i<3;i++){
+      const sx = baseX + (i-1)*6 + Math.sin(t*8+i)*3;
+      const sy = baseY - f.h*0.6 - (i*4) + (Math.cos(t*7+i)*2);
+      ctx.fillRect(sx, sy, 2, 2);
+    }
+  }
+
+  function drawWhirl(t){
+    // whirlwind ring effect around owl when casting
+    ctx.strokeStyle = 'rgba(122,255,192,0.35)';
+    ctx.lineWidth = 2;
+    for(let i=0;i<3;i++){
+      const r = 34 + i*10 + Math.sin(t*10+i)*2;
+      ctx.beginPath();
+      ctx.arc(owl.x, owl.y-18, r, 0, Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+  }
+
+  // Leaderboard local
+  const LB_KEY = 'wst_runner_lb_v1';
+  function loadLB(){
+    try { return JSON.parse(localStorage.getItem(LB_KEY) || '[]'); } catch { return []; }
+  }
+  function saveLB(arr){
+    localStorage.setItem(LB_KEY, JSON.stringify(arr.slice(0,10)));
+  }
+  function renderLB(){
+    const arr = loadLB();
+    ui.lb.innerHTML = '';
+    if (!arr.length){
+      const li = document.createElement('li');
+      li.style.justifyContent = 'center';
+      li.textContent = 'No scores yet. Be the first.';
+      ui.lb.appendChild(li);
+      return;
+    }
+    arr.forEach((s,i)=>{
+      const li = document.createElement('li');
+      li.innerHTML = `<span>#${i+1} ${s.name}</span><span>${s.score}</span>`;
+      ui.lb.appendChild(li);
+    });
+  }
+  renderLB();
+
+  ui.submit?.addEventListener('click', () => {
+    const name = (prompt('Name for the Library ledger?') || '').trim().slice(0,18);
+    if (!name) return;
+    const arr = loadLB();
+    arr.push({ name, score });
+    arr.sort((a,b)=>b.score-a.score);
+    saveLB(arr);
+    renderLB();
+  });
+
+  ui.share?.addEventListener('click', () => {
+    const txt = encodeURIComponent(`I survived Wan Shi Tong: Spirit Runner with a score of ${score}. 🦉🔥 #WanShiTong`);
+    window.open(`https://twitter.com/intent/tweet?text=${txt}`, '_blank');
+  });
+
+  // fixed timestep loop
+  let last = performance.now();
+  let acc = 0;
+  const step = 1/60;
+
+  function update(dt){
+    if (!running) return;
+
+    // movement (optional left/right but slow)
+    if (K.has('ArrowLeft')) owl.x = Math.max(30, owl.x - MOVE*dt);
+    if (K.has('ArrowRight')) owl.x = Math.min((c.clientWidth||960)-30, owl.x + MOVE*dt);
+
+    // jump
+    if ((K.has('Space')) && owl.on){
+      owl.vy = -JUMP;
+      owl.on = false;
     }
 
-    // Whirlwind (edge-trigger)
-    if (keys.whirl && state.whirlwindCd <= 0 && state.whirlwindActive <= 0) {
-      state.whirlwindActive = 0.35;
-      state.whirlwindCd = 4.0;
-      // Clear fires within radius
-      const cx = owl.x;
-      const r = 140;
-      fires = fires.filter(f => (Math.abs((f.x + f.w/2) - cx) > r));
-    }
+    owl.vy += GRAV*dt;
+    owl.y += owl.vy*dt;
 
-    // Gravity
-    owl.vy += state.gravity * step;
-    owl.y += owl.vy * step;
-
-    if (owl.y >= ground - owl.h){
-      owl.y = ground - owl.h;
+    if (owl.y >= GROUND){
+      owl.y = GROUND;
       owl.vy = 0;
-      owl.onGround = true;
+      owl.on = true;
     }
 
-    // Spawn fire with bigger gaps
-    spawnTimer -= step;
-    if (spawnTimer <= 0){
-      spawnFire();
-      // spacing: 1.35s–2.25s, plus ensure minimum x gap
-      const base = 1.7 + Math.random() * 0.8;
-      spawnTimer = base;
+    // cooldown
+    whirlCooldown = Math.max(0, whirlCooldown - dt);
+    ui.whirl.textContent = whirlCooldown <= 0 ? 'Ready' : `${whirlCooldown.toFixed(1)}s`;
+
+    // cast whirlwind
+    if (K.has('KeyX') && whirlCooldown <= 0){
+      whirlCooldown = WHIRL_CD;
+      // clear fires within radius
+      const cx = owl.x, cy = owl.y-18;
+      fires.forEach(f=>{
+        const dx = f.x - cx;
+        const dy = (f.y) - cy;
+        if (Math.sqrt(dx*dx + dy*dy) <= WHIRL_RADIUS) f.alive = false;
+      });
     }
 
-    // Move fires
-    const speed = state.speed;
-    for (const f of fires) {
-      f.x -= speed * step;
-      f.y = ground - f.h + 8;
+    // spawn fires ahead
+    const w = (c.clientWidth || 960);
+    if (fires.length < 6 && (fires.length === 0 || (spawnX - (fires[fires.length-1]?.x || 0)) >= FIRE_MIN_GAP)){
+      if (spawnX < w + 600) spawnFire();
     }
-    fires = fires.filter(f => f.x > -80);
 
-    // Collision (AABB)
-    const ox = owl.x - owl.w/2, oy = owl.y, ow = owl.w, oh = owl.h;
+    // move fires left
+    fires.forEach(f => f.x -= FIRE_SPEED*dt);
+    fires = fires.filter(f => f.x > -80 && f.alive);
+
+    // scoring over time
+    score += dt * 10; // slower scoring
+    ui.score.textContent = String(Math.floor(score));
+
+    // collisions
     for (const f of fires){
-      if (ox < f.x + f.w && ox + ow > f.x && oy < f.y + f.h && oy + oh > f.y){
-        gameOver();
-        break;
+      if (!f.alive) continue;
+      if (hitCircleRect(owl.x, owl.y-18, owl.r, f)){
+        running = false;
+        // banished message overlay (simple)
       }
     }
+
+    // best
+    const sInt = Math.floor(score);
+    if (sInt > best){
+      best = sInt;
+      localStorage.setItem('wst_runner_best', String(best));
+      ui.best.textContent = String(best);
+    }
   }
 
-  function draw() {
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0,0,w,h);
+  function draw(now){
+    const w = c.clientWidth || 960;
+    const h = parseInt(c.style.height || '260',10) || 260;
+    drawBG(w,h, now/1000);
 
-    // Background: mystical dunes + wisps
-    ctx.fillStyle = 'rgba(218,165,32,0.05)';
-    for (let i=0;i<10;i++){
-      const yy = 60 + i*34;
-      ctx.fillRect(24, yy, w-48, 2);
-    }
-
-    // Snow-ish particles (subtle)
-    ctx.fillStyle = 'rgba(255,255,255,0.18)';
-    for (let i=0;i<70;i++){
-      const sx = (i*97 + state.t*30) % (w+50) - 25;
-      const sy = (i*41 + state.t*70) % (h+50) - 25;
-      const r = (i%3)+0.8;
-      ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill();
-    }
-
-    // Ground
-    const ground = canvas.height - 56;
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.fillRect(0, ground, w, 56);
+    // ground line
     ctx.strokeStyle = 'rgba(218,165,32,0.22)';
     ctx.beginPath();
-    ctx.moveTo(0, ground+0.5);
-    ctx.lineTo(w, ground+0.5);
+    ctx.moveTo(0, GROUND+1);
+    ctx.lineTo(w, GROUND+1);
     ctx.stroke();
 
-    // Fires (more “real” flame layers)
-    for (const f of fires){
-      const flick = 0.55 + 0.45*Math.sin((state.t*10) + f.x*0.02);
-      // outer flame
-      ctx.fillStyle = `rgba(255, 60, 60, ${0.55 + 0.25*flick})`;
-      flameShape(f.x, f.y, f.w, f.h, 1.0);
-      // inner flame
-      ctx.fillStyle = `rgba(255, 170, 60, ${0.35 + 0.25*flick})`;
-      flameShape(f.x+4, f.y+8, f.w-8, f.h-14, 0.9);
-      // sparks
-      ctx.fillStyle = `rgba(255, 220, 120, ${0.18 + 0.18*flick})`;
-      for (let i=0;i<3;i++){
-        const sx = f.x + f.w/2 + (i-1)*6 + Math.sin(state.t*9 + i)*3;
-        const sy = f.y + 8 + i*10 + Math.cos(state.t*7 + i)*2;
-        ctx.beginPath(); ctx.arc(sx, sy, 1.2, 0, Math.PI*2); ctx.fill();
-      }
-    }
+    // fires
+    fires.forEach(f=> drawFire(f, now/1000));
 
-    // Whirlwind effect
-    if (state.whirlwindActive > 0){
-      const p = state.whirlwindActive / 0.35;
-      ctx.strokeStyle = `rgba(122,255,192,${0.25 + 0.35*p})`;
-      ctx.lineWidth = 2;
-      for (let i=0;i<3;i++){
-        ctx.beginPath();
-        ctx.arc(owl.x, owl.y + owl.h/2, 40 + i*18, 0, Math.PI*2);
-        ctx.stroke();
-      }
-      ctx.lineWidth = 1;
-    }
+    // owl
+    drawOwl();
 
-    // Owl (emoji style)
-    ctx.font = `${Math.floor(owl.h*1.2)}px system-ui, Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText('🦉', owl.x, owl.y-6);
+    // whirlwind visual when cooling (brief hint)
+    if (whirlCooldown > (WHIRL_CD-0.18)) drawWhirl(now/1000);
 
-    // Overlay text
-    ctx.fillStyle = 'rgba(0,0,0,0.20)';
-    ctx.fillRect(0,0,w,30);
-    ctx.fillStyle = 'rgba(218,165,32,0.92)';
-    ctx.font = '14px ui-monospace, monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText('Jump the flames. X = Whirlwind.', 10, 20);
-
-    if (!state.running && !state.gameOver){
-      centerMsg('Press Start', 'then run the Spirit Library.');
-    }
-    if (state.gameOver){
-      centerMsg('Banished.', 'Press R or Restart.');
+    // status overlay
+    if (!running){
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = 'rgba(232,227,214,0.90)';
+      ctx.font = '22px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const msg = (score > 0) ? 'Banished.' : 'Press Start.';
+      ctx.fillText(msg, w/2, h/2 - 10);
+      ctx.font = '13px ui-monospace, monospace';
+      ctx.fillStyle = 'rgba(232,227,214,0.75)';
+      ctx.fillText('Space to jump • X to whirlwind • R to restart', w/2, h/2 + 16);
     }
   }
 
-  function flameShape(x,y,w,h,s){
-    ctx.beginPath();
-    ctx.moveTo(x + w/2, y);
-    ctx.bezierCurveTo(x + w*0.15, y + h*0.35*s, x + w*0.10, y + h*0.85*s, x + w/2, y + h*s);
-    ctx.bezierCurveTo(x + w*0.90, y + h*0.85*s, x + w*0.85, y + h*0.35*s, x + w/2, y);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  function centerMsg(h1, h2){
-    const w = canvas.width, h = canvas.height;
-    ctx.fillStyle = 'rgba(0,0,0,0.60)';
-    ctx.fillRect(0,0,w,h);
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.font = '26px ui-monospace, monospace';
-    ctx.fillText(h1, w/2, h/2 - 18);
-    ctx.fillStyle = 'rgba(232,227,214,0.85)';
-    ctx.font = '14px ui-monospace, monospace';
-    ctx.fillText(h2, w/2, h/2 + 12);
-  }
-
-  function frame(now){
-    const dt = Math.min(0.05, (now - last) / 1000);
+  function loop(now){
+    const dt = Math.min(0.05, (now - last)/1000);
     last = now;
     acc += dt;
-
-    while (acc >= STEP){
-      update(STEP);
-      acc -= STEP;
+    while (acc >= step){
+      update(step);
+      acc -= step;
     }
-    draw();
-    requestAnimationFrame(frame);
+    draw(now);
+    requestAnimationFrame(loop);
   }
 
-  loadBest();
-  renderLb();
-  reset(false);
-  requestAnimationFrame(frame);
-})();
+  reset();
+  requestAnimationFrame(loop);
 
+  // ---- Meme Library ----
+  const memeImg = document.getElementById('wstMemeImg');
+  const memeCap = document.getElementById('wstMemeCaption');
+  const prevBtn = document.getElementById('wstPrevBtn');
+  const nextBtn = document.getElementById('wstNextBtn');
+  const randBtn = document.getElementById('wstRandBtn');
+  const copyBtn = document.getElementById('wstCopyBtn');
+  const shareMemeBtn = document.getElementById('wstShareMemeBtn');
+
+  const MEMES = [
+    {src:'memes/page-001.jpg', cap:'Page 001 — The first forbidden page is always the loudest.'},
+    {src:'memes/page-002.jpg', cap:'Page 002 — The Librarian approves of receipts.'},
+    {src:'memes/page-003.jpg', cap:'Page 003 — Enter quietly. Leave louder.'},
+    {src:'memes/page-004.jpg', cap:'Page 004 — Knowledge is a weapon. Use it wrong and pay.'},
+    {src:'memes/page-005.jpg', cap:'Page 005 — The archive remembers everything.'},
+    {src:'memes/page-006.jpg', cap:'Page 006 — The Spirit World does not forget volume.'}
+  ];
+  let mi = 0;
+  function showM(i){
+    mi = (i + MEMES.length) % MEMES.length;
+    const m = MEMES[mi];
+    if (memeImg) memeImg.src = m.src;
+    if (memeCap) memeCap.textContent = m.cap;
+  }
+  prevBtn?.addEventListener('click', ()=>showM(mi-1));
+  nextBtn?.addEventListener('click', ()=>showM(mi+1));
+  randBtn?.addEventListener('click', ()=>showM(Math.floor(Math.random()*MEMES.length)));
+  copyBtn?.addEventListener('click', async ()=>{
+    try { await navigator.clipboard.writeText(MEMES[mi].cap); }
+    catch { /* ignore */ }
+  });
+  shareMemeBtn?.addEventListener('click', ()=>{
+    const txt = encodeURIComponent(MEMES[mi].cap + ' #WanShiTong');
+    window.open(`https://twitter.com/intent/tweet?text=${txt}`, '_blank');
+  });
+  showM(0);
+
+  // ---- Spirit Awaken ----
+  const awakenBtn = document.getElementById('wstAwakenBtn');
+  const wrap = document.getElementById('wstSpiritImgWrap');
+  awakenBtn?.addEventListener('click', ()=>{
+    if (!wrap) return;
+    wrap.classList.toggle('awakened');
+    awakenBtn.textContent = wrap.classList.contains('awakened') ? 'Return to Silence' : 'Awaken';
+  });
+})();
 </script>
+
 </body>
 </html>

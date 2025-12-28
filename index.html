@@ -2587,7 +2587,7 @@
     <div class="wst-portal-top">
       <div class="wst-portal-title">
         <strong>WAN SHI TONG — KNOWLEDGE VAULT</strong>
-        <span>Portal mode. A concentrated mirror of the Library.</span>
+        <span>Portal mode. Snowball telemetry. Forbidden pages.</span>
       </div>
       <button class="wst-portal-close" id="wstPortalClose" type="button">Close (Esc)</button>
     </div>
@@ -2596,227 +2596,101 @@
       <div class="wst-portal-tabs" role="tablist" aria-label="Portal Tabs">
         <button class="wst-portal-tab" role="tab" aria-selected="true"  data-tab="snowball">Snowball Terminal</button>
         <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="family">Snowball Family</button>
-        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="spirit">Spirit Gate</button></div>
+        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="spirit">Spirit Gate</button>
+      </div>
       <div class="wst-portal-content" id="wstPortalContent"></div>
     </div>
   </div>
 </div>
 
-
 <script>
 (() => {
-  // ===== WST Portal (additive; non-destructive) =====
+  // ===== Portal open/close =====
   const portalBtn = document.getElementById('wstPortalBtn');
   const portal = document.getElementById('wstPortal');
   const closeBtn = document.getElementById('wstPortalClose');
   const content = document.getElementById('wstPortalContent');
   const tabs = Array.from(portal.querySelectorAll('.wst-portal-tab'));
 
+  let snowballTimer = null;
+  let familyTimer = null;
+
   function setPortal(open){
     portal.setAttribute('aria-hidden', open ? 'false' : 'true');
-    portal.classList.toggle("open", open);
+    portal.classList.toggle('open', open);
     document.body.style.overflow = open ? 'hidden' : '';
     if(open){
-      renderTab('snowball');
-      tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === 'snowball' ? 'true' : 'false'));
+      setActiveTab('snowball');
+    } else {
+      stopAll();
+      content.innerHTML = '';
     }
+  }
+
+  function stopAll(){
+    if(snowballTimer){ clearInterval(snowballTimer); snowballTimer = null; }
+    if(familyTimer){ clearInterval(familyTimer); familyTimer = null; }
+  }
+
+  function setActiveTab(tab){
+    tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === tab ? 'true' : 'false'));
+    renderTab(tab);
   }
 
   function cloneSection(selector){
     const el = document.querySelector(selector);
     if(!el) return null;
     const c = el.cloneNode(true);
-    // Remove any IDs to avoid duplicates in the mirror
     c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
     return c;
   }
 
-  // Daily Vault (local only)
-  const VAULT_KEY = 'wst_daily_vault_v1';
-  const todayKey = new Date().toISOString().slice(0,10);
-  const vaultData = {
-    prophecy: [
-      "A chart may climb, but the library remembers the wick.",
-      "When the crowd chants, count the exits — and the entrances.",
-      "The owl blinks once for patience, twice for profit, thrice for ruin."
-    ],
-    lore: [
-      "In the Si Wong sands, knowledge is a tax — paid in truth, not coin.",
-      "A library moved to the Spirit World cannot be rugged by mortals.",
-      "He who hoards secrets becomes the secret."
-    ],
-    mantra: [
-      "Slow hands. Sharp eyes. No mercy for noise.",
-      "Seek receipts. Ignore theater.",
-      "Be early, be small, be ruthless with risk."
-    ],
-    quest: [
-      "Find one overlooked detail in the chart, then do nothing for 10 minutes.",
-      "Share one meme page with a caption that sounds like scripture.",
-      "Write a single sentence: why you are in this trade — keep it pinned."
-    ]
-  };
-  // ===== Forbidden Index (rare reveal) =====
-  const FORBIDDEN_POOL = [
-    "FORBIDDEN PAGE — Classified Marginalia\n\nWhen the room grows loud, the Librarian grows silent. Volume is not knowledge; it is only footfall.",
-    "FORBIDDEN PAGE — The Archivist’s Warning\n\nIf you ask for a prediction, you confess you did not read the record.",
-    "FORBIDDEN PAGE — A Seal Broken\n\nSome scrolls are not meant to be traded. They are meant to be remembered.",
-    "FORBIDDEN PAGE — Spirit Ledger\n\nSustainable motion is the only magic that lasts. Everything else is a spark in dry air."
-  ];
-
-  function isoWeekKey(d){
-    // ISO week number key (year-week)
-    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    const dayNum = date.getUTCDay() || 7;
-    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
-    return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
-  }
-
-  const FORBIDDEN_KEY_PREFIX = 'wst_forbidden_index_';
-
-  function getForbiddenState(){
-    const wk = isoWeekKey(new Date());
-    try{
-      const raw = localStorage.getItem(FORBIDDEN_KEY_PREFIX + wk);
-      if(!raw) return { week: wk, unlocked: false, text: '' };
-      const obj = JSON.parse(raw);
-      return { week: wk, unlocked: !!obj.unlocked, text: obj.text || '' };
-    }catch(e){
-      return { week: wk, unlocked: false, text: '' };
-    }
-  }
-
-  function setForbiddenState(text){
-    const wk = isoWeekKey(new Date());
-    try{
-      localStorage.setItem(FORBIDDEN_KEY_PREFIX + wk, JSON.stringify({ unlocked: true, text, ts: Date.now() }));
-    }catch(e){}
-  }
-
-  function showPortalToast(msg){
-    const el = document.createElement('div');
-    el.className = 'wst-portal-toast';
-    el.textContent = msg;
-    document.body.appendChild(el);
-    requestAnimationFrame(() => el.classList.add('show'));
-    setTimeout(() => {
-      el.classList.remove('show');
-      setTimeout(() => el.remove(), 250);
-    }, 1600);
-  }
-
-  function openForbiddenModal(text){
-    const modal = document.createElement('div');
-    modal.className = 'wst-forbidden-modal';
-    modal.innerHTML = `
-      <div class="wst-forbidden-backdrop" data-close="1"></div>
-      <div class="wst-forbidden-card" role="dialog" aria-modal="true">
-        <div class="wst-forbidden-head">
-          <div class="wst-forbidden-title">THE FORBIDDEN INDEX</div>
-          <button type="button" class="wst-mini-btn" data-close="1">Close</button>
-        </div>
-        <pre class="wst-forbidden-text"></pre>
-        <div class="wst-forbidden-actions">
-          <button type="button" class="wst-mini-btn" id="wstForbiddenCopy">Copy</button>
-          <button type="button" class="wst-mini-btn" id="wstForbiddenShare">Share on X</button>
-        </div>
-        <div class="wst-portal-note">Rare reveal. Stored locally for this week.</div>
-      </div>
-    `;
-    modal.querySelector('.wst-forbidden-text').textContent = text;
-    modal.addEventListener('click', (e) => {
-      const t = e.target;
-      if (t && t.getAttribute && t.getAttribute('data-close') === '1') modal.remove();
-    });
-    document.body.appendChild(modal);
-
-    const copyBtn = modal.querySelector('#wstForbiddenCopy');
-    const shareBtn = modal.querySelector('#wstForbiddenShare');
-
-    copyBtn?.addEventListener('click', async () => {
-      try{ await navigator.clipboard.writeText(text); showPortalToast('Copied.'); }catch(e){ showPortalToast('Copy failed.'); }
-    });
-
-    shareBtn?.addEventListener('click', () => {
-      const url = 'https://x.com/intent/tweet?text=' + encodeURIComponent(text + "\n\n$WanShiTong");
-      window.open(url, '_blank', 'noopener,noreferrer');
-    });
-  }
-
-  function attemptForbiddenReveal(){
-    const state = getForbiddenState();
-    if (state.unlocked && state.text){
-      openForbiddenModal(state.text);
-      return state;
-    }
-    // 2% chance per click
-    const hit = Math.random() < 0.02;
-    if (!hit){
-      showPortalToast('The shelves remain silent.');
-      return state;
-    }
-    const text = FORBIDDEN_POOL[Math.floor(Math.random() * FORBIDDEN_POOL.length)];
-    setForbiddenState(text);
-    openForbiddenModal(text);
-    showPortalToast('A seal breaks open…');
-    return { week: state.week, unlocked: true, text };
-  }
-
-
-  function getDailyVault(){
-    try{
-      const raw = localStorage.getItem(VAULT_KEY);
-      if(!raw) return null;
-      const obj = JSON.parse(raw);
-      if(obj?.date === todayKey) return obj;
-      return null;
-    }catch(e){ return null; }
-  }
-  function setDailyVault(obj){
-    try{ localStorage.setItem(VAULT_KEY, JSON.stringify(obj)); }catch(e){}
-  }
-
-  
-  // ===== Snowball Portal Tech (advanced; additive) =====
-  const WST_TOKEN_INPUT = 'DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump'; // mint or pair-like input
-  const SNOWBALL_TOKEN_INPUT = 'Gbu7JAKhTVtGyRryg8cYPiKNhonXpUqbrZuCDjfUpump'; // $snowball (pump.fun mint)
-
-  let wstSnowballInterval = null;
-
-  function fmtUSD(n){
-    const x = Number(n);
-    if (!isFinite(x)) return '—';
-    const abs = Math.abs(x);
-    if (abs >= 1e9) return `$${(x/1e9).toFixed(2)}B`;
-    if (abs >= 1e6) return `$${(x/1e6).toFixed(2)}M`;
-    if (abs >= 1e3) return `$${(x/1e3).toFixed(2)}K`;
-    return `$${x.toFixed(2)}`;
-  }
-
+  // ===== Utilities =====
   async function fetchJsonNoStore(url){
     const u = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
     const r = await fetch(u, { cache: 'no-store' });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
     return await r.json();
   }
 
+  function fmtUsd(x){
+    const n = Number(x);
+    if(!isFinite(n)) return '—';
+    const abs = Math.abs(n);
+    if(abs >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+    if(abs >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+    if(abs >= 1e3) return '$' + (n/1e3).toFixed(2) + 'K';
+    return '$' + n.toFixed(2);
+  }
+
+  function fmtNum(x){
+    const n = Number(x);
+    if(!isFinite(n)) return '—';
+    return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+
+  function inferTokenInput(){
+    // Try to find a contract address shown on the page. Fallback to your known value.
+    const text = document.body.innerText || '';
+    const match = text.match(/[1-9A-HJ-NP-Za-km-z]{32,44}(?:pump)?/);
+    return match ? match[0] : 'DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump';
+  }
+
   async function resolvePairAddressFromInput(input){
-    // Try: treat input as pair address
+    // Try treat input as pair
     try {
-      const d = await fetchJsonNoStore(`https://api.dexscreener.com/latest/dex/pairs/solana/${input}`);
+      const d = await fetchJsonNoStore('https://api.dexscreener.com/latest/dex/pairs/solana/' + input);
       const p = d?.pairs?.[0];
-      if (p?.pairAddress) return p.pairAddress;
-    } catch(e){ /* ignore */ }
+      if(p?.pairAddress) return p.pairAddress;
+    } catch(e){}
 
-    // Fallback: treat input as token mint (strip trailing 'pump' if present)
+    // Treat as mint (strip trailing "pump" if present)
     const mint = input.endsWith('pump') ? input.slice(0, -4) : input;
-    const pools = await fetchJsonNoStore(`https://api.dexscreener.com/token-pairs/v1/solana/${mint}`);
+    const pools = await fetchJsonNoStore('https://api.dexscreener.com/token-pairs/v1/solana/' + mint);
     const first = Array.isArray(pools) ? pools[0] : null;
-    if (first?.pairAddress) return first.pairAddress;
+    if(first?.pairAddress) return first.pairAddress;
 
-    throw new Error('Could not resolve DexScreener pair for token.');
+    throw new Error('Could not resolve DexScreener pair.');
   }
 
   function renderSnowballTerminal(){
@@ -2826,79 +2700,73 @@
       <div class="wst-sb-hero">
         <div class="wst-sb-title">Snowball Terminal</div>
         <div class="wst-sb-sub">
-          Volume-aware telemetry for $WanShiTong with an estimated Snowball burn-flow model.
-          <span class="wst-sb-disclaimer">Estimates only. “0.5% of every trade” assumption based on Snowball’s public description.</span>
+          Live telemetry for $WanShiTong. Cache-busted fetch. Auto-refresh.
+          <span class="wst-sb-disclaimer">Estimated burnFlow uses: 0.5% × 24h Volume (USD). Estimates only.</span>
         </div>
       </div>
 
       <div class="wst-sb-grid">
         <div class="wst-sb-card">
-          <div class="wst-sb-k">WST Price</div>
-          <div class="wst-sb-v" data-k="wstPrice">Loading…</div>
+          <div class="wst-sb-k">Price</div>
+          <div class="wst-sb-v" data-k="price">—</div>
         </div>
         <div class="wst-sb-card">
           <div class="wst-sb-k">24h Volume</div>
-          <div class="wst-sb-v" data-k="wstVol24h">Loading…</div>
+          <div class="wst-sb-v" data-k="vol24h">—</div>
         </div>
         <div class="wst-sb-card">
           <div class="wst-sb-k">Liquidity</div>
-          <div class="wst-sb-v" data-k="wstLiq">Loading…</div>
+          <div class="wst-sb-v" data-k="liq">—</div>
         </div>
         <div class="wst-sb-card">
           <div class="wst-sb-k">Market Cap</div>
-          <div class="wst-sb-v" data-k="wstMcap">Loading…</div>
+          <div class="wst-sb-v" data-k="mcap">—</div>
         </div>
+
         <div class="wst-sb-card wst-sb-wide">
-          <div class="wst-sb-k">Estimated Snowball Burn Flow (USD / 24h)</div>
-          <div class="wst-sb-v" data-k="burnUsd">—</div>
-          <div class="wst-sb-mini">
-            Model: burnFlow ≈ 0.5% × volume. If Snowball is enabled, this approximates the USD value routed to buy/burn.
+          <div class="wst-sb-k">Estimated Burn Flow (USD / 24h)</div>
+          <div class="wst-sb-v" data-k="burn">—</div>
+          <div class="wst-sb-mini">burnFlow ≈ 0.005 × volume24h</div>
+        </div>
+
+        <div class="wst-sb-card wst-sb-wide">
+          <div class="wst-sb-k">Library Telemetry</div>
+          <div class="wst-sb-mini" data-k="status">Resolving pair…</div>
+          <div class="wst-sb-console">
+            <div class="wst-sb-console-head">
+              <span>STREAM</span>
+              <span class="wst-sb-console-dot"></span>
+              <span data-k="updated">—</span>
+            </div>
+            <div class="wst-sb-console-body" data-k="log"></div>
           </div>
-        </div>
-        <div class="wst-sb-card wst-sb-wide">
-          <div class="wst-sb-k">Market Heat</div>
-          <div class="wst-sb-v" data-k="heat">—</div>
-          <div class="wst-sb-mini">
-            Derived from Volume/Liquidity ratio and 24h price change. This is not financial advice.
+          <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+            <button class="btn small" type="button" data-k="refreshBtn">Refresh Now</button>
+            <a class="btn small" data-k="dexLink" href="#" target="_blank" rel="noopener noreferrer">Open on DexScreener</a>
           </div>
         </div>
       </div>
-
-      <div class="wst-sb-console" aria-label="Snowball Console">
-        <div class="wst-sb-console-head">
-          <span>LIBRARY TELEMETRY</span>
-          <span class="wst-sb-console-dot"></span>
-          <span data-k="updated">—</span>
-        </div>
-        <div class="wst-sb-console-body" data-function renderTab(tab){
-    content.innerHTML = '';
-    // Stop any live intervals when switching
-    stopSnowballUpdates();
-    stopFamilyUpdates();
-
-    if(tab === 'snowball'){
-      content.appendChild(renderSnowballTerminal());
-      return;
-    }
-
-    if(tab === 'family'){
-      content.appendChild(renderSnowballFamily());
-      return;
-    }
-
-    if(tab === 'spirit'){
-      const s = cloneSection('#spiritWorld') || cloneSection('[data-section="spiritWorld"]');
-      if(s) content.appendChild(s);
-      const note = document.createElement('div');
-      note.className = 'wst-portal-note';
-      note.textContent = 'Spirit Gate mirror. The original controls remain on the main page.';
-      content.appendChild(note);
-      return;
-    }
+    `;
+    startSnowballUpdates(wrap);
+    return wrap;
   }
 
-  // Tab events the embed is blocked, use the button below.</div>
-          <iframe class="wst-sb-iframe" src="https://www.sb.fun/" loading="lazy" referrerpolicy="no-referrer" title="Snowball Dashboard"></iframe>
+  function renderSnowballFamily(){
+    const wrap = document.createElement('div');
+    wrap.className = 'wst-sb-wrap';
+    wrap.innerHTML = `
+      <div class="wst-sb-hero">
+        <div class="wst-sb-title">Snowball Family</div>
+        <div class="wst-sb-sub">
+          A simple directory view: official board + a small live watchlist.
+        </div>
+      </div>
+
+      <div class="wst-sb-grid">
+        <div class="wst-sb-card wst-sb-wide">
+          <div class="wst-sb-k">Official Board</div>
+          <div class="wst-sb-mini">If the embed is blocked, use the button below.</div>
+          <iframe class="wst-sb-iframe" src="https://www.sb.fun/" loading="lazy" referrerpolicy="no-referrer" title="Snowball Board"></iframe>
           <div style="margin-top:10px;">
             <a class="btn small" href="https://www.sb.fun/" target="_blank" rel="noopener noreferrer">Open sb.fun</a>
           </div>
@@ -2906,8 +2774,8 @@
 
         <div class="wst-sb-card wst-sb-wide">
           <div class="wst-sb-k">Family Watchlist (Live)</div>
-          <div class="wst-sb-mini">Live pulls via DexScreener. Edit tokens in the config array in the script if you want to curate.</div>
-          <div class="wst-sb-table" role="table" aria-label="Snowball Family Tokens">
+          <div class="wst-sb-mini">Auto-refresh. Edit the list inside the script if you want to curate.</div>
+          <div class="wst-sb-table" role="table" aria-label="Family Watchlist">
             <div class="wst-sb-row wst-sb-head" role="row">
               <div role="columnheader">Token</div>
               <div role="columnheader">Price</div>
@@ -2916,7 +2784,7 @@
               <div role="columnheader">BurnFlow (est.)</div>
               <div role="columnheader">Link</div>
             </div>
-            <div data-k="familyRows"></div>
+            <div data-k="rows"></div>
           </div>
         </div>
       </div>
@@ -2926,310 +2794,152 @@
   }
 
   async function startSnowballUpdates(container){
-    stopSnowballUpdates();
+    stopAll();
     const get = (k) => container.querySelector(`[data-k="${k}"]`);
     const logEl = get('log');
+    const statusEl = get('status');
     const updatedEl = get('updated');
     const dexLink = get('dexLink');
     const refreshBtn = get('refreshBtn');
 
-    let wstPair = null;
-
-    function log(line){
+    function log(msg){
       if(!logEl) return;
       const div = document.createElement('div');
-      div.className = 'wst-sb-logline';
-      div.textContent = line;
+      div.textContent = msg;
       logEl.prepend(div);
-      // cap lines
-      while (logEl.childNodes.length > 24) logEl.removeChild(logEl.lastChild);
     }
+
+    const input = inferTokenInput();
+    let pair = null;
 
     async function refresh(){
       try{
-        if(!wstPair){
-          wstPair = await resolvePairAddressFromInput(WST_TOKEN_INPUT);
-          const url = `https://dexscreener.com/solana/${wstPair}`;
-          if (dexLink) dexLink.href = url;
-          log(`Pair resolved: ${wstPair.slice(0,4)}…${wstPair.slice(-4)}`);
+        if(!pair){
+          statusEl.textContent = 'Resolving pair for: ' + input;
+          pair = await resolvePairAddressFromInput(input);
+          statusEl.textContent = 'Pair resolved: ' + pair;
+          dexLink.href = 'https://dexscreener.com/solana/' + pair;
+          log('Pair resolved.');
         }
-        const data = await fetchJsonNoStore(`https://api.dexscreener.com/latest/dex/pairs/solana/${wstPair}`);
-        const p = data?.pairs?.[0];
-        if(!p) throw new Error('No pair data');
+
+        const d = await fetchJsonNoStore('https://api.dexscreener.com/latest/dex/pairs/solana/' + pair);
+        const p = d?.pairs?.[0];
+        if(!p) throw new Error('No pair data.');
 
         const price = Number(p.priceUsd);
         const vol24h = Number(p.volume?.h24);
         const liq = Number(p.liquidity?.usd);
-        const mcap = Number(p.marketCap ?? p.fdv);
+        const mcap = Number(p.fdv);
 
-        const burnUsd = isFinite(vol24h) ? (vol24h * 0.005) : NaN; // 0.5% assumption
+        container.querySelector('[data-k="price"]').textContent = isFinite(price) ? '$' + price.toFixed(price < 1 ? 6 : 4) : '—';
+        container.querySelector('[data-k="vol24h"]').textContent = fmtUsd(vol24h);
+        container.querySelector('[data-k="liq"]').textContent = fmtUsd(liq);
+        container.querySelector('[data-k="mcap"]').textContent = fmtUsd(mcap);
+        container.querySelector('[data-k="burn"]').textContent = fmtUsd(vol24h * 0.005);
 
-        // Heat: combine vol/liq and price change
-        const vl = (isFinite(vol24h) && isFinite(liq) && liq > 0) ? (vol24h / liq) : NaN;
-        const chg = Number(p.priceChange?.h24);
-        let heat = '—';
-        if (isFinite(vl) || isFinite(chg)){
-          const score = clamp(
-            (isFinite(vl) ? (vl * 35) : 0) + (isFinite(chg) ? (Math.abs(chg) * 0.6) : 0),
-            0, 100
-          );
-          heat = `${Math.round(score)}/100`;
-        }
-
-        const set = (k, v) => { const el = get(k); if(el) el.textContent = v; };
-        set('wstPrice', isFinite(price) ? `$${price.toFixed(6)}` : '—');
-        set('wstVol24h', fmtUSD(vol24h));
-        set('wstLiq', fmtUSD(liq));
-        set('wstMcap', fmtUSD(mcap));
-        set('burnUsd', fmtUSD(burnUsd));
-        set('heat', heat);
-
-        if(updatedEl) updatedEl.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
-
-        // Narrative log
-        if (isFinite(burnUsd)){
-          log(`Burn-flow est.: ${fmtUSD(burnUsd)} / 24h (0.5% × vol)`);
-        } else {
-          log('Telemetry refreshed.');
-        }
-      }catch(e){
-        if(updatedEl) updatedEl.textContent = 'Live data unavailable (check token/pair).';
-        log('Refresh failed. The Library remains silent.');
+        const now = new Date();
+        updatedEl.textContent = now.toLocaleTimeString();
+        log('Update: price=' + fmtNum(price) + ' vol24h=' + fmtNum(vol24h));
+      } catch(e){
+        statusEl.textContent = 'Error: ' + (e?.message || e);
+        log('Error: ' + (e?.message || e));
       }
     }
 
     refreshBtn?.addEventListener('click', refresh);
     await refresh();
-    wstSnowballInterval = setInterval(refresh, 30000);
+    snowballTimer = setInterval(refresh, 8000);
   }
 
-  function stopSnowballUpdates(){
-    if (wstSnowballInterval){
-      clearInterval(wstSnowballInterval);
-      wstSnowballInterval = null;
+  function startFamilyUpdates(container){
+    stopAll();
+    const rowsEl = container.querySelector('[data-k="rows"]');
+
+    const TOKENS = [
+      { name: 'WanShiTong', input: inferTokenInput() },
+      { name: 'Snowball', input: 'snowball' } // placeholder; will resolve via token-pairs search if replaced with mint
+    ];
+
+    async function resolveBestPairForTokenInput(input){
+      // If it's not base58, attempt to resolve by leaving row blank.
+      // This is intentionally conservative: better empty than wrong.
+      if(!/^[1-9A-HJ-NP-Za-km-z]{32,44}(pump)?$/.test(input)) return null;
+      return await resolvePairAddressFromInput(input);
     }
-  }
 
-  let wstFamilyInterval = null;
+    async function refresh(){
+      try{
+        rowsEl.innerHTML = '';
+        for(const t of TOKENS){
+          const pair = await resolveBestPairForTokenInput(t.input);
+          if(!pair){
+            const row = document.createElement('div');
+            row.className = 'wst-sb-row';
+            row.innerHTML = `<div>${t.name}</div><div>—</div><div>—</div><div>—</div><div>—</div><div>—</div>`;
+            rowsEl.appendChild(row);
+            continue;
+          }
 
-  const FAMILY_TOKENS = [
-    { name: '$WanShiTong', input: WST_TOKEN_INPUT },
-    { name: '$snowball', input: SNOWBALL_TOKEN_INPUT }
-  ];
-
-  async function startFamilyUpdates(container){
-    stopFamilyUpdates();
-    const rowsHost = container.querySelector('[data-k="familyRows"]');
-
-    async function renderRows(){
-      if(!rowsHost) return;
-      rowsHost.innerHTML = '';
-      for (const t of FAMILY_TOKENS){
-        const row = document.createElement('div');
-        row.className = 'wst-sb-row';
-        row.setAttribute('role','row');
-        row.innerHTML = `
-          <div role="cell">${t.name}</div>
-          <div role="cell">—</div>
-          <div role="cell">—</div>
-          <div role="cell">—</div>
-          <div role="cell">—</div>
-          <div role="cell"><a href="#" target="_blank" rel="noopener noreferrer">Open</a></div>
-        `;
-        rowsHost.appendChild(row);
-
-        try{
-          const pair = await resolvePairAddressFromInput(t.input);
-          const d = await fetchJsonNoStore(`https://api.dexscreener.com/latest/dex/pairs/solana/${pair}`);
+          const d = await fetchJsonNoStore('https://api.dexscreener.com/latest/dex/pairs/solana/' + pair);
           const p = d?.pairs?.[0];
           const price = Number(p?.priceUsd);
           const vol24h = Number(p?.volume?.h24);
           const liq = Number(p?.liquidity?.usd);
-          const burnUsd = isFinite(vol24h) ? (vol24h * 0.005) : NaN;
+          const burn = vol24h * 0.005;
 
-          const cells = row.querySelectorAll('[role="cell"]');
-          cells[1].textContent = isFinite(price) ? `$${price.toFixed(6)}` : '—';
-          cells[2].textContent = fmtUSD(vol24h);
-          cells[3].textContent = fmtUSD(liq);
-          cells[4].textContent = fmtUSD(burnUsd);
-
-          const a = row.querySelector('a');
-          const url = `https://dexscreener.com/solana/${pair}`;
-          a.href = url;
-        }catch(e){
-          // leave as dashes
+          const row = document.createElement('div');
+          row.className = 'wst-sb-row';
+          row.innerHTML = `
+            <div>${t.name}</div>
+            <div>${isFinite(price) ? '$' + price.toFixed(price < 1 ? 6 : 4) : '—'}</div>
+            <div>${fmtUsd(vol24h)}</div>
+            <div>${fmtUsd(liq)}</div>
+            <div>${fmtUsd(burn)}</div>
+            <div><a href="https://dexscreener.com/solana/${pair}" target="_blank" rel="noopener noreferrer">View</a></div>
+          `;
+          rowsEl.appendChild(row);
         }
+      } catch(e){
+        const row = document.createElement('div');
+        row.className = 'wst-sb-row';
+        row.innerHTML = `<div>Error</div><div colspan="5">${(e?.message || e)}</div>`;
+        rowsEl.appendChild(row);
       }
     }
 
-    await renderRows();
-    wstFamilyInterval = setInterval(renderRows, 45000);
-  }
-
-  function stopFamilyUpdates(){
-    if (wstFamilyInterval){
-      clearInterval(wstFamilyInterval);
-      wstFamilyInterval = null;
-    }
-  }
-function renderVault(){
-    const existing = getDailyVault();
-    let item = existing;
-
-    const wrap = document.createElement('div');
-    wrap.className = 'wst-vault-card';
-
-    const head = document.createElement('div');
-    head.className = 'wst-vault-head';
-
-    const title = document.createElement('h3');
-    title.textContent = 'Wan Shi Tong’s Daily Vault';
-    title.style.margin = '0';
-    head.appendChild(title);
-
-    const right = document.createElement('div');
-    right.className = 'wst-vault-right';
-
-    const state = getForbiddenState();
-    const badge = document.createElement('span');
-    badge.className = 'wst-forbidden-badge' + (state.unlocked ? ' unlocked' : '');
-    badge.textContent = state.unlocked ? 'FORBIDDEN INDEX: UNLOCKED' : 'FORBIDDEN INDEX: LOCKED';
-
-    const fbtn = document.createElement('button');
-    fbtn.className = 'wst-forbidden-btn';
-    fbtn.type = 'button';
-    fbtn.setAttribute('aria-label', 'Open the Forbidden Index');
-    fbtn.title = 'Forbidden Index (rare reveal)';
-    fbtn.textContent = '⟡';
-    fbtn.addEventListener('click', () => {
-      const st = attemptForbiddenReveal();
-      if (st && st.unlocked){
-        badge.classList.add('unlocked');
-        badge.textContent = 'FORBIDDEN INDEX: UNLOCKED';
-      }
-    });
-
-    right.appendChild(badge);
-    right.appendChild(fbtn);
-    head.appendChild(right);
-    wrap.appendChild(head);
-
-    const out = document.createElement('div');
-    out.id = 'wstVaultOutput';
-    out.style.whiteSpace = 'pre-wrap';
-    out.style.lineHeight = '1.45';
-    out.style.opacity = '0.95';
-    out.textContent = item ? `TYPE: ${item.type.toUpperCase()}\n\n${item.text}` : 'The vault is sealed. Reveal today’s page.';
-    wrap.appendChild(out);
-
-    const note = document.createElement('div');
-    note.className = 'wst-portal-note';
-    note.textContent = 'One reveal per day (local browser). Clearly satire / for entertainment.';
-    wrap.appendChild(note);
-
-    const actions = document.createElement('div');
-    actions.className = 'wst-vault-actions';
-
-    const revealBtn = document.createElement('button');
-    revealBtn.className = 'wst-mini-btn';
-    revealBtn.type = 'button';
-    revealBtn.textContent = item ? 'Vault Sealed (Come Back Tomorrow)' : 'Reveal Today’s Page';
-    revealBtn.disabled = !!item;
-
-    revealBtn.addEventListener('click', () => {
-      if(item) return;
-      const types = Object.keys(vaultData);
-      const type = types[Math.floor(Math.random()*types.length)];
-      const list = vaultData[type];
-      const text = list[Math.floor(Math.random()*list.length)];
-      item = { date: todayKey, type, text };
-      setDailyVault(item);
-      out.textContent = `TYPE: ${item.type.toUpperCase()}\n\n${item.text}`;
-      revealBtn.textContent = 'Vault Sealed (Come Back Tomorrow)';
-      revealBtn.disabled = true;
-    });
-
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'wst-mini-btn';
-    copyBtn.type = 'button';
-    copyBtn.textContent = 'Copy';
-    copyBtn.addEventListener('click', async () => {
-      const txt = out.textContent || '';
-      try{ await navigator.clipboard.writeText(txt); copyBtn.textContent = 'Copied'; setTimeout(()=>copyBtn.textContent='Copy', 900); }catch(e){}
-    });
-
-    const shareBtn = document.createElement('button');
-    shareBtn.className = 'wst-mini-btn';
-    shareBtn.type = 'button';
-    shareBtn.textContent = 'Share on X';
-    shareBtn.addEventListener('click', () => {
-      const txt = out.textContent || '';
-      const url = 'https://x.com/intent/tweet?text=' + encodeURIComponent(txt + "\n\n$WanShiTong");
-      window.open(url, '_blank', 'noopener,noreferrer');
-    });
-
-    actions.appendChild(revealBtn);
-    actions.appendChild(copyBtn);
-    actions.appendChild(shareBtn);
-    wrap.appendChild(actions);
-    return wrap;
+    refresh();
+    familyTimer = setInterval(refresh, 12000);
   }
 
   function renderTab(tab){
     content.innerHTML = '';
-    if(tab === 'vault'){
-      content.appendChild(renderVault());
+    stopAll();
+
+    if(tab === 'snowball'){
+      content.appendChild(renderSnowballTerminal());
       return;
     }
-
-    if(tab === 'memes'){
-      const m = cloneSection('#memeLibrary') || cloneSection('[data-section="memeLibrary"]');
-      if(m) content.appendChild(m);
-      const note = document.createElement('div');
-      note.className = 'wst-portal-note';
-      note.textContent = 'Forbidden Pages mirror. For full interactions, use the main page.';
-      content.appendChild(note);
+    if(tab === 'family'){
+      content.appendChild(renderSnowballFamily());
       return;
     }
-
     if(tab === 'spirit'){
       const s = cloneSection('#spiritWorld') || cloneSection('[data-section="spiritWorld"]');
       if(s) content.appendChild(s);
       const note = document.createElement('div');
       note.className = 'wst-portal-note';
-      note.textContent = 'Spirit Gate mirror. The original controls remain on the main page.';
+      note.textContent = 'Spirit Gate mirror. Use the main page controls for full effects.';
       content.appendChild(note);
       return;
     }
   }
 
-  // Tab events
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabs.forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
-      renderTab(btn.dataset.tab);
-    });
-  });
-
-  // Open / close
+  // ===== Events =====
+  tabs.forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.tab)));
   portalBtn?.addEventListener('click', () => setPortal(true));
   closeBtn?.addEventListener('click', () => setPortal(false));
-  portal?.addEventListener('click', (e) => {
-    const t = e.target;
-    if (t && t.getAttribute('data-close') === '1') setPortal(false);
-  });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && portal.getAttribute('aria-hidden') === 'false') setPortal(false);
-  });
-
-  // Subtle parallax drift (no layout changes)
-  const root = document.documentElement;
-  window.addEventListener('mousemove', (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 2;
-    const y = (e.clientY / window.innerHeight - 0.5) * 2;
-    root.style.setProperty('--wst-parallax-x', (x * 6).toFixed(2) + 'px');
-    root.style.setProperty('--wst-parallax-y', (y * 6).toFixed(2) + 'px');
-  }, { passive: true });
+  portal?.addEventListener('click', (e) => { if(e.target?.getAttribute('data-close') === '1') setPortal(false); });
+  window.addEventListener('keydown', (e) => { if(e.key === 'Escape' && portal.getAttribute('aria-hidden') === 'false') setPortal(false); });
 
 })();
 </script>

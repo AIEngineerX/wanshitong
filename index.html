@@ -879,7 +879,220 @@
   margin-top: 10px;
   font-size: 13px;
 }
-  </style>
+  
+/* === WST Portal Overlay (additive) === */
+.wst-portal-btn{
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 9998;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(178, 134, 48, 0.55);
+  background: rgba(0,0,0,0.55);
+  color: var(--gold, #d4a52b);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+}
+.wst-portal-btn:hover{ background: rgba(0,0,0,0.7); }
+
+.wst-portal{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+.wst-portal[aria-hidden="false"]{ display:block; }
+
+.wst-portal-backdrop{
+  position:absolute; inset:0;
+  background:
+    radial-gradient(900px 520px at 50% 20%, rgba(122,255,192,0.10), transparent 60%),
+    radial-gradient(900px 520px at 20% 70%, rgba(120,210,255,0.09), transparent 60%),
+    rgba(0,0,0,0.72);
+  backdrop-filter: blur(8px);
+}
+
+.wst-portal-shell{
+  position: relative;
+  width: min(1100px, calc(100% - 24px));
+  height: min(720px, calc(100% - 24px));
+  margin: 12px auto;
+  border-radius: 18px;
+  border: 1px solid rgba(178,134,48,0.55);
+  background: rgba(10,7,4,0.86);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  overflow: hidden;
+}
+
+.wst-portal-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(178,134,48,0.25);
+}
+.wst-portal-title{
+  display:flex; flex-direction:column; gap:4px;
+}
+.wst-portal-title strong{
+  color: var(--gold, #d4a52b);
+  letter-spacing: 0.08em;
+}
+.wst-portal-title span{ opacity:0.8; font-size: 12px; }
+
+.wst-portal-close{
+  border: 1px solid rgba(178,134,48,0.45);
+  background: rgba(0,0,0,0.35);
+  color: #eee;
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor:pointer;
+}
+
+.wst-portal-body{
+  display:grid;
+  grid-template-columns: 220px 1fr;
+  height: calc(100% - 58px);
+}
+.wst-portal-tabs{
+  border-right: 1px solid rgba(178,134,48,0.2);
+  padding: 12px;
+  overflow:auto;
+}
+.wst-portal-tab{
+  width:100%;
+  text-align:left;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(178,134,48,0.25);
+  background: rgba(0,0,0,0.25);
+  color: #eae3d6;
+  cursor:pointer;
+  margin-bottom: 10px;
+}
+.wst-portal-tab[aria-selected="true"]{
+  background: rgba(178,134,48,0.14);
+  border-color: rgba(178,134,48,0.55);
+}
+.wst-portal-content{
+  padding: 14px;
+  overflow:auto;
+}
+.wst-portal-note{
+  font-size: 12px;
+  opacity: 0.75;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.wst-vault-card{
+  border: 1px solid rgba(178,134,48,0.35);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.30);
+  padding: 14px;
+}
+.wst-vault-actions{
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;
+}
+.wst-mini-btn{
+  border: 1px solid rgba(178,134,48,0.45);
+  background: rgba(0,0,0,0.35);
+  color: #eae3d6;
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor:pointer;
+}
+.wst-mini-btn:hover{ background: rgba(178,134,48,0.12); }
+
+@media (max-width: 860px){
+  .wst-portal-body{ grid-template-columns: 1fr; }
+  .wst-portal-tabs{ display:flex; gap:10px; border-right:0; border-bottom:1px solid rgba(178,134,48,0.2); }
+  .wst-portal-tab{ margin-bottom:0; white-space:nowrap; }
+}
+
+
+/* Parallax (non-destructive) */
+#floatingParticles{
+  transform: translate(var(--wst-parallax-x, 0px), var(--wst-parallax-y, 0px));
+  transition: transform 120ms linear;
+}
+
+/* === Portal Intensity Upgrade (additive overrides) === */
+.wst-portal-btn{
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.72), rgba(0,0,0,0.48));
+  border-color: rgba(218,165,32,0.70);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(218,165,32,0.18),
+    0 0 22px rgba(218,165,32,0.22),
+    0 0 46px rgba(255,60,60,0.08);
+  animation: wstPortalPulse 2.4s ease-in-out infinite;
+}
+.wst-portal-btn::before{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,60,60,0.12), transparent 55%),
+    conic-gradient(from 90deg, rgba(218,165,32,0.22), rgba(120,210,255,0.10), rgba(122,255,192,0.10), rgba(218,165,32,0.22));
+  filter: blur(10px);
+  z-index:-1;
+}
+.wst-portal-btn:hover{
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 48px rgba(0,0,0,0.52),
+    0 0 0 1px rgba(218,165,32,0.22),
+    0 0 30px rgba(218,165,32,0.30),
+    0 0 70px rgba(255,60,60,0.12);
+}
+
+@keyframes wstPortalPulse{
+  0%,100% { filter: brightness(1); }
+  50%     { filter: brightness(1.12); }
+}
+
+.wst-portal-backdrop{
+  background:
+    radial-gradient(980px 560px at 50% 18%, rgba(255,60,60,0.10), transparent 58%),
+    radial-gradient(900px 520px at 50% 20%, rgba(122,255,192,0.10), transparent 60%),
+    radial-gradient(900px 520px at 20% 70%, rgba(120,210,255,0.09), transparent 60%),
+    rgba(0,0,0,0.78);
+}
+
+.wst-portal-shell{
+  box-shadow:
+    0 40px 120px rgba(0,0,0,0.72),
+    0 0 0 1px rgba(218,165,32,0.14),
+    0 0 60px rgba(255,60,60,0.08);
+  border-color: rgba(218,165,32,0.25);
+  transform: translateY(10px) scale(0.985);
+  opacity: 0.0;
+}
+
+.wst-portal.open .wst-portal-shell{
+  animation: wstPortalEnter 420ms ease-out forwards;
+}
+
+@keyframes wstPortalEnter{
+  from { transform: translateY(18px) scale(0.975); opacity: 0; }
+  to   { transform: translateY(0px) scale(1.0); opacity: 1; }
+}
+
+/* Make portal feel tighter / fewer things */
+.wst-portal-title span{
+  opacity: 0.78;
+}
+</style>
 </head>
 
 <body>
@@ -2210,5 +2423,229 @@
   reset();
 })();
 </script>
+
+<!-- === WST Portal Overlay (additive) === -->
+<button class="wst-portal-btn" id="wstPortalBtn" type="button">ENTER THE LIBRARY</button>
+
+<div class="wst-portal" id="wstPortal" aria-hidden="true">
+  <div class="wst-portal-backdrop" data-close="1"></div>
+  <div class="wst-portal-shell" role="dialog" aria-modal="true" aria-label="Wan Shi Tong Portal">
+    <div class="wst-portal-top">
+      <div class="wst-portal-title">
+        <strong>WAN SHI TONG — KNOWLEDGE VAULT</strong>
+        <span>Portal mode. A concentrated mirror of the Library.</span>
+      </div>
+      <button class="wst-portal-close" id="wstPortalClose" type="button">Close (Esc)</button>
+    </div>
+
+    <div class="wst-portal-body">
+      <div class="wst-portal-tabs" role="tablist" aria-label="Portal Tabs">
+        <button class="wst-portal-tab" role="tab" aria-selected="true"  data-tab="vault">Daily Vault</button>
+        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="memes">Forbidden Pages</button>
+        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="spirit">Spirit Gate</button></div>
+      <div class="wst-portal-content" id="wstPortalContent"></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(() => {
+  // ===== WST Portal (additive; non-destructive) =====
+  const portalBtn = document.getElementById('wstPortalBtn');
+  const portal = document.getElementById('wstPortal');
+  const closeBtn = document.getElementById('wstPortalClose');
+  const content = document.getElementById('wstPortalContent');
+  const tabs = Array.from(portal.querySelectorAll('.wst-portal-tab'));
+
+  function setPortal(open){
+    portal.setAttribute('aria-hidden', open ? 'false' : 'true');
+    portal.classList.toggle("open", open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if(open){
+      renderTab('vault');
+      tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === 'vault' ? 'true' : 'false'));
+    }
+  }
+
+  function cloneSection(selector){
+    const el = document.querySelector(selector);
+    if(!el) return null;
+    const c = el.cloneNode(true);
+    // Remove any IDs to avoid duplicates in the mirror
+    c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+    return c;
+  }
+
+  // Daily Vault (local only)
+  const VAULT_KEY = 'wst_daily_vault_v1';
+  const todayKey = new Date().toISOString().slice(0,10);
+  const vaultData = {
+    prophecy: [
+      "A chart may climb, but the library remembers the wick.",
+      "When the crowd chants, count the exits — and the entrances.",
+      "The owl blinks once for patience, twice for profit, thrice for ruin."
+    ],
+    lore: [
+      "In the Si Wong sands, knowledge is a tax — paid in truth, not coin.",
+      "A library moved to the Spirit World cannot be rugged by mortals.",
+      "He who hoards secrets becomes the secret."
+    ],
+    mantra: [
+      "Slow hands. Sharp eyes. No mercy for noise.",
+      "Seek receipts. Ignore theater.",
+      "Be early, be small, be ruthless with risk."
+    ],
+    quest: [
+      "Find one overlooked detail in the chart, then do nothing for 10 minutes.",
+      "Share one meme page with a caption that sounds like scripture.",
+      "Write a single sentence: why you are in this trade — keep it pinned."
+    ]
+  };
+
+  function getDailyVault(){
+    try{
+      const raw = localStorage.getItem(VAULT_KEY);
+      if(!raw) return null;
+      const obj = JSON.parse(raw);
+      if(obj?.date === todayKey) return obj;
+      return null;
+    }catch(e){ return null; }
+  }
+  function setDailyVault(obj){
+    try{ localStorage.setItem(VAULT_KEY, JSON.stringify(obj)); }catch(e){}
+  }
+
+  function renderVault(){
+    const existing = getDailyVault();
+    let item = existing;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'wst-vault-card';
+    const title = document.createElement('h3');
+    title.textContent = 'Wan Shi Tong’s Daily Vault';
+    title.style.margin = '0 0 10px 0';
+    wrap.appendChild(title);
+
+    const out = document.createElement('div');
+    out.id = 'wstVaultOutput';
+    out.style.whiteSpace = 'pre-wrap';
+    out.style.lineHeight = '1.45';
+    out.style.opacity = '0.95';
+    out.textContent = item ? `TYPE: ${item.type.toUpperCase()}\n\n${item.text}` : 'The vault is sealed. Reveal today’s page.';
+    wrap.appendChild(out);
+
+    const note = document.createElement('div');
+    note.className = 'wst-portal-note';
+    note.textContent = 'One reveal per day (local browser). Clearly satire / for entertainment.';
+    wrap.appendChild(note);
+
+    const actions = document.createElement('div');
+    actions.className = 'wst-vault-actions';
+
+    const revealBtn = document.createElement('button');
+    revealBtn.className = 'wst-mini-btn';
+    revealBtn.type = 'button';
+    revealBtn.textContent = item ? 'Vault Sealed (Come Back Tomorrow)' : 'Reveal Today’s Page';
+    revealBtn.disabled = !!item;
+
+    revealBtn.addEventListener('click', () => {
+      if(item) return;
+      const types = Object.keys(vaultData);
+      const type = types[Math.floor(Math.random()*types.length)];
+      const list = vaultData[type];
+      const text = list[Math.floor(Math.random()*list.length)];
+      item = { date: todayKey, type, text };
+      setDailyVault(item);
+      out.textContent = `TYPE: ${item.type.toUpperCase()}\n\n${item.text}`;
+      revealBtn.textContent = 'Vault Sealed (Come Back Tomorrow)';
+      revealBtn.disabled = true;
+    });
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'wst-mini-btn';
+    copyBtn.type = 'button';
+    copyBtn.textContent = 'Copy';
+    copyBtn.addEventListener('click', async () => {
+      const txt = out.textContent || '';
+      try{ await navigator.clipboard.writeText(txt); copyBtn.textContent = 'Copied'; setTimeout(()=>copyBtn.textContent='Copy', 900); }catch(e){}
+    });
+
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'wst-mini-btn';
+    shareBtn.type = 'button';
+    shareBtn.textContent = 'Share on X';
+    shareBtn.addEventListener('click', () => {
+      const txt = out.textContent || '';
+      const url = 'https://x.com/intent/tweet?text=' + encodeURIComponent(txt + "\n\n$WanShiTong");
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+
+    actions.appendChild(revealBtn);
+    actions.appendChild(copyBtn);
+    actions.appendChild(shareBtn);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function renderTab(tab){
+    content.innerHTML = '';
+    if(tab === 'vault'){
+      content.appendChild(renderVault());
+      return;
+    }
+
+    if(tab === 'memes'){
+      const m = cloneSection('#memeLibrary') || cloneSection('[data-section="memeLibrary"]');
+      if(m) content.appendChild(m);
+      const note = document.createElement('div');
+      note.className = 'wst-portal-note';
+      note.textContent = 'Forbidden Pages mirror. For full interactions, use the main page.';
+      content.appendChild(note);
+      return;
+    }
+
+    if(tab === 'spirit'){
+      const s = cloneSection('#spiritWorld') || cloneSection('[data-section="spiritWorld"]');
+      if(s) content.appendChild(s);
+      const note = document.createElement('div');
+      note.className = 'wst-portal-note';
+      note.textContent = 'Spirit Gate mirror. The original controls remain on the main page.';
+      content.appendChild(note);
+      return;
+    }
+  }
+
+  // Tab events
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
+      renderTab(btn.dataset.tab);
+    });
+  });
+
+  // Open / close
+  portalBtn?.addEventListener('click', () => setPortal(true));
+  closeBtn?.addEventListener('click', () => setPortal(false));
+  portal?.addEventListener('click', (e) => {
+    const t = e.target;
+    if (t && t.getAttribute('data-close') === '1') setPortal(false);
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && portal.getAttribute('aria-hidden') === 'false') setPortal(false);
+  });
+
+  // Subtle parallax drift (no layout changes)
+  const root = document.documentElement;
+  window.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 2;
+    const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    root.style.setProperty('--wst-parallax-x', (x * 6).toFixed(2) + 'px');
+    root.style.setProperty('--wst-parallax-y', (y * 6).toFixed(2) + 'px');
+  }, { passive: true });
+
+})();
+</script>
+
 </body>
 </html>

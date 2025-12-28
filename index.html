@@ -1246,6 +1246,100 @@
   .wst-sb-row div:nth-child(5),
   .wst-sb-row div:nth-child(6){ display:none; }
 }
+
+
+/* Snowball Terminal controls */
+.wst-sb-controls{
+  margin: 12px 0 14px;
+  padding: 10px;
+  border: 1px solid rgba(218,165,32,0.26);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.28);
+}
+.wst-sb-label{
+  display:block;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .85;
+  margin-bottom: 6px;
+}
+.wst-sb-input{
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(218,165,32,0.35);
+  background: rgba(0,0,0,0.40);
+  color: #f5e6c8;
+  outline: none;
+  font-family: Georgia, serif;
+}
+.wst-sb-input:focus{
+  border-color: rgba(255,215,0,0.70);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.12);
+}
+.wst-sb-btn{
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(218,165,32,0.45);
+  background: rgba(0,0,0,0.35);
+  color: #f5e6c8;
+  cursor: pointer;
+}
+.wst-sb-btn:hover{
+  background: rgba(218,165,32,0.12);
+}
+.wst-sb-btn-ghost{
+  width: auto;
+  margin-top: 0;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.wst-sb-hint{
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .75;
+}
+
+/* Receipt Vault */
+.wst-receipt-controls{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.wst-receipt-list{
+  border: 1px solid rgba(218,165,32,0.18);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.22);
+  padding: 10px;
+  min-height: 120px;
+}
+.wst-receipt-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(218,165,32,0.12);
+}
+.wst-receipt-row:last-child{ border-bottom: none; }
+.wst-receipt-sig{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  opacity: .92;
+}
+.wst-receipt-actions{
+  display:flex;
+  gap: 6px;
+}
+.wst-receipt-empty{
+  opacity: .75;
+  padding: 10px 4px;
+}
+
 </style>
 </head>
 
@@ -2596,7 +2690,7 @@
       <div class="wst-portal-tabs" role="tablist" aria-label="Portal Tabs">
         <button class="wst-portal-tab" role="tab" aria-selected="true"  data-tab="snowball">Snowball Terminal</button>
         <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="family">Snowball Family</button>
-        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="spirit">Spirit Gate</button>
+        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="receipts">Receipt Vault</button>
       </div>
       <div class="wst-portal-content" id="wstPortalContent"></div>
     </div>
@@ -2669,28 +2763,61 @@
     return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
   }
 
+  
   function inferTokenInput(){
-    // Try to find a contract address shown on the page. Fallback to your known value.
+    // Priority: user-set value (local), then scan page text, then fallback.
+    try{
+      const saved = localStorage.getItem('wst_token_input');
+      if(saved && saved.trim()) return saved.trim();
+    } catch(e){}
+
     const text = document.body.innerText || '';
     const match = text.match(/[1-9A-HJ-NP-Za-km-z]{32,44}(?:pump)?/);
     return match ? match[0] : 'DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump';
   }
 
+  
   async function resolvePairAddressFromInput(input){
-    // Try treat input as pair
-    try {
-      const d = await fetchJsonNoStore('https://api.dexscreener.com/latest/dex/pairs/solana/' + input);
-      const p = d?.pairs?.[0];
-      if(p?.pairAddress) return p.pairAddress;
-    } catch(e){}
+    // Accept either:
+    // - DexScreener pair address
+    // - token mint
+    // - a "pump"-suffixed string (we will try variants)
+    const raw = (input || '').trim();
+    if(!raw) return null;
 
-    // Treat as mint (strip trailing "pump" if present)
-    const mint = input.endsWith('pump') ? input.slice(0, -4) : input;
-    const pools = await fetchJsonNoStore('https://api.dexscreener.com/token-pairs/v1/solana/' + mint);
-    const first = Array.isArray(pools) ? pools[0] : null;
-    if(first?.pairAddress) return first.pairAddress;
+    const candidates = [];
+    candidates.push(raw);
+    if(raw.endsWith('pump')) candidates.push(raw.slice(0, -4));
+    // Sometimes users paste uppercase/lowercase variants; base58 is case-sensitive but we can still try raw only.
 
-    throw new Error('Could not resolve DexScreener pair.');
+    // 1) Try as pair directly (fast)
+    for(const c of candidates){
+      try {
+        const d = await fetchJsonNoStore('https://api.dexscreener.com/latest/dex/pairs/solana/' + encodeURIComponent(c));
+        const p = d?.pairs?.[0];
+        if(p?.pairAddress) return p.pairAddress;
+      } catch(e){}
+    }
+
+    // 2) Try DexScreener token endpoint (works when you have a mint but not a pair)
+    for(const c of candidates){
+      try {
+        const d = await fetchJsonNoStore('https://api.dexscreener.com/latest/dex/tokens/' + encodeURIComponent(c));
+        const p = d?.pairs?.[0];
+        if(p?.pairAddress) return p.pairAddress;
+      } catch(e){}
+    }
+
+    // 3) Try token-pairs (older endpoint that returns list of pairs for a mint)
+    for(const c of candidates){
+      try {
+        const list = await fetchJsonNoStore('https://api.dexscreener.com/token-pairs/v1/solana/' + encodeURIComponent(c));
+        const p0 = Array.isArray(list) ? list[0] : null;
+        if(p0?.pairAddress) return p0.pairAddress;
+      } catch(e){}
+    }
+
+    return null;
   }
 
   function renderSnowballTerminal(){
@@ -2705,7 +2832,14 @@
         </div>
       </div>
 
-      <div class="wst-sb-grid">
+      
+      <div class="wst-sb-controls">
+        <label class="wst-sb-label">Token / Pair</label>
+        <input class="wst-sb-input" id="wstSbTokenInput" placeholder="Paste mint or pair (DexScreener)" />
+        <button class="wst-sb-btn" id="wstSbSaveToken" type="button">Set</button>
+        <div class="wst-sb-hint">Tip: paste a Solana mint or a DexScreener pair address. Saved locally.</div>
+      </div>
+<div class="wst-sb-grid">
         <div class="wst-sb-card">
           <div class="wst-sb-k">Price</div>
           <div class="wst-sb-v" data-k="price">—</div>
@@ -2741,12 +2875,29 @@
             <div class="wst-sb-console-body" data-k="log"></div>
           </div>
           <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
-            <button class="btn small" type="button" data-k="refreshBtn">Refresh Now</button>
+            <button class="btn small" id="wstSbRefreshNow" type="button" data-k="refreshBtn">Refresh Now</button>
             <a class="btn small" data-k="dexLink" href="#" target="_blank" rel="noopener noreferrer">Open on DexScreener</a>
           </div>
         </div>
       </div>
     `;
+
+    // Wire token input (local)
+    const ti = wrap.querySelector('#wstSbTokenInput');
+    const ts = wrap.querySelector('#wstSbSaveToken');
+    if(ti){ ti.value = inferTokenInput(); }
+    if(ts && ti){
+      ts.addEventListener('click', () => {
+        const v = (ti.value || '').trim();
+        if(!v) return;
+        try{ localStorage.setItem('wst_token_input', v); } catch(e){}
+        // Immediate visual feedback
+        const hint = wrap.querySelector('.wst-sb-hint');
+        if(hint) hint.textContent = 'Saved. Refreshing…';
+        // Trigger a refresh on next interval
+        try{ const btn = document.getElementById('wstSbRefreshNow'); btn && btn.click(); } catch(e){}
+      });
+    }
     startSnowballUpdates(wrap);
     return wrap;
   }
@@ -2809,11 +2960,19 @@
       logEl.prepend(div);
     }
 
-    const input = inferTokenInput();
+    let input = inferTokenInput();
     let pair = null;
+    let lastInput = input;
 
     async function refresh(){
       try{
+        const current = inferTokenInput();
+        if(current !== lastInput){
+          lastInput = current;
+          input = current;
+          pair = null;
+          log('Token updated → ' + input);
+        }
         if(!pair){
           statusEl.textContent = 'Resolving pair for: ' + input;
           pair = await resolvePairAddressFromInput(input);
@@ -2911,7 +3070,113 @@
     familyTimer = setInterval(refresh, 12000);
   }
 
-  function renderTab(tab){
+  
+  function renderReceiptVault(){
+    const wrap = document.createElement('div');
+    wrap.className = 'wst-receipt-wrap';
+    wrap.innerHTML = `
+      <div class="wst-sb-hero">
+        <div class="wst-sb-title">Receipt Vault</div>
+        <div class="wst-sb-sub">Paste a Solana TX signature. Store “receipts” locally. One-click open on Solscan.</div>
+      </div>
+
+      <div class="wst-receipt-controls">
+        <input class="wst-sb-input" id="wstTxInput" placeholder="Transaction signature (Solana)" />
+        <button class="wst-sb-btn" id="wstTxAdd" type="button">Seal Receipt</button>
+        <button class="wst-sb-btn wst-sb-btn-ghost" id="wstTxClear" type="button">Clear</button>
+      </div>
+
+      <div class="wst-receipt-list" id="wstReceiptList"></div>
+      <div class="wst-sb-hint">Stored in your browser only. No backend.</div>
+    `;
+
+    const listEl = wrap.querySelector('#wstReceiptList');
+    const inputEl = wrap.querySelector('#wstTxInput');
+    const addBtn = wrap.querySelector('#wstTxAdd');
+    const clrBtn = wrap.querySelector('#wstTxClear');
+
+    function readReceipts(){
+      try{
+        const raw = localStorage.getItem('wst_receipts');
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch(e){ return []; }
+    }
+    function writeReceipts(arr){
+      try{ localStorage.setItem('wst_receipts', JSON.stringify(arr.slice(0, 25))); } catch(e){}
+    }
+    function render(){
+      const arr = readReceipts();
+      if(!arr.length){
+        listEl.innerHTML = '<div class="wst-receipt-empty">No receipts yet.</div>';
+        return;
+      }
+      listEl.innerHTML = '';
+      arr.forEach((sig, i) => {
+        const row = document.createElement('div');
+        row.className = 'wst-receipt-row';
+        const short = sig.length > 18 ? (sig.slice(0, 10) + '…' + sig.slice(-6)) : sig;
+        row.innerHTML = `
+          <div class="wst-receipt-sig" title="${sig}">${short}</div>
+          <div class="wst-receipt-actions">
+            <button class="wst-sb-btn wst-sb-btn-ghost" data-open="${sig}">Open</button>
+            <button class="wst-sb-btn wst-sb-btn-ghost" data-copy="${sig}">Copy</button>
+            <button class="wst-sb-btn wst-sb-btn-ghost" data-del="${i}">X</button>
+          </div>
+        `;
+        listEl.appendChild(row);
+      });
+    }
+
+    function isLikelySig(s){
+      // Solana signatures are base58-ish and usually 80-90 chars.
+      return /^[1-9A-HJ-NP-Za-km-z]{70,120}$/.test(s);
+    }
+
+    addBtn?.addEventListener('click', () => {
+      const sig = (inputEl.value || '').trim();
+      if(!isLikelySig(sig)){
+        inputEl.value = '';
+        inputEl.placeholder = 'Invalid signature — paste full TX signature';
+        setTimeout(() => { inputEl.placeholder = 'Transaction signature (Solana)'; }, 1500);
+        return;
+      }
+      const arr = readReceipts();
+      if(!arr.includes(sig)) arr.unshift(sig);
+      writeReceipts(arr);
+      inputEl.value = '';
+      render();
+    });
+
+    clrBtn?.addEventListener('click', () => {
+      writeReceipts([]);
+      render();
+    });
+
+    listEl?.addEventListener('click', (e) => {
+      const t = e.target;
+      if(!(t instanceof HTMLElement)) return;
+      const open = t.getAttribute('data-open');
+      const copy = t.getAttribute('data-copy');
+      const del = t.getAttribute('data-del');
+      if(open){
+        window.open('https://solscan.io/tx/' + open, '_blank', 'noopener');
+      } else if(copy){
+        navigator.clipboard?.writeText(copy);
+      } else if(del){
+        const idx = parseInt(del, 10);
+        const arr = readReceipts();
+        arr.splice(idx, 1);
+        writeReceipts(arr);
+        render();
+      }
+    });
+
+    render();
+    return wrap;
+  }
+
+function renderTab(tab){
     content.innerHTML = '';
     stopAll();
 
@@ -2923,13 +3188,8 @@
       content.appendChild(renderSnowballFamily());
       return;
     }
-    if(tab === 'spirit'){
-      const s = cloneSection('#spiritWorld') || cloneSection('[data-section="spiritWorld"]');
-      if(s) content.appendChild(s);
-      const note = document.createElement('div');
-      note.className = 'wst-portal-note';
-      note.textContent = 'Spirit Gate mirror. Use the main page controls for full effects.';
-      content.appendChild(note);
+    if(tab === 'receipts'){
+      content.appendChild(renderReceiptVault());
       return;
     }
   }

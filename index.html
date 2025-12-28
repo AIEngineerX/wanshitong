@@ -1212,6 +1212,40 @@
   justify-content:flex-end;
   margin-top: 10px;
 }
+
+/* ===== Snowball Terminal styles (portal-only) ===== */
+.wst-sb-wrap, .wst-sb-family{ padding: 6px 2px; }
+.wst-sb-hero{ margin-bottom: 12px; }
+.wst-sb-title{ font-weight: 800; letter-spacing: .08em; color: rgba(218,165,32,0.98); text-transform: uppercase; }
+.wst-sb-sub{ margin-top: 6px; font-size: 12px; color: rgba(232,227,214,0.82); line-height: 1.45; }
+.wst-sb-disclaimer{ display:block; margin-top:6px; color: rgba(232,227,214,0.62); font-size: 11px; }
+.wst-sb-grid{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.wst-sb-card{ border:1px solid rgba(218,165,32,0.28); border-radius: 14px; padding: 12px; background: rgba(0,0,0,0.32); }
+.wst-sb-wide{ grid-column: 1 / -1; }
+.wst-sb-k{ font-size: 11px; color: rgba(232,227,214,0.70); text-transform: uppercase; letter-spacing: .08em; }
+.wst-sb-v{ margin-top: 6px; font-size: 18px; font-weight: 800; }
+.wst-sb-mini{ margin-top: 8px; font-size: 11px; color: rgba(232,227,214,0.66); line-height: 1.4; }
+
+.wst-sb-console{ margin-top: 12px; border:1px solid rgba(122,255,192,0.22); border-radius: 14px; background: rgba(0,0,0,0.38); overflow:hidden; }
+.wst-sb-console-head{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(122,255,192,0.18); font-size:11px; color: rgba(232,227,214,0.74); text-transform: uppercase; letter-spacing: .12em; }
+.wst-sb-console-dot{ width:8px; height:8px; border-radius:50%; background: rgba(122,255,192,0.65); box-shadow: 0 0 14px rgba(122,255,192,0.35); }
+.wst-sb-console-body{ height: 160px; overflow:auto; padding: 10px 12px; font-size: 12px; color: rgba(232,227,214,0.86); }
+.wst-sb-logline{ padding: 6px 0; border-bottom: 1px dashed rgba(218,165,32,0.14); }
+.wst-sb-console-actions{ display:flex; gap:10px; padding:10px 12px; border-top:1px solid rgba(218,165,32,0.14); flex-wrap:wrap; }
+
+.wst-sb-iframe{ width: 100%; height: 520px; border:0; border-radius: 12px; margin-top: 10px; background: rgba(0,0,0,0.22); }
+
+.wst-sb-table{ margin-top: 10px; border:1px solid rgba(218,165,32,0.18); border-radius: 12px; overflow:hidden; }
+.wst-sb-row{ display:grid; grid-template-columns: 1.4fr .9fr .9fr .9fr 1.0fr .7fr; gap: 8px; padding: 10px 10px; border-bottom:1px solid rgba(218,165,32,0.12); align-items:center; font-size: 12px; }
+.wst-sb-head{ font-size: 11px; text-transform: uppercase; letter-spacing:.08em; color: rgba(232,227,214,0.70); background: rgba(0,0,0,0.20); }
+.wst-sb-row a{ color: rgba(218,165,32,0.95); text-decoration:none; }
+@media (max-width: 840px){
+  .wst-sb-grid{ grid-template-columns: 1fr; }
+  .wst-sb-row{ grid-template-columns: 1.4fr .9fr .9fr; grid-auto-rows:auto; }
+  .wst-sb-row div:nth-child(4),
+  .wst-sb-row div:nth-child(5),
+  .wst-sb-row div:nth-child(6){ display:none; }
+}
 </style>
 </head>
 
@@ -1396,7 +1430,7 @@
       <div class="panel" style="grid-column: 1 / -1;">
         <h3>Enter the Spirit World</h3>
         <p class="muted" style="margin-bottom: 18px;">
-           The Librarian appears when summoned.
+          No model. No loading. The Librarian appears when summoned.
         </p>
 
         <div class="sigil-wrap">
@@ -2560,8 +2594,8 @@
 
     <div class="wst-portal-body">
       <div class="wst-portal-tabs" role="tablist" aria-label="Portal Tabs">
-        <button class="wst-portal-tab" role="tab" aria-selected="true"  data-tab="vault">Daily Vault</button>
-        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="memes">Forbidden Pages</button>
+        <button class="wst-portal-tab" role="tab" aria-selected="true"  data-tab="snowball">Snowball Terminal</button>
+        <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="family">Snowball Family</button>
         <button class="wst-portal-tab" role="tab" aria-selected="false" data-tab="spirit">Spirit Gate</button></div>
       <div class="wst-portal-content" id="wstPortalContent"></div>
     </div>
@@ -2583,8 +2617,8 @@
     portal.classList.toggle("open", open);
     document.body.style.overflow = open ? 'hidden' : '';
     if(open){
-      renderTab('vault');
-      tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === 'vault' ? 'true' : 'false'));
+      renderTab('snowball');
+      tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === 'snowball' ? 'true' : 'false'));
     }
   }
 
@@ -2744,7 +2778,301 @@
     try{ localStorage.setItem(VAULT_KEY, JSON.stringify(obj)); }catch(e){}
   }
 
-  function renderVault(){
+  
+  // ===== Snowball Portal Tech (advanced; additive) =====
+  const WST_TOKEN_INPUT = 'DzmMSKtWmc2vhDxEcD5EH5Qr1MZNYJYZ8uE3UHaxpump'; // mint or pair-like input
+  const SNOWBALL_TOKEN_INPUT = 'Gbu7JAKhTVtGyRryg8cYPiKNhonXpUqbrZuCDjfUpump'; // $snowball (pump.fun mint)
+
+  let wstSnowballInterval = null;
+
+  function fmtUSD(n){
+    const x = Number(n);
+    if (!isFinite(x)) return '—';
+    const abs = Math.abs(x);
+    if (abs >= 1e9) return `$${(x/1e9).toFixed(2)}B`;
+    if (abs >= 1e6) return `$${(x/1e6).toFixed(2)}M`;
+    if (abs >= 1e3) return `$${(x/1e3).toFixed(2)}K`;
+    return `$${x.toFixed(2)}`;
+  }
+
+  async function fetchJsonNoStore(url){
+    const u = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+    const r = await fetch(u, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  }
+
+  async function resolvePairAddressFromInput(input){
+    // Try: treat input as pair address
+    try {
+      const d = await fetchJsonNoStore(`https://api.dexscreener.com/latest/dex/pairs/solana/${input}`);
+      const p = d?.pairs?.[0];
+      if (p?.pairAddress) return p.pairAddress;
+    } catch(e){ /* ignore */ }
+
+    // Fallback: treat input as token mint (strip trailing 'pump' if present)
+    const mint = input.endsWith('pump') ? input.slice(0, -4) : input;
+    const pools = await fetchJsonNoStore(`https://api.dexscreener.com/token-pairs/v1/solana/${mint}`);
+    const first = Array.isArray(pools) ? pools[0] : null;
+    if (first?.pairAddress) return first.pairAddress;
+
+    throw new Error('Could not resolve DexScreener pair for token.');
+  }
+
+  function renderSnowballTerminal(){
+    const wrap = document.createElement('div');
+    wrap.className = 'wst-sb-wrap';
+    wrap.innerHTML = `
+      <div class="wst-sb-hero">
+        <div class="wst-sb-title">Snowball Terminal</div>
+        <div class="wst-sb-sub">
+          Volume-aware telemetry for $WanShiTong with an estimated Snowball burn-flow model.
+          <span class="wst-sb-disclaimer">Estimates only. “0.5% of every trade” assumption based on Snowball’s public description.</span>
+        </div>
+      </div>
+
+      <div class="wst-sb-grid">
+        <div class="wst-sb-card">
+          <div class="wst-sb-k">WST Price</div>
+          <div class="wst-sb-v" data-k="wstPrice">Loading…</div>
+        </div>
+        <div class="wst-sb-card">
+          <div class="wst-sb-k">24h Volume</div>
+          <div class="wst-sb-v" data-k="wstVol24h">Loading…</div>
+        </div>
+        <div class="wst-sb-card">
+          <div class="wst-sb-k">Liquidity</div>
+          <div class="wst-sb-v" data-k="wstLiq">Loading…</div>
+        </div>
+        <div class="wst-sb-card">
+          <div class="wst-sb-k">Market Cap</div>
+          <div class="wst-sb-v" data-k="wstMcap">Loading…</div>
+        </div>
+        <div class="wst-sb-card wst-sb-wide">
+          <div class="wst-sb-k">Estimated Snowball Burn Flow (USD / 24h)</div>
+          <div class="wst-sb-v" data-k="burnUsd">—</div>
+          <div class="wst-sb-mini">
+            Model: burnFlow ≈ 0.5% × volume. If Snowball is enabled, this approximates the USD value routed to buy/burn.
+          </div>
+        </div>
+        <div class="wst-sb-card wst-sb-wide">
+          <div class="wst-sb-k">Market Heat</div>
+          <div class="wst-sb-v" data-k="heat">—</div>
+          <div class="wst-sb-mini">
+            Derived from Volume/Liquidity ratio and 24h price change. This is not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="wst-sb-console" aria-label="Snowball Console">
+        <div class="wst-sb-console-head">
+          <span>LIBRARY TELEMETRY</span>
+          <span class="wst-sb-console-dot"></span>
+          <span data-k="updated">—</span>
+        </div>
+        <div class="wst-sb-console-body" data-function renderTab(tab){
+    content.innerHTML = '';
+    // Stop any live intervals when switching
+    stopSnowballUpdates();
+    stopFamilyUpdates();
+
+    if(tab === 'snowball'){
+      content.appendChild(renderSnowballTerminal());
+      return;
+    }
+
+    if(tab === 'family'){
+      content.appendChild(renderSnowballFamily());
+      return;
+    }
+
+    if(tab === 'spirit'){
+      const s = cloneSection('#spiritWorld') || cloneSection('[data-section="spiritWorld"]');
+      if(s) content.appendChild(s);
+      const note = document.createElement('div');
+      note.className = 'wst-portal-note';
+      note.textContent = 'Spirit Gate mirror. The original controls remain on the main page.';
+      content.appendChild(note);
+      return;
+    }
+  }
+
+  // Tab events the embed is blocked, use the button below.</div>
+          <iframe class="wst-sb-iframe" src="https://www.sb.fun/" loading="lazy" referrerpolicy="no-referrer" title="Snowball Dashboard"></iframe>
+          <div style="margin-top:10px;">
+            <a class="btn small" href="https://www.sb.fun/" target="_blank" rel="noopener noreferrer">Open sb.fun</a>
+          </div>
+        </div>
+
+        <div class="wst-sb-card wst-sb-wide">
+          <div class="wst-sb-k">Family Watchlist (Live)</div>
+          <div class="wst-sb-mini">Live pulls via DexScreener. Edit tokens in the config array in the script if you want to curate.</div>
+          <div class="wst-sb-table" role="table" aria-label="Snowball Family Tokens">
+            <div class="wst-sb-row wst-sb-head" role="row">
+              <div role="columnheader">Token</div>
+              <div role="columnheader">Price</div>
+              <div role="columnheader">24h Vol</div>
+              <div role="columnheader">Liq</div>
+              <div role="columnheader">BurnFlow (est.)</div>
+              <div role="columnheader">Link</div>
+            </div>
+            <div data-k="familyRows"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    startFamilyUpdates(wrap);
+    return wrap;
+  }
+
+  async function startSnowballUpdates(container){
+    stopSnowballUpdates();
+    const get = (k) => container.querySelector(`[data-k="${k}"]`);
+    const logEl = get('log');
+    const updatedEl = get('updated');
+    const dexLink = get('dexLink');
+    const refreshBtn = get('refreshBtn');
+
+    let wstPair = null;
+
+    function log(line){
+      if(!logEl) return;
+      const div = document.createElement('div');
+      div.className = 'wst-sb-logline';
+      div.textContent = line;
+      logEl.prepend(div);
+      // cap lines
+      while (logEl.childNodes.length > 24) logEl.removeChild(logEl.lastChild);
+    }
+
+    async function refresh(){
+      try{
+        if(!wstPair){
+          wstPair = await resolvePairAddressFromInput(WST_TOKEN_INPUT);
+          const url = `https://dexscreener.com/solana/${wstPair}`;
+          if (dexLink) dexLink.href = url;
+          log(`Pair resolved: ${wstPair.slice(0,4)}…${wstPair.slice(-4)}`);
+        }
+        const data = await fetchJsonNoStore(`https://api.dexscreener.com/latest/dex/pairs/solana/${wstPair}`);
+        const p = data?.pairs?.[0];
+        if(!p) throw new Error('No pair data');
+
+        const price = Number(p.priceUsd);
+        const vol24h = Number(p.volume?.h24);
+        const liq = Number(p.liquidity?.usd);
+        const mcap = Number(p.marketCap ?? p.fdv);
+
+        const burnUsd = isFinite(vol24h) ? (vol24h * 0.005) : NaN; // 0.5% assumption
+
+        // Heat: combine vol/liq and price change
+        const vl = (isFinite(vol24h) && isFinite(liq) && liq > 0) ? (vol24h / liq) : NaN;
+        const chg = Number(p.priceChange?.h24);
+        let heat = '—';
+        if (isFinite(vl) || isFinite(chg)){
+          const score = clamp(
+            (isFinite(vl) ? (vl * 35) : 0) + (isFinite(chg) ? (Math.abs(chg) * 0.6) : 0),
+            0, 100
+          );
+          heat = `${Math.round(score)}/100`;
+        }
+
+        const set = (k, v) => { const el = get(k); if(el) el.textContent = v; };
+        set('wstPrice', isFinite(price) ? `$${price.toFixed(6)}` : '—');
+        set('wstVol24h', fmtUSD(vol24h));
+        set('wstLiq', fmtUSD(liq));
+        set('wstMcap', fmtUSD(mcap));
+        set('burnUsd', fmtUSD(burnUsd));
+        set('heat', heat);
+
+        if(updatedEl) updatedEl.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+
+        // Narrative log
+        if (isFinite(burnUsd)){
+          log(`Burn-flow est.: ${fmtUSD(burnUsd)} / 24h (0.5% × vol)`);
+        } else {
+          log('Telemetry refreshed.');
+        }
+      }catch(e){
+        if(updatedEl) updatedEl.textContent = 'Live data unavailable (check token/pair).';
+        log('Refresh failed. The Library remains silent.');
+      }
+    }
+
+    refreshBtn?.addEventListener('click', refresh);
+    await refresh();
+    wstSnowballInterval = setInterval(refresh, 30000);
+  }
+
+  function stopSnowballUpdates(){
+    if (wstSnowballInterval){
+      clearInterval(wstSnowballInterval);
+      wstSnowballInterval = null;
+    }
+  }
+
+  let wstFamilyInterval = null;
+
+  const FAMILY_TOKENS = [
+    { name: '$WanShiTong', input: WST_TOKEN_INPUT },
+    { name: '$snowball', input: SNOWBALL_TOKEN_INPUT }
+  ];
+
+  async function startFamilyUpdates(container){
+    stopFamilyUpdates();
+    const rowsHost = container.querySelector('[data-k="familyRows"]');
+
+    async function renderRows(){
+      if(!rowsHost) return;
+      rowsHost.innerHTML = '';
+      for (const t of FAMILY_TOKENS){
+        const row = document.createElement('div');
+        row.className = 'wst-sb-row';
+        row.setAttribute('role','row');
+        row.innerHTML = `
+          <div role="cell">${t.name}</div>
+          <div role="cell">—</div>
+          <div role="cell">—</div>
+          <div role="cell">—</div>
+          <div role="cell">—</div>
+          <div role="cell"><a href="#" target="_blank" rel="noopener noreferrer">Open</a></div>
+        `;
+        rowsHost.appendChild(row);
+
+        try{
+          const pair = await resolvePairAddressFromInput(t.input);
+          const d = await fetchJsonNoStore(`https://api.dexscreener.com/latest/dex/pairs/solana/${pair}`);
+          const p = d?.pairs?.[0];
+          const price = Number(p?.priceUsd);
+          const vol24h = Number(p?.volume?.h24);
+          const liq = Number(p?.liquidity?.usd);
+          const burnUsd = isFinite(vol24h) ? (vol24h * 0.005) : NaN;
+
+          const cells = row.querySelectorAll('[role="cell"]');
+          cells[1].textContent = isFinite(price) ? `$${price.toFixed(6)}` : '—';
+          cells[2].textContent = fmtUSD(vol24h);
+          cells[3].textContent = fmtUSD(liq);
+          cells[4].textContent = fmtUSD(burnUsd);
+
+          const a = row.querySelector('a');
+          const url = `https://dexscreener.com/solana/${pair}`;
+          a.href = url;
+        }catch(e){
+          // leave as dashes
+        }
+      }
+    }
+
+    await renderRows();
+    wstFamilyInterval = setInterval(renderRows, 45000);
+  }
+
+  function stopFamilyUpdates(){
+    if (wstFamilyInterval){
+      clearInterval(wstFamilyInterval);
+      wstFamilyInterval = null;
+    }
+  }
+function renderVault(){
     const existing = getDailyVault();
     let item = existing;
 

@@ -1092,6 +1092,126 @@
 .wst-portal-title span{
   opacity: 0.78;
 }
+
+/* ===== Forbidden Index UI (portal only) ===== */
+.wst-vault-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin: 0 0 10px 0;
+}
+.wst-vault-right{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+.wst-forbidden-badge{
+  font-size: 11px;
+  letter-spacing: .08em;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(218,165,32,0.35);
+  background: rgba(0,0,0,0.35);
+  color: rgba(232,227,214,0.85);
+  white-space: nowrap;
+}
+.wst-forbidden-badge.unlocked{
+  border-color: rgba(122,255,192,0.45);
+  box-shadow: 0 0 22px rgba(122,255,192,0.14);
+  color: rgba(122,255,192,0.95);
+}
+.wst-forbidden-btn{
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(218,165,32,0.55);
+  background: radial-gradient(circle at 30% 30%, rgba(218,165,32,0.22), rgba(0,0,0,0.35));
+  color: rgba(232,227,214,0.95);
+  cursor:pointer;
+  transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow: 0 0 18px rgba(218,165,32,0.16);
+}
+.wst-forbidden-btn:hover{
+  box-shadow: 0 0 30px rgba(218,165,32,0.25);
+}
+.wst-forbidden-btn:active{
+  transform: scale(0.98);
+}
+
+/* Toast */
+.wst-portal-toast{
+  position: fixed;
+  left: 18px;
+  bottom: 78px;
+  z-index: 10020;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .2s ease, transform .2s ease;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(218,165,32,0.35);
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  color: rgba(232,227,214,0.92);
+  font-size: 12px;
+}
+.wst-portal-toast.show{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Forbidden modal */
+.wst-forbidden-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 10030;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.wst-forbidden-backdrop{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,0.72);
+}
+.wst-forbidden-card{
+  position: relative;
+  width: min(720px, calc(100% - 28px));
+  border-radius: 16px;
+  border: 1px solid rgba(122,255,192,0.35);
+  background: linear-gradient(180deg, rgba(10,14,18,0.96), rgba(0,0,0,0.86));
+  box-shadow: 0 0 60px rgba(122,255,192,0.12);
+  padding: 14px 14px 12px 14px;
+}
+.wst-forbidden-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.wst-forbidden-title{
+  letter-spacing: .12em;
+  font-size: 12px;
+  color: rgba(122,255,192,0.95);
+}
+.wst-forbidden-text{
+  margin: 0;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(218,165,32,0.22);
+  background: rgba(0,0,0,0.35);
+  color: rgba(232,227,214,0.92);
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+.wst-forbidden-actions{
+  display:flex;
+  gap: 10px;
+  justify-content:flex-end;
+  margin-top: 10px;
+}
 </style>
 </head>
 
@@ -2502,6 +2622,114 @@
       "Write a single sentence: why you are in this trade — keep it pinned."
     ]
   };
+  // ===== Forbidden Index (rare reveal) =====
+  const FORBIDDEN_POOL = [
+    "FORBIDDEN PAGE — Classified Marginalia\n\nWhen the room grows loud, the Librarian grows silent. Volume is not knowledge; it is only footfall.",
+    "FORBIDDEN PAGE — The Archivist’s Warning\n\nIf you ask for a prediction, you confess you did not read the record.",
+    "FORBIDDEN PAGE — A Seal Broken\n\nSome scrolls are not meant to be traded. They are meant to be remembered.",
+    "FORBIDDEN PAGE — Spirit Ledger\n\nSustainable motion is the only magic that lasts. Everything else is a spark in dry air."
+  ];
+
+  function isoWeekKey(d){
+    // ISO week number key (year-week)
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = date.getUTCDay() || 7;
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
+  }
+
+  const FORBIDDEN_KEY_PREFIX = 'wst_forbidden_index_';
+
+  function getForbiddenState(){
+    const wk = isoWeekKey(new Date());
+    try{
+      const raw = localStorage.getItem(FORBIDDEN_KEY_PREFIX + wk);
+      if(!raw) return { week: wk, unlocked: false, text: '' };
+      const obj = JSON.parse(raw);
+      return { week: wk, unlocked: !!obj.unlocked, text: obj.text || '' };
+    }catch(e){
+      return { week: wk, unlocked: false, text: '' };
+    }
+  }
+
+  function setForbiddenState(text){
+    const wk = isoWeekKey(new Date());
+    try{
+      localStorage.setItem(FORBIDDEN_KEY_PREFIX + wk, JSON.stringify({ unlocked: true, text, ts: Date.now() }));
+    }catch(e){}
+  }
+
+  function showPortalToast(msg){
+    const el = document.createElement('div');
+    el.className = 'wst-portal-toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 250);
+    }, 1600);
+  }
+
+  function openForbiddenModal(text){
+    const modal = document.createElement('div');
+    modal.className = 'wst-forbidden-modal';
+    modal.innerHTML = `
+      <div class="wst-forbidden-backdrop" data-close="1"></div>
+      <div class="wst-forbidden-card" role="dialog" aria-modal="true">
+        <div class="wst-forbidden-head">
+          <div class="wst-forbidden-title">THE FORBIDDEN INDEX</div>
+          <button type="button" class="wst-mini-btn" data-close="1">Close</button>
+        </div>
+        <pre class="wst-forbidden-text"></pre>
+        <div class="wst-forbidden-actions">
+          <button type="button" class="wst-mini-btn" id="wstForbiddenCopy">Copy</button>
+          <button type="button" class="wst-mini-btn" id="wstForbiddenShare">Share on X</button>
+        </div>
+        <div class="wst-portal-note">Rare reveal. Stored locally for this week.</div>
+      </div>
+    `;
+    modal.querySelector('.wst-forbidden-text').textContent = text;
+    modal.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t && t.getAttribute && t.getAttribute('data-close') === '1') modal.remove();
+    });
+    document.body.appendChild(modal);
+
+    const copyBtn = modal.querySelector('#wstForbiddenCopy');
+    const shareBtn = modal.querySelector('#wstForbiddenShare');
+
+    copyBtn?.addEventListener('click', async () => {
+      try{ await navigator.clipboard.writeText(text); showPortalToast('Copied.'); }catch(e){ showPortalToast('Copy failed.'); }
+    });
+
+    shareBtn?.addEventListener('click', () => {
+      const url = 'https://x.com/intent/tweet?text=' + encodeURIComponent(text + "\n\n$WanShiTong");
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+  }
+
+  function attemptForbiddenReveal(){
+    const state = getForbiddenState();
+    if (state.unlocked && state.text){
+      openForbiddenModal(state.text);
+      return state;
+    }
+    // 2% chance per click
+    const hit = Math.random() < 0.02;
+    if (!hit){
+      showPortalToast('The shelves remain silent.');
+      return state;
+    }
+    const text = FORBIDDEN_POOL[Math.floor(Math.random() * FORBIDDEN_POOL.length)];
+    setForbiddenState(text);
+    openForbiddenModal(text);
+    showPortalToast('A seal breaks open…');
+    return { week: state.week, unlocked: true, text };
+  }
+
 
   function getDailyVault(){
     try{
@@ -2522,10 +2750,41 @@
 
     const wrap = document.createElement('div');
     wrap.className = 'wst-vault-card';
+
+    const head = document.createElement('div');
+    head.className = 'wst-vault-head';
+
     const title = document.createElement('h3');
     title.textContent = 'Wan Shi Tong’s Daily Vault';
-    title.style.margin = '0 0 10px 0';
-    wrap.appendChild(title);
+    title.style.margin = '0';
+    head.appendChild(title);
+
+    const right = document.createElement('div');
+    right.className = 'wst-vault-right';
+
+    const state = getForbiddenState();
+    const badge = document.createElement('span');
+    badge.className = 'wst-forbidden-badge' + (state.unlocked ? ' unlocked' : '');
+    badge.textContent = state.unlocked ? 'FORBIDDEN INDEX: UNLOCKED' : 'FORBIDDEN INDEX: LOCKED';
+
+    const fbtn = document.createElement('button');
+    fbtn.className = 'wst-forbidden-btn';
+    fbtn.type = 'button';
+    fbtn.setAttribute('aria-label', 'Open the Forbidden Index');
+    fbtn.title = 'Forbidden Index (rare reveal)';
+    fbtn.textContent = '⟡';
+    fbtn.addEventListener('click', () => {
+      const st = attemptForbiddenReveal();
+      if (st && st.unlocked){
+        badge.classList.add('unlocked');
+        badge.textContent = 'FORBIDDEN INDEX: UNLOCKED';
+      }
+    });
+
+    right.appendChild(badge);
+    right.appendChild(fbtn);
+    head.appendChild(right);
+    wrap.appendChild(head);
 
     const out = document.createElement('div');
     out.id = 'wstVaultOutput';
